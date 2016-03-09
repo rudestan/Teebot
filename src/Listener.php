@@ -1,11 +1,11 @@
 <?php
 
-namespace Teebot\Api;
+namespace Teebot;
 
-use Teebot\Api\Exception;
-use Teebot\Api\Method\GetUpdates;
-use Teebot\Api\Command\Executor;
-use Teebot\Api\Exception\Fatal;
+use Teebot\Exception;
+use Teebot\Method\GetUpdates;
+use Teebot\Command\Executor;
+use Teebot\Exception\Fatal;
 
 class Listener
 {
@@ -23,8 +23,21 @@ class Listener
 
     protected $timeout;
 
-    public function __construct($args)
+    protected $cliOptions = [
+        'short' => 'n:c:',
+        'long'  => ['name:', 'config']
+    ];
+
+    public function __construct($args = [])
     {
+        if (empty($args)) {
+            $args = getopt($this->cliOptions['short'], $this->cliOptions['long']);
+        }
+
+        $this->init($args);
+    }
+
+    protected function init($args) {
         try {
             $botName = $this->getBotName($args);
 
@@ -36,8 +49,10 @@ class Listener
             exit();
         }
 
+        $botConfig = $this->getBotConfig($args);
+
         $config = Config::getInstance();
-        $config->initBotConfiguration($botName);
+        $config->initBotConfiguration($botName, $botConfig);
 
         $this->timeout = $config->getTimeout();
 
@@ -48,7 +63,12 @@ class Listener
 
     protected function getBotName($args)
     {
-        return $args[1] ?? null;
+        return $args['n'] ?? $args['name'] ?? null;
+    }
+
+    protected function getBotConfig($args)
+    {
+        return $args['c'] ?? $args['config'] ?? null;
     }
 
     protected function initArgs()

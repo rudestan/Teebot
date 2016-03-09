@@ -2,11 +2,11 @@
 
 namespace Teebot\Bot\FirstBot\EntityEvent;
 
-use Teebot\Api\Command\AbstractCommand;
+use Teebot\Command\AbstractCommand;
 
 class Error extends AbstractCommand
 {
-    /** @var \Teebot\Api\Entity\Error $entity */
+    /** @var \Teebot\Entity\Error $entity */
     protected $entity;
 
     public function run()

@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Api\Exception;
+namespace Teebot\Exception;
 
 use \Exception;
 

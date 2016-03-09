@@ -2,7 +2,7 @@
 
 namespace Teebot\Bot\FirstBot\Command;
 
-use Teebot\Api\Command\AbstractCommand;
+use Teebot\Command\AbstractCommand;
 
 class Hi extends AbstractCommand
 {

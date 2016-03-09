@@ -2,8 +2,8 @@
 
 namespace Teebot\Bot\FirstBot\Command;
 
-use Teebot\Api\Command\AbstractCommand;
-use Teebot\Api\Method\GetMe;
+use Teebot\Command\AbstractCommand;
+use Teebot\Method\GetMe;
 
 class Me extends AbstractCommand
 {

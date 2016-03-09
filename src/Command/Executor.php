@@ -1,12 +1,12 @@
 <?php
 
-namespace Teebot\Api\Command;
+namespace Teebot\Command;
 
-use Teebot\Api\Request;
-use Teebot\Api\Entity\AbstractEntity;
-use Teebot\Api\Entity\Message;
-use Teebot\Api\Config;
-use Teebot\Api\Response;
+use Teebot\Request;
+use Teebot\Entity\AbstractEntity;
+use Teebot\Entity\Message;
+use Teebot\Config;
+use Teebot\Response;
 
 class Executor
 {
@@ -15,6 +15,8 @@ class Executor
     const COMMAND_ARGS_SEPARATOR = ' ';
 
     const COMMAND_PARTS_DELIMITER = '_';
+
+    const COMMAND_UNKNOWN_CLASSNAME = 'Unknown';
 
     public function processEntities(array $entities)
     {
@@ -79,8 +81,17 @@ class Executor
         $name = implode('', $parts);
 
         $nameSpace = Config::getInstance()->getCommandNamespace();
+        $className = $nameSpace . "\\" . $name;
 
-        return $nameSpace . "\\" . $name;
+        if (!class_exists($className) && Config::getInstance()->getCatchUnknownCommand() == true) {
+            $className = $nameSpace . "\\" . static::COMMAND_UNKNOWN_CLASSNAME;
+
+            if (!class_exists($className)) {
+                $className = __NAMESPACE__ . "\\" . static::COMMAND_UNKNOWN_CLASSNAME;
+            }
+        }
+
+        return $className;
     }
 
     protected function getEntityClass($type)

@@ -2,7 +2,7 @@
 
 namespace Teebot\Bot\FirstBot\EntityEvent;
 
-use Teebot\Api\Command\AbstractCommand;
+use Teebot\Command\AbstractCommand;
 
 class User extends AbstractCommand
 {

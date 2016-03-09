@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Api\Method;
+namespace Teebot\Method;
 
 abstract class AbstractMethod {
 
