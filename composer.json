@@ -1,0 +1,19 @@
+{
+  "name": "rudestan/teebot",
+  "type": "library",
+  "description": "Yet another Telegram bot framework.",
+  "keywords": ["telegram", "bot", "phptelegram", "teebot"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Stan Drozdov",
+      "email": "rudestan@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0"
+  },
+  "autoload": {
+    "psr-4": { "Teebot\\": "./" }
+  }
+}
