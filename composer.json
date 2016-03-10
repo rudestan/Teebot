@@ -4,6 +4,7 @@
   "description": "Yet another Telegram bot framework.",
   "keywords": ["telegram", "bot", "phptelegram", "teebot"],
   "license": "MIT",
+  "version": "0.0.1",
   "authors": [
     {
       "name": "Stan Drozdov",
