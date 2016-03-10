@@ -1,6 +1,0 @@
-{
-  "name": "FirstBot",
-  "token": "<BOT_TOKEN>",
-  "url": "https://api.telegram.org",
-  "timeout": 3
-}
