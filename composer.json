@@ -5,6 +5,7 @@
   "keywords": ["telegram", "bot", "phptelegram", "teebot"],
   "license": "MIT",
   "version": "0.0.1",
+  "minimum-stability": "dev",
   "authors": [
     {
       "name": "Stan Drozdov",
