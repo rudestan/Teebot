@@ -1,10 +1,10 @@
 <?php
 
-namespace Teebot\Api\Command;
+namespace Teebot\Command;
 
-use Teebot\Api\Method\SendMessage;
-use Teebot\Api\Entity\Message;
-use Teebot\Api\Entity\AbstractEntity;
+use Teebot\Method\SendMessage;
+use Teebot\Entity\Message;
+use Teebot\Entity\AbstractEntity;
 
 abstract class AbstractCommand
 {

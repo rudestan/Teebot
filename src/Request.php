@@ -1,13 +1,13 @@
 <?php
 
-namespace Teebot\Api;
+namespace Teebot;
 
-use Teebot\Api\Method\AbstractMethod;
-use Teebot\Api\Exception\Critical;
+use Teebot\Method\AbstractMethod;
+use Teebot\Exception\Critical;
 
 class Request
 {
-    const METHOD_CLASSNAME_TEMPLATE = 'Teebot\\Api\\Method\\%s';
+    const METHOD_CLASSNAME_TEMPLATE = 'Teebot\\Method\\%s';
 
     const METHOD_GET = 'GET';
 

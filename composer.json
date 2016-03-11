@@ -16,6 +16,9 @@
     "php": ">=7.0"
   },
   "autoload": {
-    "psr-4": { "Teebot\\": "./" }
+    "psr-4": {
+      "Teebot\\Bot\\": "./Bot",
+      "Teebot\\": "./src"
+    }
   }
 }

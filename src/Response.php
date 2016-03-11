@@ -1,16 +1,16 @@
 <?php
 
-namespace Teebot\Api;
+namespace Teebot;
 
-use Teebot\Api\Exception\Fatal;
-use Teebot\Api\Entity\AbstractEntity;
-use Teebot\Api\Entity\Message;
-use Teebot\Api\Entity\Error;
-use Teebot\Api\Exception\Critical;
+use Teebot\Exception\Fatal;
+use Teebot\Entity\AbstractEntity;
+use Teebot\Entity\Message;
+use Teebot\Entity\Error;
+use Teebot\Exception\Critical;
 
 class Response
 {
-    const ENTITY_PATTERN = 'Teebot\\Api\\Entity\\%s';
+    const ENTITY_PATTERN = 'Teebot\\Entity\\%s';
 
     const DEFAULT_ENTITY_TYPE = Message::TYPE;
 
@@ -118,7 +118,7 @@ class Response
         $entity = null;
 
         if (!class_exists($entityClassName)) {
-            throw new Fatal('Entity "'.$entityType.'" does not exists or not supported yet!');
+            throw new Critical('Entity "'.$entityType.'" does not exists or not supported yet!');
         }
         /** @var AbstractEntity $entity */
         $entity = new $entityClassName($rawItemData);

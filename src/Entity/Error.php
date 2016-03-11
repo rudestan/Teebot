@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Api\Entity;
+namespace Teebot\Entity;
 
 class Error extends AbstractEntity
 {

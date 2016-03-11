@@ -1,8 +1,8 @@
 <?php
 
-namespace Teebot\Bot\FirstBot\Command;
+namespace Teebot\Bot\Example\Command;
 
-use Teebot\Api\Command\AbstractCommand;
+use Teebot\Command\AbstractCommand;
 
 class Hi extends AbstractCommand
 {

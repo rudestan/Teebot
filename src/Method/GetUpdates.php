@@ -1,16 +1,12 @@
 <?php
 
-namespace Teebot\Api\Method;
+namespace Teebot\Method;
 
-class SendMessage extends AbstractMethod
+class GetUpdates extends AbstractMethod
 {
-    const NAME = 'sendMessage';
+    const NAME = 'getUpdates';
 
     protected $args;
-
-    protected $text;
-
-    protected $chatId;
 
     public function __construct($args)
     {

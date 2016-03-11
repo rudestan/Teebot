@@ -1,8 +1,8 @@
 <?php
 
-namespace Teebot\Api;
+namespace Teebot;
 
-use Teebot\Api\Exception\Fatal;
+use Teebot\Exception\Fatal;
 
 class Config
 {
@@ -28,6 +28,8 @@ class Config
 
     protected $method;
 
+    protected $catch_unknown_command = null;
+
     protected $commandNamespace = null;
 
     protected $entityEventNamespace = null;
@@ -45,14 +47,14 @@ class Config
         return self::$instance;
     }
 
-    public function initBotConfiguration(string $botName)
+    public function initBotConfiguration(string $botName, $botConfig = null)
     {
         $this->botName = $botName;
 
         try {
             $this->botDir = $this->getBotDir($botName);
 
-            $this->loadConfig($this->botDir, $botName);
+            $this->loadConfig($this->botDir, $botConfig);
             $this->setNamespaces($botName);
         } catch (Fatal $e) {
             echo $e->getMessage();
@@ -84,12 +86,12 @@ class Config
         $this->entityEventNamespace = sprintf(static::EVENT_NAMESPACE_PATTERN, $botName);
     }
 
-    protected function loadConfig($botDir)
+    protected function loadConfig($botDir, $botConfig)
     {
-        $configFile = $botDir . static::CONFIG_FILENAME;
+        $configFile = $botConfig ?? $botDir . static::CONFIG_FILENAME;
 
-        if (!file_exists($configFile)) {
-            throw new Fatal('File "' . static::CONFIG_FILENAME . ' does not exists in "' . $botDir . '"!');
+        if (!is_file($configFile) || !is_readable($configFile)) {
+            throw new Fatal('File "' . $configFile . '" does not exists or not readable!');
         }
 
         $config = file_get_contents($configFile);
@@ -140,6 +142,14 @@ class Config
     public function getMethod()
     {
         return $this->method;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCatchUnknownCommand()
+    {
+        return $this->catch_unknown_command;
     }
 
     /**

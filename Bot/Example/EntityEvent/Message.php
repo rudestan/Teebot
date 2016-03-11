@@ -1,8 +1,8 @@
 <?php
 
-namespace Teebot\Bot\FirstBot\EntityEvent;
+namespace Teebot\Bot\Example\EntityEvent;
 
-use Teebot\Api\Command\AbstractCommand;
+use Teebot\Command\AbstractCommand;
 
 class Message extends AbstractCommand
 {

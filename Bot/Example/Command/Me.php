@@ -1,9 +1,9 @@
 <?php
 
-namespace Teebot\Bot\FirstBot\Command;
+namespace Teebot\Bot\Example\Command;
 
-use Teebot\Api\Command\AbstractCommand;
-use Teebot\Api\Method\GetMe;
+use Teebot\Command\AbstractCommand;
+use Teebot\Method\GetMe;
 
 class Me extends AbstractCommand
 {
