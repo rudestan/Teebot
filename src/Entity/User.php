@@ -4,20 +4,15 @@ namespace Teebot\Entity;
 
 class User extends AbstractEntity
 {
-    const TYPE = 'User';
+    const ENTITY_TYPE = 'User';
 
     protected $id;
 
     protected $firstName;
 
-    protected $userName;
+    protected $lastName;
 
-    protected function setProperties(array $data)
-    {
-        $this->id = $data['id'];
-        $this->firstName = $data['first_name'];
-        $this->userName = $data['username'];
-    }
+    protected $username;
 
     /**
      * @return mixed
@@ -28,7 +23,7 @@ class User extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFirstName()
     {
@@ -36,10 +31,18 @@ class User extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return string
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+
+    /**
+     * @return string
      */
     public function getUserName()
     {
-        return $this->userName;
+        return $this->username;
     }
 }

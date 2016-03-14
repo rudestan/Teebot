@@ -4,7 +4,7 @@ namespace Teebot\Entity;
 
 class Error extends AbstractEntity
 {
-    const TYPE = 'Error';
+    const ENTITY_TYPE = 'Error';
 
     protected $errorCode;
 
@@ -24,11 +24,5 @@ class Error extends AbstractEntity
     public function getDescription()
     {
         return $this->description;
-    }
-
-    protected function setProperties(array $data)
-    {
-        $this->errorCode = $data['error_code'];
-        $this->description = $data['description'];
     }
 }

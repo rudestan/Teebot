@@ -12,7 +12,7 @@ class Response
 {
     const ENTITY_PATTERN = 'Teebot\\Entity\\%s';
 
-    const DEFAULT_ENTITY_TYPE = Message::TYPE;
+    const DEFAULT_ENTITY_TYPE = Message::ENTITY_TYPE;
 
     protected $decodedData = [];
 
@@ -31,17 +31,9 @@ class Response
             throw new Critical('Error decoding data!');
         }
 
-        $entityType     = $this->isErrorReceived() ? Error::TYPE : $entityType;
+        $entityType     = $this->isErrorReceived() ? Error::ENTITY_TYPE : $entityType;
         $entitiesSource = $this->getRawEntitiesList();
         $this->entities = $this->buildEntities($entitiesSource, $entityType);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCaller()
-    {
-        return $this->caller;
     }
 
     protected function decodeData($rawData) {

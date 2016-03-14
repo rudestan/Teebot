@@ -4,51 +4,90 @@ namespace Teebot\Entity;
 
 class Message extends AbstractEntity
 {
-    const TYPE = 'Message';
+    const ENTITY_TYPE = 'Message';
 
-    protected $updateId = null;
+    protected $updateId;
 
-    protected $id = null;
+    protected $messageId;
 
-    protected $fromId = null;
+    /** @var User $from */
+    protected $from;
 
-    protected $fromFirstName = null;
+    protected $date;
 
-    protected $fromLastName = null;
+    /** @var Chat $chat */
+    protected $chat;
 
-    protected $chatId = null;
+    /** @var User $forwardFrom */
+    protected $forwardFrom;
 
-    protected $chatFirstName = null;
+    protected $forwardDate;
 
-    protected $chatLastName = null;
+    /** @var Message $replyToMessage */
+    protected $replyToMessage;
 
-    protected $chatType;
+    protected $text;
 
-    protected $date = null;
+    /** @var Audio $audio */
+    protected $audio;
 
-    protected $text = null;
+    /** @var Document $document */
+    protected $document;
 
-    public function __construct(array $data = null)
+    /** @var Photo $photo */
+    protected $photo;
+
+    /** @var Sticker $sticker */
+    protected $sticker;
+
+    /** @var Video $video */
+    protected $video;
+
+    /** @var Voice $voice */
+    protected $voice;
+
+    protected $caption;
+
+    /** @var Contact $contact */
+    protected $contact;
+
+    /** @var Location $location */
+    protected $location;
+
+    /** @var User $newChatParticipant */
+    protected $newChatParticipant;
+
+    /** @var User $leftChatParticipant */
+    protected $leftChatParticipant;
+
+    protected $newChatTitle;
+
+    /** @var PhotoSize[] $newChatPhoto */
+    protected $newChatPhoto;
+
+    protected $deleteChatPhoto;
+
+    protected $groupChatCreated;
+
+    protected $supergroupChatCreated;
+
+    protected $channelChatCreated;
+
+    protected $migrateToChatId;
+
+    protected $migrateFromChatId;
+
+    public function __construct(array $data)
     {
         $this->updateId = $data['update_id'] ?? null;
 
         if (isset($data['message'])) {
-            parent::__construct($data['message']);
-        }
-    }
+            $message         = $data['message'];
+            $message['from'] = isset($message['from']) ? new User($message['from']) : null;
+            $message['chat'] = isset($message['chat']) ? new Chat($message['chat']) : null;
 
-    protected function setProperties(array $data)
-    {
-        $this->id = $this->getPropertyByPath('message_id', $data);
-        $this->fromId = $this->getPropertyByPath('from.id', $data);
-        $this->fromFirstName = $this->getPropertyByPath('from.first_name', $data);
-        $this->fromLastName = $this->getPropertyByPath('from.last_name', $data);
-        $this->chatId = $this->getPropertyByPath('chat.id', $data);
-        $this->chatFirstName = $this->getPropertyByPath('chat.first_name', $data);
-        $this->chatLastName = $this->getPropertyByPath('chat.last_name', $data);
-        $this->chatType = $this->getPropertyByPath('chat.type', $data);
-        $this->text = $this->getPropertyByPath('text', $data);
-        $this->date = $this->getPropertyByPath('date', $data);
+            parent::__construct($message);
+        }
     }
 
     /**
@@ -62,33 +101,17 @@ class Message extends AbstractEntity
     /**
      * @return null
      */
-    public function getId()
+    public function getMessageId()
     {
-        return $this->id;
+        return $this->messageId;
     }
 
     /**
-     * @return null
+     * @return User
      */
-    public function getFromId()
+    public function getFrom()
     {
-        return $this->fromId;
-    }
-
-    /**
-     * @return null
-     */
-    public function getFromFirstName()
-    {
-        return $this->fromFirstName;
-    }
-
-    /**
-     * @return null
-     */
-    public function getFromLastName()
-    {
-        return $this->fromLastName;
+        return $this->from;
     }
 
     /**
@@ -96,31 +119,11 @@ class Message extends AbstractEntity
      */
     public function getChatId()
     {
-        return $this->chatId;
-    }
+        if ($this->chat instanceof Chat) {
+            return $this->chat->getId();
+        }
 
-    /**
-     * @return null
-     */
-    public function getChatFirstName()
-    {
-        return $this->chatFirstName;
-    }
-
-    /**
-     * @return null
-     */
-    public function getChatLastName()
-    {
-        return $this->chatLastName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getChatType()
-    {
-        return $this->chatType;
+        return null;
     }
 
     /**
@@ -137,21 +140,5 @@ class Message extends AbstractEntity
     public function getText()
     {
         return $this->text;
-    }
-
-    /**
-     * @param null $text
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-    }
-
-    /**
-     * @param null $chatId
-     */
-    public function setChatId($chatId)
-    {
-        $this->chatId = $chatId;
     }
 }

@@ -4,7 +4,7 @@ namespace Teebot\Entity;
 
 abstract class AbstractEntity
 {
-    const TYPE = 'AbstractEntity';
+    const ENTITY_TYPE = 'AbstractEntity';
 
     protected $parent;
 
@@ -24,35 +24,25 @@ abstract class AbstractEntity
         $this->parent = $parent;
     }
 
-    public function __construct(array $data = null)
+    public function __construct(array $data)
     {
         $this->setProperties($data);
     }
 
-    public function getType() : string
+    public function getEntityType() : string
     {
-        return static::TYPE;
+        return static::ENTITY_TYPE;
     }
 
-    protected function getPropertyByPath($path, $data)
-    {
-        $value = null;
-        $parts = explode('.', trim($path, '.'));
-        $count = count($parts);
+    protected function setProperties(array $data) {
+        foreach ($data as $name => $value) {
+            $name = str_replace(" ", "", lcfirst(ucwords(str_replace("_", " ", $name))));
 
-        for ($i = 0; $i < $count; $i++) {
-            $part = $parts[$i];
-
-            if (isset($data[$part])) {
-                $value = is_array($data[$part]) && $i != $count - 1 ?
-                    $this->getPropertyByPath($path, $data[$part]) : $data[$part];
+            if (property_exists($this, $name)) {
+                $this->{$name} = $value;
             }
         }
-
-        return $value;
     }
-
-    abstract protected function setProperties(array $data);
 
     public function getProperties()
     {

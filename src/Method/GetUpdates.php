@@ -6,20 +6,9 @@ class GetUpdates extends AbstractMethod
 {
     const NAME = 'getUpdates';
 
-    protected $args;
+    protected $offset;
 
-    public function __construct($args)
-    {
-        $this->args = $args;
-    }
+    protected $limit   = 1;
 
-    public function getName()
-    {
-        return self::NAME;
-    }
-
-    public function getArgs()
-    {
-        return $this->args;
-    }
+    protected $timeout = 3;
 }

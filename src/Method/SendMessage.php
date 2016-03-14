@@ -4,26 +4,25 @@ namespace Teebot\Method;
 
 class SendMessage extends AbstractMethod
 {
-    const NAME = 'sendMessage';
+    const NAME                = 'sendMessage';
 
-    protected $args;
+    const RETURN_ENTITY       = 'Message';
 
-    protected $text;
+    const PARSE_MODE_MARKDOWN = 'Markdown';
+
+    const PARSE_MODE_HTML     = 'HTML';
 
     protected $chatId;
 
-    public function __construct($args)
-    {
-        $this->args = $args;
-    }
+    protected $text;
 
-    public function getName()
-    {
-        return self::NAME;
-    }
+    protected $parseMode;
 
-    public function getArgs()
-    {
-        return $this->args;
-    }
+    protected $disableWebPagePreview;
+
+    protected $disableNotification;
+
+    protected $replyToMessageId;
+
+    protected $replyMarkup;
 }

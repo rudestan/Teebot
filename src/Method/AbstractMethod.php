@@ -4,12 +4,21 @@ namespace Teebot\Method;
 
 abstract class AbstractMethod {
 
+    const NAME          = null;
+
     const RETURN_ENTITY = null;
 
     protected $args;
 
-    abstract public function getName();
-    abstract public function getArgs();
+    public function __construct($args)
+    {
+        $this->args = $args;
+    }
+
+    public function getName()
+    {
+        return static::NAME;
+    }
 
     public function getReturnEntityType()
     {
@@ -18,18 +27,13 @@ abstract class AbstractMethod {
 
     public function getArgsAsString()
     {
-        $argsString = '';
         $args = $this->getArgs();
 
-        if (!empty($args)) {
-            $parts = [];
+        return $args ? http_build_query($args) : '';
+    }
 
-            foreach ($args as $k => $v) {
-                $parts[] = $k . '=' . $v;
-            }
-            $argsString = implode('&', $parts);
-        }
-
-        return $argsString;
+    public function getArgs()
+    {
+        return $this->args;
     }
 }

@@ -118,7 +118,7 @@ class Executor
 
     protected function executeEvent(AbstractEntity $entity)
     {
-        $type = $entity->getType();
+        $type = $entity->getEntityType();
 
         $className = $this->getEntityClass($type);
 
