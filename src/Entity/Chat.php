@@ -14,9 +14,9 @@ class Chat extends AbstractEntity
 
     protected $username;
 
-    protected $firstName;
+    protected $first_name;
 
-    protected $lastName;
+    protected $last_name;
 
     /**
      * @return mixed
@@ -55,7 +55,7 @@ class Chat extends AbstractEntity
      */
     public function getFirstName()
     {
-        return $this->firstName;
+        return $this->first_name;
     }
 
     /**
@@ -63,6 +63,6 @@ class Chat extends AbstractEntity
      */
     public function getLastName()
     {
-        return $this->lastName;
+        return $this->last_name;
     }
 }

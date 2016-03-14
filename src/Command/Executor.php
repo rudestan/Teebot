@@ -2,6 +2,8 @@
 
 namespace Teebot\Command;
 
+use Teebot\Exception\Fatal;
+use Teebot\Method\AbstractMethod;
 use Teebot\Request;
 use Teebot\Entity\AbstractEntity;
 use Teebot\Entity\Message;
@@ -17,6 +19,37 @@ class Executor
     const COMMAND_PARTS_DELIMITER = '_';
 
     const COMMAND_UNKNOWN_CLASSNAME = 'Unknown';
+
+    protected static $instance;
+
+    /** @var Config $config */
+    protected $config;
+
+    /** @var Request $request */
+    protected $request;
+
+    public static function getInstance()
+    {
+        if (!self::$instance instanceof self) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    public function initWithConfig(Config $config)
+    {
+        $this->config  = $config;
+        $this->request = new Request($config);
+    }
 
     public function processEntities(array $entities)
     {
@@ -80,10 +113,10 @@ class Executor
 
         $name = implode('', $parts);
 
-        $nameSpace = Config::getInstance()->getCommandNamespace();
+        $nameSpace = $this->config->getCommandNamespace();
         $className = $nameSpace . "\\" . $name;
 
-        if (!class_exists($className) && Config::getInstance()->getCatchUnknownCommand() == true) {
+        if (!class_exists($className) && $this->config->getCatchUnknownCommand() == true) {
             $className = $nameSpace . "\\" . static::COMMAND_UNKNOWN_CLASSNAME;
 
             if (!class_exists($className)) {
@@ -96,7 +129,7 @@ class Executor
 
     protected function getEntityClass($type)
     {
-        $nameSpace = Config::getInstance()->getEntityEventNamespace();
+        $nameSpace = $this->config->getEntityEventNamespace();
 
         return $nameSpace . "\\" . $type;
     }
@@ -133,12 +166,11 @@ class Executor
         return null;
     }
 
-    public function callRemoteMethod($method, $args = [], $processResponse = true, $parent = null)
+    public function callRemoteMethod(AbstractMethod $method, $processResponse = true, $parent = null)
     {
-        $request = Request::getInstance();
-
         /** @var Response $response */
-        $response = $request->exec($method, $args, $parent);
+
+        $response = $this->request->exec($method, $parent);
 
         if ($response instanceof Response && ($processResponse || $response->isErrorReceived())) {
             $this->processEntities($response->getEntities());

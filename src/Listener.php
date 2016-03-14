@@ -14,7 +14,7 @@ class Listener
     /**
      * @var Request
      */
-    protected $request;
+//    protected $request;
 
     /**
      * @var Executor $executor
@@ -51,14 +51,11 @@ class Listener
 
         $botConfig = $this->getBotConfig($args);
 
-        $config = Config::getInstance();
-        $config->initBotConfiguration($botName, $botConfig);
-
+        $config = new Config($botName, $botConfig);
         $this->timeout = $config->getTimeout();
 
-        $this->request = Request::getInstance();
-        $this->request->setConfig($config);
-        $this->executor = new Executor();
+        $this->executor = Executor::getInstance();
+        $this->executor->initWithConfig($config);
     }
 
     protected function getBotName($args)
@@ -82,16 +79,16 @@ class Listener
     public function listen()
     {
         // Flush old messages and reset offset to the last position
-        $response = $this->executor->callRemoteMethod(GetUpdates::NAME, [], false);
-        $args = $this->initArgs();
+        $method   = new GetUpdates($this->initArgs());
+        $response = $this->executor->callRemoteMethod($method, false);
 
         while (1) {
 
             if ($response && $response instanceof Response) {
-                $args['offset'] = $response->getOffset();
+                $method->setOffset($response->getOffset());
             }
 
-            $response = $this->executor->callRemoteMethod(GetUpdates::NAME, $args);
+            $response = $this->executor->callRemoteMethod($method);
 
             sleep($this->timeout);
         }

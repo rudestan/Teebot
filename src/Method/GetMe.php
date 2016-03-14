@@ -7,9 +7,4 @@ class GetMe extends AbstractMethod
     const NAME          = 'getMe';
 
     const RETURN_ENTITY = 'User';
-
-    public function getArgs()
-    {
-        return null;
-    }
 }

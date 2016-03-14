@@ -8,9 +8,9 @@ class User extends AbstractEntity
 
     protected $id;
 
-    protected $firstName;
+    protected $first_name;
 
-    protected $lastName;
+    protected $last_name;
 
     protected $username;
 
@@ -27,7 +27,7 @@ class User extends AbstractEntity
      */
     public function getFirstName()
     {
-        return $this->firstName;
+        return $this->first_name;
     }
 
     /**
@@ -35,7 +35,7 @@ class User extends AbstractEntity
      */
     public function getLastName()
     {
-        return $this->lastName;
+        return $this->last_name;
     }
 
     /**

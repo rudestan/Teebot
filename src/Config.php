@@ -36,15 +36,9 @@ class Config
 
     protected $botDir = null;
 
-    protected static $instance;
-
-    public static function getInstance()
+    public function __construct(string $botName, $botConfig = null)
     {
-        if (!self::$instance instanceof self) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
+        $this->initBotConfiguration($botName, $botConfig);
     }
 
     public function initBotConfiguration(string $botName, $botConfig = null)

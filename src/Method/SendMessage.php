@@ -12,17 +12,27 @@ class SendMessage extends AbstractMethod
 
     const PARSE_MODE_HTML     = 'HTML';
 
-    protected $chatId;
+    protected $chat_id;
 
     protected $text;
 
-    protected $parseMode;
+    protected $parse_mode;
 
-    protected $disableWebPagePreview;
+    protected $disable_web_page_preview;
 
-    protected $disableNotification;
+    protected $disable_notification;
 
-    protected $replyToMessageId;
+    protected $reply_to_message_id;
 
-    protected $replyMarkup;
+    protected $reply_markup;
+
+    protected $supportedProperties = [
+        'chat_id'                  => true,
+        'text'                     => true,
+        'parse_mode'               => false,
+        'disable_web_page_preview' => false,
+        'disable_notification'     => false,
+        'reply_to_message_id'      => false,
+        'reply_markup'             => false,
+    ];
 }

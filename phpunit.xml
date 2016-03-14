@@ -1,0 +1,10 @@
+<phpunit
+        colors="true"
+        backupGlobals="false">
+
+    <testsuites>
+        <testsuite>
+            <directory suffix=".php">./test</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

@@ -2,17 +2,28 @@
 
 namespace Teebot\Method;
 
+use Teebot\Exception\Fatal;
+
 abstract class AbstractMethod {
+
+    use \Teebot\Traits\Property;
 
     const NAME          = null;
 
     const RETURN_ENTITY = null;
 
-    protected $args;
+    protected $supportedProperties = [];
 
-    public function __construct($args)
+    public function __construct($args = [])
     {
-        $this->args = $args;
+        try {
+            $this->validateArgs($args);
+        } catch (Fatal $e) {
+            echo $e->getMessage();
+            exit();
+        }
+
+        $this->setProperties($args);
     }
 
     public function getName()
@@ -25,15 +36,33 @@ abstract class AbstractMethod {
         return static::RETURN_ENTITY;
     }
 
-    public function getArgsAsString()
+    public function getPropertiesAsString()
     {
-        $args = $this->getArgs();
+        $properties = $this->getPropertiesAsArray();
 
-        return $args ? http_build_query($args) : '';
+        return $properties ? http_build_query($properties) : '';
     }
 
-    public function getArgs()
+    public function getPropertiesAsArray()
     {
-        return $this->args;
+        $properties = [];
+
+        foreach ($this->supportedProperties as $name => $isRequired) {
+
+            if (property_exists($this, $name)) {
+                $properties[$name] = $this->{$name};
+            }
+        }
+
+        return $properties;
+    }
+
+    protected function validateArgs($args)
+    {
+        foreach ($this->supportedProperties as $property => $isRequired) {
+            if ($isRequired === true && empty($args[$property])) {
+                throw new Fatal('Required property "'.$property.'" is not set!');
+            }
+        }
     }
 }

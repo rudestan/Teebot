@@ -6,9 +6,9 @@ class Message extends AbstractEntity
 {
     const ENTITY_TYPE = 'Message';
 
-    protected $updateId;
+    protected $update_id;
 
-    protected $messageId;
+    protected $message_id;
 
     /** @var User $from */
     protected $from;
@@ -18,13 +18,13 @@ class Message extends AbstractEntity
     /** @var Chat $chat */
     protected $chat;
 
-    /** @var User $forwardFrom */
-    protected $forwardFrom;
+    /** @var User $forward_from */
+    protected $forward_from;
 
-    protected $forwardDate;
+    protected $forward_date;
 
-    /** @var Message $replyToMessage */
-    protected $replyToMessage;
+    /** @var Message $reply_to_message */
+    protected $reply_to_message;
 
     protected $text;
 
@@ -54,32 +54,32 @@ class Message extends AbstractEntity
     /** @var Location $location */
     protected $location;
 
-    /** @var User $newChatParticipant */
-    protected $newChatParticipant;
+    /** @var User $new_chat_participant */
+    protected $new_chat_participant;
 
-    /** @var User $leftChatParticipant */
-    protected $leftChatParticipant;
+    /** @var User $left_chat_participant */
+    protected $left_chat_participant;
 
-    protected $newChatTitle;
+    protected $new_chat_title;
 
-    /** @var PhotoSize[] $newChatPhoto */
-    protected $newChatPhoto;
+    /** @var PhotoSize[] $new_chat_photo */
+    protected $new_chat_photo;
 
-    protected $deleteChatPhoto;
+    protected $delete_chat_photo;
 
-    protected $groupChatCreated;
+    protected $group_chat_created;
 
-    protected $supergroupChatCreated;
+    protected $supergroup_chat_created;
 
-    protected $channelChatCreated;
+    protected $channel_chat_created;
 
-    protected $migrateToChatId;
+    protected $migrate_to_chat_id;
 
-    protected $migrateFromChatId;
+    protected $migrate_from_chat_id;
 
     public function __construct(array $data)
     {
-        $this->updateId = $data['update_id'] ?? null;
+        $this->update_id = $data['update_id'] ?? null;
 
         if (isset($data['message'])) {
             $message         = $data['message'];
@@ -95,7 +95,7 @@ class Message extends AbstractEntity
      */
     public function getUpdateId()
     {
-        return $this->updateId;
+        return $this->update_id;
     }
 
     /**
@@ -103,7 +103,7 @@ class Message extends AbstractEntity
      */
     public function getMessageId()
     {
-        return $this->messageId;
+        return $this->message_id;
     }
 
     /**

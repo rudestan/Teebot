@@ -6,7 +6,7 @@ class Error extends AbstractEntity
 {
     const ENTITY_TYPE = 'Error';
 
-    protected $errorCode;
+    protected $error_code;
 
     protected $description;
 
@@ -15,7 +15,7 @@ class Error extends AbstractEntity
      */
     public function getErrorCode()
     {
-        return $this->errorCode;
+        return $this->error_code;
     }
 
     /**

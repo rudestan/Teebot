@@ -18,27 +18,15 @@ class Request
      */
     protected $config;
 
-    protected static $instance;
-
-    public static function getInstance()
-    {
-        if (!self::$instance instanceof self) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
-    public function setConfig(Config $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }
 
-    public function exec($method, $args = [], $parent = null)
+    public function exec(AbstractMethod $method, $parent = null)
     {
-        $methodInstance = $this->getMethodClassInstance($method, $args);
-        $returnType = $methodInstance->getReturnEntityType();
-        $result = $this->sendRequest($methodInstance);
+        $returnType = $method->getReturnEntityType();
+        $result = $this->sendRequest($method);
 
         return $this->getResponseObject($result, $returnType, $parent);
     }
@@ -54,11 +42,11 @@ class Request
         // Default method is always POST
         if ($this->config->getMethod() !== self::METHOD_GET) {
             curl_setopt($this->ch, CURLOPT_POST, 1);
-            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $methodInstance->getArgsAsString());
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $methodInstance->getPropertiesAsString());
 
             $url = $this->buildUrl($name);
         } else {
-            $url = $this->buildUrl($name, $methodInstance->getArgsAsString());
+            $url = $this->buildUrl($name, $methodInstance->getPropertiesAsString());
         }
 
         curl_setopt($this->ch, CURLOPT_URL, $url);
@@ -83,7 +71,7 @@ class Request
         return $response;
     }
 
-    protected function getMethodClassInstance($methodName, $args) : AbstractMethod
+    protected function getMethodClassInstance_old($methodName, $args) : AbstractMethod
     {
         $methodClassName = sprintf(self::METHOD_CLASSNAME_TEMPLATE, ucfirst($methodName));
 

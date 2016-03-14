@@ -48,31 +48,20 @@ abstract class AbstractCommand
             return false;
         }
 
-        $methodName = SendMessage::NAME;
-
         $args = [
-            'text' => $text,
+            'text'    => $text,
             'chat_id' => $chatId
         ];
 
-        /*
+        $method = new SendMessage($args);
 
-        Todo: pass object as args
-
-               $entity = new Message();
-               $entity->setText($text);
-               $entity->setChatId($chatId);
-
-        */
-
-
-        return $this->callRemoteMethod($methodName, $args, false);
+        return $this->callRemoteMethod($method, false);
     }
 
-    protected function callRemoteMethod($methodName, $args = [], $processResponse = true)
+    protected function callRemoteMethod($method, $processResponse = true)
     {
-        $executor = new Executor();
+        $executor = Executor::getInstance();
 
-        return $executor->callRemoteMethod($methodName, $args, $processResponse, $this->entity);
+        return $executor->callRemoteMethod($method, $processResponse, $this->entity);
     }
 }

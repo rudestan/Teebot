@@ -9,8 +9,8 @@ class Me extends AbstractCommand
 {
     public function run()
     {
-        $methodName = GetMe::NAME;
+        $method = new GetMe();
 
-        $this->callRemoteMethod($methodName);
+        $this->callRemoteMethod($method);
     }
 }

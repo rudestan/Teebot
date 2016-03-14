@@ -4,6 +4,8 @@ namespace Teebot\Entity;
 
 abstract class AbstractEntity
 {
+    use \Teebot\Traits\Property;
+
     const ENTITY_TYPE = 'AbstractEntity';
 
     protected $parent;
@@ -32,20 +34,5 @@ abstract class AbstractEntity
     public function getEntityType() : string
     {
         return static::ENTITY_TYPE;
-    }
-
-    protected function setProperties(array $data) {
-        foreach ($data as $name => $value) {
-            $name = str_replace(" ", "", lcfirst(ucwords(str_replace("_", " ", $name))));
-
-            if (property_exists($this, $name)) {
-                $this->{$name} = $value;
-            }
-        }
-    }
-
-    public function getProperties()
-    {
-        return array_filter(get_object_vars($this));
     }
 }
