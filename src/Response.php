@@ -10,9 +10,7 @@ use Teebot\Exception\Critical;
 
 class Response
 {
-    const ENTITY_PATTERN = 'Teebot\\Entity\\%s';
-
-    const DEFAULT_ENTITY_TYPE = Message::ENTITY_TYPE;
+    const DEFAULT_ENTITY_TYPE = Message::class;
 
     protected $decodedData = [];
 
@@ -22,7 +20,7 @@ class Response
 
     protected $parent;
 
-    public function __construct(string $rawData, $entityType, $parent)
+    public function __construct(string $rawData, $entityClass, $parent)
     {
         $this->parent      = $parent;
         $this->decodedData = $this->decodeData($rawData);
@@ -31,9 +29,9 @@ class Response
             throw new Critical('Error decoding data!');
         }
 
-        $entityType     = $this->isErrorReceived() ? Error::ENTITY_TYPE : $entityType;
+        $entityClass    = $this->isErrorReceived() ? Error::class : $entityClass;
         $entitiesSource = $this->getRawEntitiesList();
-        $this->entities = $this->buildEntities($entitiesSource, $entityType);
+        $this->entities = $this->buildEntities($entitiesSource, $entityClass);
     }
 
     protected function decodeData($rawData) {
@@ -62,7 +60,7 @@ class Response
         return $this->decodedData['result'] ?? $this->decodedData;
     }
 
-    protected function buildEntities(array $rawData, $entityType = null) : array
+    protected function buildEntities(array $rawData, $entityClass = null) : array
     {
         $entities = [];
         $entity   = null;
@@ -81,7 +79,7 @@ class Response
             }
 
             try {
-                $entity = $this->buildEntity($rawItemData, $entityType);
+                $entity = $this->buildEntity($rawItemData, $entityClass);
 
                 $entities[] = $entity;
 
@@ -97,23 +95,16 @@ class Response
         return $entities;
     }
 
-    protected function getEntityClassName($entityType)
+    protected function buildEntity(array $rawItemData, $entityClass = null) : AbstractEntity
     {
-        $entityType = $entityType ?? static::DEFAULT_ENTITY_TYPE;
-
-        return sprintf(static::ENTITY_PATTERN, $entityType);
-    }
-
-    protected function buildEntity(array $rawItemData, $entityType = null) : AbstractEntity
-    {
-        $entityClassName = $this->getEntityClassName($entityType);
+        $entityClass = $entityClass ?? static::DEFAULT_ENTITY_TYPE;
         $entity = null;
 
-        if (!class_exists($entityClassName)) {
-            throw new Critical('Entity "'.$entityType.'" does not exists or not supported yet!');
+        if (!class_exists($entityClass)) {
+            throw new Critical('Entity "'.$entityClass.'" does not exists or not supported yet!');
         }
         /** @var AbstractEntity $entity */
-        $entity = new $entityClassName($rawItemData);
+        $entity = new $entityClass($rawItemData);
         $entity->setParent($this->parent);
 
         return $entity;

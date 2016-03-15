@@ -2,11 +2,13 @@
 
 namespace Teebot\Method;
 
+use Teebot\Entity\Message;
+
 class SendMessage extends AbstractMethod
 {
     const NAME                = 'sendMessage';
 
-    const RETURN_ENTITY       = 'Message';
+    const RETURN_ENTITY       = Message::class;
 
     const PARSE_MODE_MARKDOWN = 'Markdown';
 

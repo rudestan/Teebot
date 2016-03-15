@@ -6,11 +6,13 @@ use Teebot\Command\AbstractCommand;
 
 class Message extends AbstractCommand
 {
-    /** @var Message $entity */
+    /** @var \Teebot\Entity\Message $entity */
     protected $entity = null;
 
     public function run()
     {
-        $this->sendMessage('Re: ' . $this->entity->getText() . "> reply");
+        $this->getChatId();
+
+        $this->sendMessage('Current chat id: '.$this->getChatId());
     }
 }

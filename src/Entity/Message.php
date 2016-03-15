@@ -77,17 +77,19 @@ class Message extends AbstractEntity
 
     protected $migrate_from_chat_id;
 
+    protected $builtInEntities = [
+        'from' => User::class,
+        'chat' => Chat::class
+    ];
+
     public function __construct(array $data)
     {
         $this->update_id = $data['update_id'] ?? null;
+        $data            = $data['message'] ?? $data;
 
-        if (isset($data['message'])) {
-            $message         = $data['message'];
-            $message['from'] = isset($message['from']) ? new User($message['from']) : null;
-            $message['chat'] = isset($message['chat']) ? new Chat($message['chat']) : null;
+        $data = $this->initBuiltInEntities($data);
 
-            parent::__construct($message);
-        }
+        parent::__construct($data);
     }
 
     /**
@@ -140,5 +142,13 @@ class Message extends AbstractEntity
     public function getText()
     {
         return $this->text;
+    }
+
+    /**
+     * @return Chat
+     */
+    public function getChat()
+    {
+        return $this->chat;
     }
 }

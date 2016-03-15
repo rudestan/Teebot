@@ -166,13 +166,13 @@ class Executor
         return null;
     }
 
-    public function callRemoteMethod(AbstractMethod $method, $processResponse = true, $parent = null)
+    public function callRemoteMethod(AbstractMethod $method, $silentMode = false, $parent = null)
     {
         /** @var Response $response */
 
         $response = $this->request->exec($method, $parent);
 
-        if ($response instanceof Response && ($processResponse || $response->isErrorReceived())) {
+        if ($response instanceof Response && (!$silentMode || $response->isErrorReceived())) {
             $this->processEntities($response->getEntities());
         }
 

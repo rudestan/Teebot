@@ -10,6 +10,8 @@ abstract class AbstractEntity
 
     protected $parent;
 
+    protected $builtInEntities = [];
+
     /**
      * @return mixed
      */
@@ -34,5 +36,14 @@ abstract class AbstractEntity
     public function getEntityType() : string
     {
         return static::ENTITY_TYPE;
+    }
+
+    protected function initBuiltInEntities($data)
+    {
+        foreach ($this->builtInEntities as $name => $class) {
+            $data[$name] = class_exists($class) ? new $class($data[$name]) : null;
+        }
+
+        return $data;
     }
 }

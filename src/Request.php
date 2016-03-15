@@ -7,8 +7,6 @@ use Teebot\Exception\Critical;
 
 class Request
 {
-    const METHOD_CLASSNAME_TEMPLATE = 'Teebot\\Method\\%s';
-
     const METHOD_GET = 'GET';
 
     protected $ch;
@@ -25,10 +23,10 @@ class Request
 
     public function exec(AbstractMethod $method, $parent = null)
     {
-        $returnType = $method->getReturnEntityType();
-        $result = $this->sendRequest($method);
+        $entityClass = $method->getReturnEntity();
+        $result      = $this->sendRequest($method);
 
-        return $this->getResponseObject($result, $returnType, $parent);
+        return $this->getResponseObject($result, $entityClass, $parent);
     }
 
     protected function sendRequest(AbstractMethod $methodInstance)
@@ -42,7 +40,17 @@ class Request
         // Default method is always POST
         if ($this->config->getMethod() !== self::METHOD_GET) {
             curl_setopt($this->ch, CURLOPT_POST, 1);
-            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $methodInstance->getPropertiesAsString());
+
+            $fields = $methodInstance->getPropertiesAsArray();
+
+/*            if ($methodInstance::HAS_BINARY_DATA) {
+                curl_setopt($this->ch, CURLOPT_HTTPHEADER, ["Content-Type:multipart/form-data"]);
+                curl_setopt($this->ch, CURLOPT_SAFE_UPLOAD, 1);
+                $t = new \CURLFile("/var/www/html/1.jpg");
+                $fields['photo'] = $t;
+            }*/
+
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields);
 
             $url = $this->buildUrl($name);
         } else {
@@ -58,30 +66,17 @@ class Request
         return curl_exec($this->ch);
     }
 
-    protected function getResponseObject($receivedData, $entityType, $caller = null)
+    protected function getResponseObject($receivedData, $entityClass, $parent = null)
     {
         $response = null;
 
         try {
-            $response = new Response($receivedData, $entityType, $caller);
+            $response = new Response($receivedData, $entityClass, $parent);
         } catch (Critical $e) {
             echo $e->getMessage();
         }
 
         return $response;
-    }
-
-    protected function getMethodClassInstance_old($methodName, $args) : AbstractMethod
-    {
-        $methodClassName = sprintf(self::METHOD_CLASSNAME_TEMPLATE, ucfirst($methodName));
-
-        if (class_exists($methodClassName)) {
-
-            /** @var AbstractMethod $methodInstance */
-            return new $methodClassName($args);
-        }
-
-        return null;
     }
 
     protected function buildUrl($method, $args = null)

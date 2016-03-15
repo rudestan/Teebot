@@ -2,17 +2,26 @@
 
 namespace Teebot\Method;
 
+use Teebot\Entity\Message;
+
 class ForwardMessage extends AbstractMethod
 {
-    const NAME          = 'frowardMessage';
+    const NAME          = 'forwardMessage';
 
-    const RETURN_ENTITY = 'Message';
+    const RETURN_ENTITY = Message::class;
 
-    protected $chatId;
+    protected $chat_id;
 
-    protected $fromChatId;
+    protected $from_chat_id;
 
-    protected $disableNotification;
+    protected $disable_notification;
 
-    protected $messageId;
+    protected $message_id;
+
+    protected $supportedProperties = [
+        'chat_id'              => true,
+        'from_chat_id'         => true,
+        'disable_notification' => false,
+        'message_id'           => true
+    ];
 }

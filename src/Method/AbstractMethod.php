@@ -2,15 +2,18 @@
 
 namespace Teebot\Method;
 
-use Teebot\Exception\Fatal;
+use Teebot\Exception\Critical;
+use Teebot\Command\Executor;
 
 abstract class AbstractMethod {
 
     use \Teebot\Traits\Property;
 
-    const NAME          = null;
+    const NAME            = null;
 
-    const RETURN_ENTITY = null;
+    const RETURN_ENTITY   = null;
+
+    const HAS_BINARY_DATA = false;
 
     protected $supportedProperties = [];
 
@@ -18,9 +21,10 @@ abstract class AbstractMethod {
     {
         try {
             $this->validateArgs($args);
-        } catch (Fatal $e) {
+        } catch (Critical $e) {
             echo $e->getMessage();
-            exit();
+
+            return;
         }
 
         $this->setProperties($args);
@@ -31,7 +35,7 @@ abstract class AbstractMethod {
         return static::NAME;
     }
 
-    public function getReturnEntityType()
+    public function getReturnEntity()
     {
         return static::RETURN_ENTITY;
     }
@@ -61,8 +65,15 @@ abstract class AbstractMethod {
     {
         foreach ($this->supportedProperties as $property => $isRequired) {
             if ($isRequired === true && empty($args[$property])) {
-                throw new Fatal('Required property "'.$property.'" is not set!');
+                throw new Critical('Required property "'.$property.'" is not set!');
             }
         }
+    }
+
+    public function send($parent, $silentMode = true)
+    {
+        $executor = Executor::getInstance();
+
+        return $executor->callRemoteMethod($this, $silentMode, $parent);
     }
 }

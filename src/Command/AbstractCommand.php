@@ -55,13 +55,6 @@ abstract class AbstractCommand
 
         $method = new SendMessage($args);
 
-        return $this->callRemoteMethod($method, false);
-    }
-
-    protected function callRemoteMethod($method, $processResponse = true)
-    {
-        $executor = Executor::getInstance();
-
-        return $executor->callRemoteMethod($method, $processResponse, $this->entity);
+        return $method->send($this->entity);
     }
 }

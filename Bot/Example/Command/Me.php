@@ -11,6 +11,6 @@ class Me extends AbstractCommand
     {
         $method = new GetMe();
 
-        $this->callRemoteMethod($method);
+        $method->send($this->entity, false);
     }
 }

@@ -80,7 +80,7 @@ class Listener
     {
         // Flush old messages and reset offset to the last position
         $method   = new GetUpdates($this->initArgs());
-        $response = $this->executor->callRemoteMethod($method, false);
+        $response = $this->executor->callRemoteMethod($method, true);
 
         while (1) {
 
