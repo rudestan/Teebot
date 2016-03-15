@@ -2,23 +2,38 @@
 
 namespace Teebot\Method;
 
+use Teebot\Entity\AbstractEntity;
 use Teebot\Exception\Critical;
 use Teebot\Command\Executor;
+use Teebot\Traits\Property;
+use Teebot\Entity\ReplyKeyboardMarkup;
+use Teebot\Entity\ReplyKeyboardHide;
+use Teebot\Entity\ForceReply;
 
 abstract class AbstractMethod {
 
-    use \Teebot\Traits\Property;
+    use Property;
 
     const NAME            = null;
 
     const RETURN_ENTITY   = null;
 
-    const HAS_BINARY_DATA = false;
+    protected $hasAttachedData = false;
 
     protected $supportedProperties = [];
 
+    protected $supportedMarkups = [
+        ReplyKeyboardMarkup::class,
+        ReplyKeyboardHide::class,
+        ForceReply::class
+    ];
+
     public function __construct($args = [])
     {
+        if (empty($args)) {
+            return;
+        }
+
         try {
             $this->validateArgs($args);
         } catch (Critical $e) {
@@ -53,6 +68,14 @@ abstract class AbstractMethod {
 
         foreach ($this->supportedProperties as $name => $isRequired) {
 
+            $getterMethod = $this->getSetGetMethodName("get", $name);
+
+            if ($getterMethod) {
+                $properties[$name] = $this->{$getterMethod}();
+
+                continue;
+            }
+
             if (property_exists($this, $name)) {
                 $properties[$name] = $this->{$name};
             }
@@ -75,5 +98,39 @@ abstract class AbstractMethod {
         $executor = Executor::getInstance();
 
         return $executor->callRemoteMethod($this, $silentMode, $parent);
+    }
+
+    public function hasAttachedData()
+    {
+        return $this->hasAttachedData;
+    }
+
+    protected function isValidMarkup(AbstractEntity $markup)
+    {
+        foreach ($this->supportedMarkups as $className) {
+            if ($markup instanceof $className) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function setReplyMarkup(AbstractEntity $markup)
+    {
+        try {
+            $isValidMarkup = $this->isValidMarkup($markup);
+
+            if (!$isValidMarkup) {
+                throw new Critical("Markup is not supported!");
+            }
+        } catch (Critical $e) {
+            echo $e->getMessage();
+
+            $markup = null;
+        }
+        $this->reply_markup = $markup;
+
+        return $this;
     }
 }

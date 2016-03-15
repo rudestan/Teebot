@@ -9,8 +9,11 @@ class Photo extends AbstractCommand
 {
     public function run()
     {
+        $photo = '/var/www/html/test.jpg';
+
         $args = [
-            'chat_id' => $this->getChatId()
+            'chat_id' => $this->getChatId(),
+            'photo'   => $photo
         ];
 
         $method = new SendPhoto($args);

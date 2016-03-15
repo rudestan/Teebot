@@ -32,6 +32,8 @@ class GetUpdates extends AbstractMethod
     public function setOffset($offset)
     {
         $this->offset = $offset;
+
+        return $this;
     }
 
     /**
@@ -48,6 +50,8 @@ class GetUpdates extends AbstractMethod
     public function setLimit($limit)
     {
         $this->limit = $limit;
+
+        return $this;
     }
 
     /**
@@ -64,5 +68,7 @@ class GetUpdates extends AbstractMethod
     public function setTimeout($timeout)
     {
         $this->timeout = $timeout;
+
+        return $this;
     }
 }

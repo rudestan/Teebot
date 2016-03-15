@@ -9,6 +9,8 @@ class Request
 {
     const METHOD_GET = 'GET';
 
+    const CONTENT_TYPE_MULTIPART = 'Content-Type:multipart/form-data';
+
     protected $ch;
 
     /**
@@ -31,37 +33,36 @@ class Request
 
     protected function sendRequest(AbstractMethod $methodInstance)
     {
-        $name = $methodInstance->getName();
-
         if (!$this->ch) {
             $this->ch = curl_init();
         }
 
+        $name        = $methodInstance->getName();
+        $curlOptions = [
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_HEADER         => 0,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_TIMEOUT        => Config::DEFAULT_TIMEOUT
+        ];
+
         // Default method is always POST
         if ($this->config->getMethod() !== self::METHOD_GET) {
-            curl_setopt($this->ch, CURLOPT_POST, 1);
+            $curlOptions[CURLOPT_POST] = 1;
 
-            $fields = $methodInstance->getPropertiesAsArray();
+            if ($methodInstance->hasAttachedData()) {
+                $curlOptions[CURLOPT_HTTPHEADER]  = [static::CONTENT_TYPE_MULTIPART];
+                $curlOptions[CURLOPT_SAFE_UPLOAD] = 1;
+            }
 
-/*            if ($methodInstance::HAS_BINARY_DATA) {
-                curl_setopt($this->ch, CURLOPT_HTTPHEADER, ["Content-Type:multipart/form-data"]);
-                curl_setopt($this->ch, CURLOPT_SAFE_UPLOAD, 1);
-                $t = new \CURLFile("/var/www/html/1.jpg");
-                $fields['photo'] = $t;
-            }*/
+            $curlOptions[CURLOPT_POSTFIELDS] = $methodInstance->getPropertiesAsArray();
 
-            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields);
-
-            $url = $this->buildUrl($name);
+            $curlOptions[CURLOPT_URL] = $this->buildUrl($name);
         } else {
-            $url = $this->buildUrl($name, $methodInstance->getPropertiesAsString());
+            $curlOptions[CURLOPT_URL] = $this->buildUrl($name, $methodInstance->getPropertiesAsString());
         }
 
-        curl_setopt($this->ch, CURLOPT_URL, $url);
-        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($this->ch, CURLOPT_HEADER, 0);
-        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($this->ch, CURLOPT_TIMEOUT, Config::DEFAULT_TIMEOUT);
+        curl_setopt_array($this->ch, $curlOptions);
 
         return curl_exec($this->ch);
     }

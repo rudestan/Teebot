@@ -2,9 +2,11 @@
 
 namespace Teebot\Entity;
 
+use Teebot\Traits\Property;
+
 abstract class AbstractEntity
 {
-    use \Teebot\Traits\Property;
+    use Property;
 
     const ENTITY_TYPE = 'AbstractEntity';
 
