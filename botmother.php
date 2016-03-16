@@ -1,6 +1,7 @@
 <?php
 
 use Teebot\Exception\Fatal;
+use Teebot\Exception\Output;
 
 class BotMother
 {
@@ -45,8 +46,7 @@ class BotMother
 
             call_user_func_array([$this, $method], ['1','2','3']);
         } catch (Fatal $e) {
-            echo $e->getMessage();
-            exit;
+            Output::log($e);
         }
     }
 

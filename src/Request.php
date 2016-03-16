@@ -4,6 +4,7 @@ namespace Teebot;
 
 use Teebot\Method\AbstractMethod;
 use Teebot\Exception\Critical;
+use Teebot\Exception\Output;
 
 class Request
 {
@@ -74,7 +75,7 @@ class Request
         try {
             $response = new Response($receivedData, $entityClass, $parent);
         } catch (Critical $e) {
-            echo $e->getMessage();
+            Output::log($e);
         }
 
         return $response;

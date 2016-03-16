@@ -2,7 +2,8 @@
 
 namespace Teebot\Command;
 
-use Teebot\Exception\Fatal;
+use Teebot\Exception\Notice;
+use Teebot\Exception\Output;
 use Teebot\Method\AbstractMethod;
 use Teebot\Request;
 use Teebot\Entity\AbstractEntity;
@@ -56,21 +57,25 @@ class Executor
 
     public function processEntities(array $entities)
     {
-        /** @var Message $entity */
-        foreach ($entities as $entity) {
-            $command = null;
+        try {
+            /** @var Message $entity */
+            foreach ($entities as $entity) {
+                $command = null;
 
-            if ($entity instanceof Message) {
-                $command = $this->getCommand($entity->getText());
+                if ($entity instanceof Message) {
+                    $command = $this->getCommand($entity->getText());
+                }
+
+                if (strlen($command) > 0) {
+                    $args = $this->getArgString($command, $entity->getText());
+
+                    $this->executeCommand($command, $args, $entity);
+                } else {
+                    $this->executeEvent($entity);
+                }
             }
-
-            if (strlen($command) > 0) {
-                $args = $this->getArgString($command, $entity->getText());
-
-                $this->executeCommand($command, $args, $entity);
-            } else {
-                $this->executeEvent($entity);
-            }
+        } catch (Notice $e) {
+            Output::log($e);
         }
     }
 
@@ -132,7 +137,7 @@ class Executor
 
     protected function getEntityClass($type)
     {
-        $nameSpace = $this->config->getEntityEventNamespace(); // fix if namespace is not set
+        $nameSpace = $this->config->getEntityEventNamespace(); // @TODO: fix if namespace is not set
 
         return $nameSpace . "\\" . $type;
     }

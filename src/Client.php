@@ -7,6 +7,7 @@ use Teebot\Exception;
 use Teebot\Method\GetUpdates;
 use Teebot\Command\Executor;
 use Teebot\Exception\Fatal;
+use Teebot\Exception\Output;
 
 class Client
 {
@@ -42,8 +43,7 @@ class Client
                 throw new Fatal("Bot name or config should be specified!");
             }
         } catch (Fatal $e) {
-            echo $e->getMessage();
-            exit();
+            Output::log($e);
         }
 
         $config = new Config($botName, $botConfig);
@@ -92,18 +92,23 @@ class Client
 
     /**
      * @param array $receivedData
+     * @param bool  $silent
      *
      * @return Response
      */
-    public function webhook($receivedData)
+    public function webhook($receivedData = [], $silent = false)
     {
+        if (empty($receivedData)) {
+            $receivedData = file_get_contents("php://input");
+        }
+
         if (empty($receivedData)) {
             return null;
         }
 
         $response = new Response($receivedData, Message::class);
 
-        if (!empty($response->getEntities())) {
+        if (!empty($response->getEntities()) && $silent == false) {
             $this->executor->processEntities($response->getEntities());
         }
 

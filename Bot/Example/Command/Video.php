@@ -9,7 +9,7 @@ class Video extends AbstractCommand
 {
     public function run()
     {
-        $video = '/var/www/html/1.mp4';
+        $video = '/var/www/html/video.mp4';
 
         $args = [
             'chat_id' => $this->getChatId(),

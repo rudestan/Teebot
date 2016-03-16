@@ -3,6 +3,7 @@
 namespace Teebot;
 
 use Teebot\Exception\Fatal;
+use Teebot\Exception\Output;
 
 class Config
 {
@@ -31,6 +32,8 @@ class Config
     protected $catch_unknown_command = null;
 
     protected $file_url = null;
+
+    protected $log_file = null;
 
     protected $commandNamespace = null;
 
@@ -61,9 +64,7 @@ class Config
 
             $this->loadConfig($botConfig);
         } catch (Fatal $e) {
-            echo $e->getMessage();
-
-            exit();
+            Output::log($e);
         }
 
         return true;
@@ -176,6 +177,14 @@ class Config
     public function getFileUrl()
     {
         return $this->file_url;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLogFile()
+    {
+        return $this->log_file;
     }
 
     /**

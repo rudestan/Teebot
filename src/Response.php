@@ -7,6 +7,7 @@ use Teebot\Entity\AbstractEntity;
 use Teebot\Entity\Message;
 use Teebot\Entity\Error;
 use Teebot\Exception\Critical;
+use Teebot\Exception\Output;
 
 class Response
 {
@@ -43,7 +44,8 @@ class Response
     }
 
     public function isErrorReceived() {
-        if (isset($this->decodedData['ok']) && $this->decodedData['ok'] === true) {
+        if (isset($this->decodedData['message']) ||
+            (isset($this->decodedData['ok']) && $this->decodedData['ok'] === true)) {
             return false;
         }
 
@@ -105,7 +107,7 @@ class Response
                 }
 
             } catch (Fatal $e) {
-                echo $e->getMessage();
+                Output::log($e);
             }
         }
 

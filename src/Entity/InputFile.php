@@ -3,6 +3,7 @@
 namespace Teebot\Entity;
 
 use Teebot\Exception\Critical;
+use Teebot\Exception\Output;
 
 class InputFile
 {
@@ -47,7 +48,7 @@ class InputFile
         try {
             $file = $this->initFileForUpload();
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            Output::log($e);
         }
 
         return $file;

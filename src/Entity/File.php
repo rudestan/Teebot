@@ -4,6 +4,7 @@ namespace Teebot\Entity;
 
 use Teebot\Command\Executor;
 use Teebot\Exception\Critical;
+use Teebot\Exception\Output;
 
 class File extends AbstractEntity
 {
@@ -93,7 +94,7 @@ class File extends AbstractEntity
     }
 
     public function download($storePath) {
-        if (file_exists($storePath)) {
+        if (file_exists($storePath) && !is_writable($storePath)) {
             throw new Critical('File "'. $storePath.'" is already exist!"');
         }
 
@@ -108,7 +109,7 @@ class File extends AbstractEntity
 
             file_put_contents($storePath, $contents);
         } catch (\Exception $e) {
-            throw new Critical($e->getMessage());
+            Output::log(new Critical($e->getMessage()));
         }
 
         return is_readable($storePath);

@@ -5,6 +5,7 @@ namespace Teebot\Method;
 use Teebot\Entity\AbstractEntity;
 use Teebot\Exception\Critical;
 use Teebot\Command\Executor;
+use Teebot\Exception\Output;
 use Teebot\Traits\Property;
 use Teebot\Entity\ReplyKeyboardMarkup;
 use Teebot\Entity\ReplyKeyboardHide;
@@ -78,9 +79,9 @@ abstract class AbstractMethod {
         try {
             $this->validateArgs($properties);
         } catch (Critical $e) {
-            echo $e->getMessage();
+            Output::log($e);
 
-            return [];
+            $properties = [];
         }
 
         return $properties;
@@ -127,10 +128,11 @@ abstract class AbstractMethod {
                 throw new Critical("Markup is not supported!");
             }
         } catch (Critical $e) {
-            echo $e->getMessage();
+            Output::log($e);
 
             $markup = null;
         }
+
         $this->reply_markup = $markup;
 
         return $this;
