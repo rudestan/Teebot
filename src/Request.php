@@ -28,7 +28,7 @@ class Request
         $entityClass = $method->getReturnEntity();
         $result      = $this->sendRequest($method);
 
-        return $this->getResponseObject($result, $entityClass, $parent);
+        return $this->createResponseFromData($result, $entityClass, $parent);
     }
 
     protected function sendRequest(AbstractMethod $methodInstance)
@@ -67,7 +67,7 @@ class Request
         return curl_exec($this->ch);
     }
 
-    protected function getResponseObject($receivedData, $entityClass, $parent = null)
+    public function createResponseFromData($receivedData, $entityClass, $parent = null)
     {
         $response = null;
 

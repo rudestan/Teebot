@@ -20,7 +20,7 @@ class Response
 
     protected $parent;
 
-    public function __construct(string $rawData, $entityClass, $parent)
+    public function __construct(string $rawData, $entityClass, $parent = null)
     {
         $this->parent      = $parent;
         $this->decodedData = $this->decodeData($rawData);

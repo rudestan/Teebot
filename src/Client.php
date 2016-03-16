@@ -2,6 +2,7 @@
 
 namespace Teebot;
 
+use Teebot\Entity\Message;
 use Teebot\Exception;
 use Teebot\Method\GetUpdates;
 use Teebot\Command\Executor;
@@ -34,17 +35,16 @@ class Client
 
     protected function init($args) {
         try {
-            $botName = $this->getBotName($args);
+            $botName   = $this->getBotName($args);
+            $botConfig = $this->getBotConfig($args);
 
-            if (!$botName) {
-                throw new Fatal("No bot specified!");
+            if (!$botName && !$botConfig) {
+                throw new Fatal("Bot name or config should be specified!");
             }
         } catch (Fatal $e) {
             echo $e->getMessage();
             exit();
         }
-
-        $botConfig = $this->getBotConfig($args);
 
         $config = new Config($botName, $botConfig);
         $this->timeout = $config->getTimeout();
@@ -55,19 +55,20 @@ class Client
 
     protected function getBotName($args)
     {
-        return $args['n'] ?? $args['name'] ?? null;
+        return $args['n'] ?? $args['name'] ?? '';
     }
 
     protected function getBotConfig($args)
     {
-        return $args['c'] ?? $args['config'] ?? null;
+        return $args['c'] ?? $args['config'] ?? '';
     }
 
     protected function initArgs()
     {
         return [
-            'limit' => 1,
-            'timeout' => $this->timeout
+            'limit'   => 1,
+            'timeout' => $this->timeout,
+            'offset'  => -1
         ];
     }
 
@@ -90,10 +91,22 @@ class Client
     }
 
     /**
-     * @TODO: implement webhook capability
-     * @param $args
+     * @param array $receivedData
+     *
+     * @return Response
      */
-    public function webhook($args)
+    public function webhook($receivedData)
     {
+        if (empty($receivedData)) {
+            return null;
+        }
+
+        $response = new Response($receivedData, Message::class);
+
+        if (!empty($response->getEntities())) {
+            $this->executor->processEntities($response->getEntities());
+        }
+
+        return $response;
     }
 }

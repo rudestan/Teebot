@@ -38,20 +38,28 @@ class Config
 
     protected $botDir = null;
 
-    public function __construct(string $botName, $botConfig = null)
+    public function __construct(string $botName = '', $botConfig = '')
     {
         $this->initBotConfiguration($botName, $botConfig);
     }
 
-    public function initBotConfiguration(string $botName, $botConfig = null)
+    public function initBotConfiguration(string $botName = '', $botConfig = '')
     {
         $this->botName = $botName;
 
         try {
-            $this->botDir = $this->getBotDir($botName);
+            if (!empty($botName)) {
+                $this->botDir = $this->getBotDir($botName);
+                $botConfig    = $this->botDir . static::CONFIG_FILENAME;
 
-            $this->loadConfig($this->botDir, $botConfig);
-            $this->setNamespaces($botName);
+                $this->setNamespaces($botName);
+            }
+
+            if (empty($botConfig)) {
+                throw new Fatal("Path to configuration file was not sent!");
+            }
+
+            $this->loadConfig($botConfig);
         } catch (Fatal $e) {
             echo $e->getMessage();
 
@@ -82,10 +90,8 @@ class Config
         $this->entityEventNamespace = sprintf(static::EVENT_NAMESPACE_PATTERN, $botName);
     }
 
-    protected function loadConfig($botDir, $botConfig)
+    protected function loadConfig($configFile)
     {
-        $configFile = $botConfig ?? $botDir . static::CONFIG_FILENAME;
-
         if (!is_file($configFile) || !is_readable($configFile)) {
             throw new Fatal('File "' . $configFile . '" does not exists or not readable!');
         }

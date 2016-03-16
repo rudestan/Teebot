@@ -132,7 +132,7 @@ class Executor
 
     protected function getEntityClass($type)
     {
-        $nameSpace = $this->config->getEntityEventNamespace();
+        $nameSpace = $this->config->getEntityEventNamespace(); // fix if namespace is not set
 
         return $nameSpace . "\\" . $type;
     }
@@ -154,16 +154,19 @@ class Executor
 
     protected function executeEvent(AbstractEntity $entity)
     {
-        $type = $entity->getEntityType();
-
+        $type      = $entity->getEntityType();
         $className = $this->getEntityClass($type);
 
         if (class_exists($className)) {
+
             /** @var AbstractCommand $instance */
             $instance = new $className();
-            $instance->setEntity($entity);
 
-            return $instance->run();
+            if ($instance instanceof AbstractCommand) {
+                $instance->setEntity($entity);
+
+                return $instance->run();
+            }
         }
 
         return null;
