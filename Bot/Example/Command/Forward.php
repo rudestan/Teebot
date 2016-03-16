@@ -15,6 +15,6 @@ class Forward extends AbstractCommand
             'message_id'   => 579
         ];
         $method = new ForwardMessage($args);
-        $method->send($this->entity);
+        $method->trigger();
     }
 }

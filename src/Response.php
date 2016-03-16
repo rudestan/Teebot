@@ -55,9 +55,26 @@ class Response
         return $this->entities;
     }
 
+    public function getEntityByOffset($offset = 0) {
+        return is_array($this->entities) && isset($this->entities[$offset]) ? $this->entities[$offset] : null;
+    }
+
+    public function getFirstEntity()
+    {
+        return $this->getEntityByOffset();
+    }
+
     protected function getRawEntitiesList() : array
     {
-        return $this->decodedData['result'] ?? $this->decodedData;
+        if (!is_array($this->decodedData)) {
+            return [];
+        }
+
+        if (isset($this->decodedData['result']) && is_array($this->decodedData['result'])) {
+            return $this->decodedData['result'];
+        }
+
+        return $this->decodedData;
     }
 
     protected function buildEntities(array $rawData, $entityClass = null) : array

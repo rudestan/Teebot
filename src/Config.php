@@ -30,6 +30,8 @@ class Config
 
     protected $catch_unknown_command = null;
 
+    protected $file_url = null;
+
     protected $commandNamespace = null;
 
     protected $entityEventNamespace = null;
@@ -160,5 +162,25 @@ class Config
     public function getEntityEventNamespace()
     {
         return $this->entityEventNamespace;
+    }
+
+    /**
+     * @return null
+     */
+    public function getFileUrl()
+    {
+        return $this->file_url;
+    }
+
+    /**
+     * @return null
+     */
+    public function getFileBasePath()
+    {
+        if (empty($this->file_url) || empty($this->token)) {
+            return null;
+        }
+
+        return $this->file_url . $this->token . '/';
     }
 }

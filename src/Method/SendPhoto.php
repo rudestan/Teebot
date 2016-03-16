@@ -49,10 +49,12 @@ class SendPhoto extends AbstractMethod
     public function setChatId($chat_id)
     {
         $this->chat_id = $chat_id;
+
+        return $this;
     }
 
     /**
-     * @return \CURLFile
+     * @return \CURLFile|string
      */
     public function getPhoto()
     {
@@ -66,8 +68,7 @@ class SendPhoto extends AbstractMethod
      */
     public function setPhoto($photo)
     {
-        $inputFile   = new InputFile($photo);
-        $this->photo = $inputFile->getFileForUpload();
+        $this->photo = (new InputFile($photo))->getFileForUpload();
 
         return $this;
     }
@@ -122,32 +123,6 @@ class SendPhoto extends AbstractMethod
     public function setReplyToMessageId($reply_to_message_id)
     {
         $this->reply_to_message_id = $reply_to_message_id;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getReplyMarkup()
-    {
-        return $this->reply_markup;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSupportedProperties()
-    {
-        return $this->supportedProperties;
-    }
-
-    /**
-     * @param array $supportedProperties
-     */
-    public function setSupportedProperties($supportedProperties)
-    {
-        $this->supportedProperties = $supportedProperties;
 
         return $this;
     }

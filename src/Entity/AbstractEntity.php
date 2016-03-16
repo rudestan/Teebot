@@ -2,6 +2,7 @@
 
 namespace Teebot\Entity;
 
+use Teebot\Command\Executor;
 use Teebot\Traits\Property;
 
 abstract class AbstractEntity
@@ -43,6 +44,10 @@ abstract class AbstractEntity
     protected function initBuiltInEntities($data)
     {
         foreach ($this->builtInEntities as $name => $class) {
+            if (!isset($data[$name])) {
+                continue;
+            }
+
             $data[$name] = class_exists($class) ? new $class($data[$name]) : null;
         }
 

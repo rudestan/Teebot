@@ -2,25 +2,56 @@
 
 namespace Teebot\Method;
 
+use Teebot\Entity\Message;
+use Teebot\Traits\File;
+use Teebot\Entity\InputFile;
+
 class SendVoice extends AbstractMethod
 {
+    use File;
+
     const NAME          = 'sendVoice';
 
-    const RETURN_ENTITY = 'Message';
+    const RETURN_ENTITY = Message::class;
 
-    const FILE_SIZE_LIMIT_MB = 50;
-
-    const SUPPORTED_FORMAT = 'ogg';
-
-    protected $chatId;
+    protected $chat_id;
 
     protected $voice;
 
     protected $duration;
 
-    protected $disableNotification;
+    protected $disable_notification;
 
-    protected $replyToMessageId;
+    protected $reply_to_message_id;
 
-    protected $replyMarkup;
+    protected $reply_markup;
+
+    protected $supportedProperties = [
+        'chat_id'              => true,
+        'voice'                => true,
+        'duration'             => false,
+        'disable_notification' => false,
+        'reply_to_message_id'  => false,
+        'reply_markup'         => false
+    ];
+
+    /**
+     * @return \CURLFile|string
+     */
+    public function getVoice()
+    {
+        return $this->voice;
+    }
+
+    /**
+     * @param string $voice
+     *
+     * @return $this
+     */
+    public function setVoice($voice)
+    {
+        $this->voice = (new InputFile($voice))->getFileForUpload();
+
+        return $this;
+    }
 }

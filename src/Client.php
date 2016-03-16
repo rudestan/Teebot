@@ -7,14 +7,9 @@ use Teebot\Method\GetUpdates;
 use Teebot\Command\Executor;
 use Teebot\Exception\Fatal;
 
-class Listener
+class Client
 {
     const DEFAULT_DELAY = 2;
-
-    /**
-     * @var Request
-     */
-//    protected $request;
 
     /**
      * @var Executor $executor

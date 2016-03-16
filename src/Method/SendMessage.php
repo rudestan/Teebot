@@ -37,4 +37,112 @@ class SendMessage extends AbstractMethod
         'reply_to_message_id'      => false,
         'reply_markup'             => false,
     ];
+
+    /**
+     * @return mixed
+     */
+    public function getChatId()
+    {
+        return $this->chat_id;
+    }
+
+    /**
+     * @param mixed $chat_id
+     */
+    public function setChatId($chat_id)
+    {
+        $this->chat_id = $chat_id;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     * @param mixed $text
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getParseMode()
+    {
+        return $this->parse_mode;
+    }
+
+    /**
+     * @param mixed $parse_mode
+     */
+    public function setParseMode($parse_mode)
+    {
+        $this->parse_mode = $parse_mode;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDisableWebPagePreview()
+    {
+        return $this->disable_web_page_preview;
+    }
+
+    /**
+     * @param mixed $disable_web_page_preview
+     */
+    public function setDisableWebPagePreview($disable_web_page_preview)
+    {
+        $this->disable_web_page_preview = $disable_web_page_preview;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDisableNotification()
+    {
+        return $this->disable_notification;
+    }
+
+    /**
+     * @param mixed $disable_notification
+     */
+    public function setDisableNotification($disable_notification)
+    {
+        $this->disable_notification = $disable_notification;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReplyToMessageId()
+    {
+        return $this->reply_to_message_id;
+    }
+
+    /**
+     * @param mixed $reply_to_message_id
+     */
+    public function setReplyToMessageId($reply_to_message_id)
+    {
+        $this->reply_to_message_id = $reply_to_message_id;
+
+        return $this;
+    }
 }

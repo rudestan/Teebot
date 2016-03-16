@@ -4,12 +4,20 @@ namespace Teebot\Bot\Example\Command;
 
 use Teebot\Command\AbstractCommand;
 use Teebot\Method\SendPhoto;
+use Teebot\Method\SendChatAction;
 
 class Photo extends AbstractCommand
 {
     public function run()
     {
-        $photo = '/var/www/html/test.jpg';
+        (new SendChatAction())
+            ->setChatId($this->getChatId())
+            ->setAction(SendChatAction::ACTION_UPLOAD_PHOTO)
+            ->trigger();
+
+        sleep(2);
+
+        $photo = '/var/www/html/photo.jpg';
 
         $args = [
             'chat_id' => $this->getChatId(),
@@ -17,6 +25,6 @@ class Photo extends AbstractCommand
         ];
 
         $method = new SendPhoto($args);
-        $method->send($this->entity);
+        $method->trigger();
     }
 }

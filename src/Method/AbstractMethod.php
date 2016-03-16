@@ -18,7 +18,9 @@ abstract class AbstractMethod {
 
     const RETURN_ENTITY   = null;
 
-    protected $hasAttachedData = false;
+    protected $parent              = null;
+
+    protected $hasAttachedData     = false;
 
     protected $supportedProperties = [];
 
@@ -31,14 +33,6 @@ abstract class AbstractMethod {
     public function __construct($args = [])
     {
         if (empty($args)) {
-            return;
-        }
-
-        try {
-            $this->validateArgs($args);
-        } catch (Critical $e) {
-            echo $e->getMessage();
-
             return;
         }
 
@@ -81,6 +75,14 @@ abstract class AbstractMethod {
             }
         }
 
+        try {
+            $this->validateArgs($properties);
+        } catch (Critical $e) {
+            echo $e->getMessage();
+
+            return [];
+        }
+
         return $properties;
     }
 
@@ -93,11 +95,11 @@ abstract class AbstractMethod {
         }
     }
 
-    public function send($parent, $silentMode = true)
+    public function trigger($silentMode = true)
     {
         $executor = Executor::getInstance();
 
-        return $executor->callRemoteMethod($this, $silentMode, $parent);
+        return $executor->callRemoteMethod($this, $silentMode, $this->parent);
     }
 
     public function hasAttachedData()
@@ -130,6 +132,26 @@ abstract class AbstractMethod {
             $markup = null;
         }
         $this->reply_markup = $markup;
+
+        return $this;
+    }
+
+    /**
+     * @return AbstractEntity
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param AbstractEntity $parent
+     *
+     * @return $this
+     */
+    public function setParent($parent)
+    {
+        $this->parent = $parent;
 
         return $this;
     }

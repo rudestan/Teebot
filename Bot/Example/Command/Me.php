@@ -9,8 +9,8 @@ class Me extends AbstractCommand
 {
     public function run()
     {
-        $method = new GetMe();
-
-        $method->send($this->entity, false);
+        (new GetMe())
+            ->setParent($this->entity)
+            ->trigger(false);
     }
 }

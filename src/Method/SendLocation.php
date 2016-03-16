@@ -2,21 +2,32 @@
 
 namespace Teebot\Method;
 
+use Teebot\Entity\Message;
+
 class SendLocation extends AbstractMethod
 {
     const NAME          = 'sendLocation';
 
-    const RETURN_ENTITY = 'Message';
+    const RETURN_ENTITY = Message::class;
 
-    protected $chatId;
+    protected $chat_id;
 
     protected $latitude;
 
     protected $longitude;
 
-    protected $disableNotification;
+    protected $disable_notification;
 
-    protected $replyToMessageId;
+    protected $reply_to_message_id;
 
-    protected $replyMarkup;
+    protected $reply_markup;
+
+    protected $supportedProperties = [
+        'chat_id'              => true,
+        'latitude'             => true,
+        'longitude'            => true,
+        'disable_notification' => false,
+        'reply_to_message_id'  => false,
+        'reply_markup'         => false
+    ];
 }

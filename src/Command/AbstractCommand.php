@@ -48,13 +48,10 @@ abstract class AbstractCommand
             return false;
         }
 
-        $args = [
-            'text'    => $text,
-            'chat_id' => $chatId
-        ];
-
-        $method = new SendMessage($args);
-
-        return $method->send($this->entity);
+        return (new SendMessage())
+            ->setParent($this->entity)
+            ->setChatId($chatId)
+            ->setText($text)
+            ->trigger();
     }
 }

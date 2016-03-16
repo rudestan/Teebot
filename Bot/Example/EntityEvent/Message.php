@@ -3,6 +3,8 @@
 namespace Teebot\Bot\Example\EntityEvent;
 
 use Teebot\Command\AbstractCommand;
+use Teebot\Method\SendChatAction;
+use Teebot\Method\SendMessage;
 
 class Message extends AbstractCommand
 {
@@ -11,8 +13,6 @@ class Message extends AbstractCommand
 
     public function run()
     {
-        $this->getChatId();
-
         $this->sendMessage('Current chat id: '.$this->getChatId());
     }
 }

@@ -16,8 +16,6 @@ class SendAudio extends AbstractMethod
 
     const FILE_SIZE_LIMIT_MB = 50;
 
-    const SUPPORTED_FORMAT   = 'mp3';
-
     protected $chat_id;
 
     protected $audio;
@@ -46,7 +44,7 @@ class SendAudio extends AbstractMethod
     ];
 
     /**
-     * @return \CURLFile
+     * @return \CURLFile|string
      */
     public function getAudio()
     {
@@ -54,14 +52,13 @@ class SendAudio extends AbstractMethod
     }
 
     /**
-     * @param string $photo
+     * @param string $audio
      *
      * @return $this
      */
     public function setAudio($audio)
     {
-        $inputFile   = new InputFile($audio);
-        $this->audio = $inputFile->getFileForUpload();
+        $this->audio = (new InputFile($audio))->getFileForUpload();
 
         return $this;
     }

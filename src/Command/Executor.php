@@ -28,6 +28,9 @@ class Executor
     /** @var Request $request */
     protected $request;
 
+    /**
+     * @return Executor
+     */
     public static function getInstance()
     {
         if (!self::$instance instanceof self) {
