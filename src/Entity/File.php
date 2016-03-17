@@ -93,9 +93,10 @@ class File extends AbstractEntity
         return $basePath . $this->file_path;
     }
 
-    public function download($storePath) {
+    public function download($storePath)
+    {
         if (file_exists($storePath) && !is_writable($storePath)) {
-            throw new Critical('File "'. $storePath.'" is already exist!"');
+            throw new Critical('File "' . $storePath . '" is already exist!"');
         }
 
         $filePath = $this->getFullPath();

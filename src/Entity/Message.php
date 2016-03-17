@@ -4,9 +4,11 @@ namespace Teebot\Entity;
 
 class Message extends AbstractEntity
 {
-    const ENTITY_TYPE = 'Message';
+    const ENTITY_TYPE      = 'Message';
 
-    protected $update_id;
+    protected $messageType = self::ENTITY_TYPE;
+
+    protected $update_id = null;
 
     protected $message_id;
 
@@ -78,16 +80,20 @@ class Message extends AbstractEntity
     protected $migrate_from_chat_id;
 
     protected $builtInEntities = [
-        'from' => User::class,
-        'chat' => Chat::class
+        'from'     => User::class,
+        'chat'     => Chat::class,
+        'location' => Location::class,
+        'document' => Document::class,
+        'sticker'  => Sticker::class,
+        'video'    => Video::class,
+        'voice'    => Voice::class,
+        'audio'    => Audio::class,
+        'photo'    => PhotoSizeArray::class
     ];
 
     public function __construct(array $data)
     {
-        $this->update_id = $data['update_id'] ?? null;
-        $data            = $data['message'] ?? $data;
-
-        $data = $this->initBuiltInEntities($data);
+        $data = $data['message'] ?? $data;
 
         parent::__construct($data);
     }
@@ -150,5 +156,141 @@ class Message extends AbstractEntity
     public function getChat()
     {
         return $this->chat;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessageType()
+    {
+        return $this->messageType;
+    }
+
+    /**
+     * @return Location
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param Location $location
+     */
+    protected function setLocation($location)
+    {
+        $this->location = $location;
+        $this->setMessageType($location);
+    }
+
+    /**
+     * @return Document
+     */
+    public function getDocument()
+    {
+        return $this->document;
+    }
+
+    /**
+     * @param Document $document
+     */
+    public function setDocument($document)
+    {
+        $this->document = $document;
+        $this->setMessageType($document);
+    }
+
+    /**
+     * @return Sticker
+     */
+    public function getSticker()
+    {
+        return $this->sticker;
+    }
+
+    /**
+     * @param Sticker $sticker
+     */
+    public function setSticker($sticker)
+    {
+        $this->sticker = $sticker;
+        $this->setMessageType($sticker);
+    }
+
+    /**
+     * @return Video
+     */
+    public function getVideo()
+    {
+        return $this->video;
+    }
+
+    /**
+     * @param Video $video
+     */
+    public function setVideo($video)
+    {
+        $this->video = $video;
+        $this->setMessageType($video);
+    }
+
+    /**
+     * @return Voice
+     */
+    public function getVoice()
+    {
+        return $this->voice;
+    }
+
+    /**
+     * @param Voice $voice
+     */
+    public function setVoice($voice)
+    {
+        $this->voice = $voice;
+        $this->setMessageType($voice);
+    }
+
+    /**
+     * @return Audio
+     */
+    public function getAudio()
+    {
+        return $this->audio;
+    }
+
+    /**
+     * @param Audio $audio
+     */
+    public function setAudio($audio)
+    {
+        $this->audio = $audio;
+        $this->setMessageType($audio);
+    }
+
+    /**
+     * @return Photo
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param Photo $photo
+     */
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
+        $this->setMessageType($photo);
+    }
+
+    protected function setMessageType($object)
+    {
+        $this->messageType = static::ENTITY_TYPE;
+
+        if ($object instanceof AbstractEntity) {
+            $this->messageType = $object->getEntityType();
+        }
     }
 }

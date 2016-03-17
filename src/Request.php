@@ -28,7 +28,7 @@ class Request
     {
         $entityClass = $method->getReturnEntity();
         $result      = $this->sendRequest($method);
-
+        //echo($result."\n");
         return $this->createResponseFromData($result, $entityClass, $parent);
     }
 

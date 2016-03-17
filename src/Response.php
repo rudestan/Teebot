@@ -100,12 +100,11 @@ class Response
             try {
                 $entity = $this->buildEntity($rawItemData, $entityClass);
 
-                $entities[] = $entity;
-
                 if ($entity && $entity instanceof Message) {
                     $this->lastUpdate = (int) $entity->getUpdateId();
                 }
 
+                $entities[] = $entity;
             } catch (Fatal $e) {
                 Output::log($e);
             }
