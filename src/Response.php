@@ -2,16 +2,16 @@
 
 namespace Teebot;
 
+use Teebot\Entity\Update;
 use Teebot\Exception\Fatal;
 use Teebot\Entity\AbstractEntity;
-use Teebot\Entity\Message;
 use Teebot\Entity\Error;
 use Teebot\Exception\Critical;
 use Teebot\Exception\Output;
 
 class Response
 {
-    const DEFAULT_ENTITY_TYPE = Message::class;
+    const DEFAULT_ENTITY_TYPE = Update::class;
 
     protected $decodedData = [];
 
@@ -100,7 +100,7 @@ class Response
             try {
                 $entity = $this->buildEntity($rawItemData, $entityClass);
 
-                if ($entity && $entity instanceof Message) {
+                if ($entity && $entity instanceof Update) {
                     $this->lastUpdate = (int) $entity->getUpdateId();
                 }
 

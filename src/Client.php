@@ -77,7 +77,7 @@ class Client
         // Flush old messages and reset offset to the last position
         $method   = new GetUpdates($this->initArgs());
         $response = $this->executor->callRemoteMethod($method, true);
-print_r($response);die();
+
         while (1) {
 
             if ($response && $response instanceof Response) {
@@ -85,7 +85,7 @@ print_r($response);die();
             }
 
             $response = $this->executor->callRemoteMethod($method);
-
+print_r($response);
             sleep($this->timeout);
         }
     }
