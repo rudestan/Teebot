@@ -5,7 +5,7 @@ namespace Teebot\Command;
 use Teebot\Method\SendMessage;
 use Teebot\Entity\Message;
 use Teebot\Entity\AbstractEntity;
-
+// rename to event
 abstract class AbstractCommand
 {
     protected $args = [];

@@ -9,8 +9,12 @@ class Me extends AbstractCommand
 {
     public function run()
     {
-        (new GetMe())
+
+        var_dump($this->entity);
+
+        echo "Command /me triggered!";
+/*        (new GetMe())
             ->setParent($this->entity)
-            ->trigger(false);
+            ->trigger(false);*/
     }
 }

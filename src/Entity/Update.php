@@ -4,16 +4,15 @@ namespace Teebot\Entity;
 
 class Update extends AbstractEntity
 {
+    const ENTITY_TYPE              = 'Update';
 
-    const ENTITY_TYPE = 'Update';
+    const TYPE_MESSAGE             = 'Message';
 
-    const TYPE_MESSAGE = 'Message';
+    const TYPE_INLINE_QUERY        = 'InlineQuery';
 
-    const TYPE_INLINE_QUERY = 'InlineQuery';
+    const TYPE_CHOSEN_INLINE_RESULT = 'ChosenInlineResult';
 
-    const TYPE_CHOSE_INLINE_RESULT = 'ChosenInlineResult';
-
-    protected $updateType = null;
+    protected $updateType   = Message::ENTITY_TYPE;
 
     protected $update_id;
 
@@ -59,6 +58,7 @@ class Update extends AbstractEntity
     public function setMessage($message)
     {
         $this->message = $message;
+        $this->setUpdateType($message);
     }
 
     /**
@@ -75,6 +75,7 @@ class Update extends AbstractEntity
     public function setInlineQuery($inline_query)
     {
         $this->inline_query = $inline_query;
+        $this->setUpdateType($inline_query);
     }
 
     /**
@@ -91,5 +92,45 @@ class Update extends AbstractEntity
     public function setChosenInlineResult($chosen_inline_result)
     {
         $this->chosen_inline_result = $chosen_inline_result;
+        $this->setUpdateType($chosen_inline_result);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdateType()
+    {
+        return $this->updateType;
+    }
+
+    /**
+     * @param AbstractEntity $object
+     */
+    public function setUpdateType($object)
+    {
+        $this->updateType = static::ENTITY_TYPE;
+
+        if ($object instanceof AbstractEntity) {
+            $this->updateType = $object->getEntityType();
+        }
+    }
+
+    public function getUpdateTypeEntity()
+    {
+        $updateTypeEntity = null;
+
+        switch ($this->getUpdateType()) {
+            case static::TYPE_MESSAGE:
+                $updateTypeEntity = $this->message;
+                break;
+            case static::TYPE_INLINE_QUERY:
+                $updateTypeEntity = $this->inline_query;
+                break;
+            case static::TYPE_CHOSEN_INLINE_RESULT:
+                $updateTypeEntity = $this->chosen_inline_result;
+                break;
+        }
+
+        return $updateTypeEntity;
     }
 }

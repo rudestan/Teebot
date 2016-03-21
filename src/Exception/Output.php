@@ -6,7 +6,7 @@ use Teebot\Command\Executor;
 
 class Output
 {
-    public static function log(AbstractException $e)
+    public static function log($e)
     {
         $logFile = Executor::getInstance()->getConfig()->getLogFile();
         $type    = "\\Exception";

@@ -4,11 +4,9 @@ namespace Teebot\Entity;
 
 class Message extends AbstractEntity
 {
-    const ENTITY_TYPE      = 'Message';
+    const ENTITY_TYPE             = 'Message';
 
     protected $messageType = self::ENTITY_TYPE;
-
-    protected $update_id = null;
 
     protected $message_id;
 
@@ -28,6 +26,9 @@ class Message extends AbstractEntity
     /** @var Message $reply_to_message */
     protected $reply_to_message;
 
+    /** @var Command $command */
+    protected $command;
+
     protected $text;
 
     /** @var Audio $audio */
@@ -36,7 +37,7 @@ class Message extends AbstractEntity
     /** @var Document $document */
     protected $document;
 
-    /** @var Photo $photo */
+    /** @var PhotoSize $photo */
     protected $photo;
 
     /** @var Sticker $sticker */
@@ -87,8 +88,10 @@ class Message extends AbstractEntity
         'sticker'  => Sticker::class,
         'video'    => Video::class,
         'voice'    => Voice::class,
+        'contact'  => Contact::class,
         'audio'    => Audio::class,
-        'photo'    => PhotoSizeArray::class
+        'photo'    => PhotoSizeArray::class,
+        'command'  => Command::class,
     ];
 
     public function __construct(array $data)
@@ -98,12 +101,9 @@ class Message extends AbstractEntity
         parent::__construct($data);
     }
 
-    /**
-     * @return null
-     */
-    public function getUpdateId()
-    {
-        return $this->update_id;
+    public function isCommand() {
+
+        return preg_match(Command::COMMAND_PATTERN, (string) $this->text);
     }
 
     /**
@@ -143,11 +143,40 @@ class Message extends AbstractEntity
     }
 
     /**
+     * @param mixed $text
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+
+        if ($this->isCommand()) {
+            $this->command = ['text' => $text];
+        }
+    }
+
+    /**
      * @return null
      */
     public function getText()
     {
         return $this->text;
+    }
+
+    /**
+     * @return Command
+     */
+    public function getCommand()
+    {
+        return $this->command;
+    }
+
+    /**
+     * @param Command $command
+     */
+    public function setCommand($command)
+    {
+        $this->command = $command;
+        $this->setMessageType($command);
     }
 
     /**
@@ -252,6 +281,23 @@ class Message extends AbstractEntity
     }
 
     /**
+     * @return Contact
+     */
+    public function getContact()
+    {
+        return $this->contact;
+    }
+
+    /**
+     * @param Contact $contact
+     */
+    public function setContact($contact)
+    {
+        $this->contact = $contact;
+        $this->setMessageType($contact);
+    }
+
+    /**
      * @return Audio
      */
     public function getAudio()
@@ -269,7 +315,7 @@ class Message extends AbstractEntity
     }
 
     /**
-     * @return Photo
+     * @return PhotoSizeArray
      */
     public function getPhoto()
     {
@@ -277,7 +323,7 @@ class Message extends AbstractEntity
     }
 
     /**
-     * @param Photo $photo
+     * @param PhotoSizeArray $photo
      */
     public function setPhoto($photo)
     {
@@ -292,5 +338,42 @@ class Message extends AbstractEntity
         if ($object instanceof AbstractEntity) {
             $this->messageType = $object->getEntityType();
         }
+    }
+
+    public function getMessageTypeEntity()
+    {
+        $messageTypeEntity = null;
+
+        switch ($this->getMessageType()) {
+            case Location::ENTITY_TYPE:
+                $messageTypeEntity = $this->location;
+                break;
+            case Document::ENTITY_TYPE:
+                $messageTypeEntity = $this->document;
+                break;
+            case Sticker::ENTITY_TYPE:
+                $messageTypeEntity = $this->sticker;
+                break;
+            case Video::ENTITY_TYPE:
+                $messageTypeEntity = $this->video;
+                break;
+            case Voice::ENTITY_TYPE:
+                $messageTypeEntity = $this->voice;
+                break;
+            case Contact::ENTITY_TYPE:
+                $messageTypeEntity = $this->contact;
+                break;
+            case Audio::ENTITY_TYPE:
+                $messageTypeEntity = $this->audio;
+                break;
+            case PhotoSizeArray::ENTITY_TYPE:
+                $messageTypeEntity = $this->photo;
+                break;
+            case Command::ENTITY_TYPE:
+                $messageTypeEntity = $this->command;
+                break;
+        }
+
+        return $messageTypeEntity;
     }
 }

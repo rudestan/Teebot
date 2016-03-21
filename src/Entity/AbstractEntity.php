@@ -31,7 +31,7 @@ abstract class AbstractEntity
         $this->parent = $parent;
     }
 
-    public function __construct(array $data)
+    public function __construct(array $data = null)
     {
         $this->setProperties($data);
         $this->initBuiltInEntities();

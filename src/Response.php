@@ -44,8 +44,7 @@ class Response
     }
 
     public function isErrorReceived() {
-        if (isset($this->decodedData['message']) ||
-            (isset($this->decodedData['ok']) && $this->decodedData['ok'] === true)) {
+        if ((isset($this->decodedData['ok']) && $this->decodedData['ok'] === true)) {
             return false;
         }
 

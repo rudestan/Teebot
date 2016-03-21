@@ -85,18 +85,18 @@ class Client
             }
 
             $response = $this->executor->callRemoteMethod($method);
-print_r($response);
+
             sleep($this->timeout);
         }
     }
 
     /**
      * @param array $receivedData
-     * @param bool  $silent
+     * @param bool  $silentMode
      *
      * @return Response
      */
-    public function webhook($receivedData = [], $silent = false)
+    public function webhook($receivedData = [], $silentMode = false)
     {
         if (empty($receivedData)) {
             $receivedData = file_get_contents("php://input");
@@ -106,12 +106,6 @@ print_r($response);
             return null;
         }
 
-        $response = new Response($receivedData, Message::class);
-
-        if (!empty($response->getEntities()) && $silent == false) {
-            $this->executor->processEntities($response->getEntities());
-        }
-
-        return $response;
+        return $this->executor->runWebhookResponse($receivedData, $silentMode);
     }
 }
