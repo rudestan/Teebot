@@ -42,9 +42,7 @@ class BotMother
 
             $args = $this->getMethodArgs($method);
 
-
-
-            call_user_func_array([$this, $method], ['1','2','3']);
+            call_user_func_array([$this, $method], ['1', '2', '3']);
         } catch (Fatal $e) {
             Output::log($e);
         }
@@ -63,26 +61,26 @@ the following arguments:
 -d, --dir [dir]          : Bot's root directory (absolute path)\n\n";
     }
 
-    protected function getMethod($command) {
+    protected function getMethod($command)
+    {
         $method = $this->commandMethodMapper[$command] ?? null;
 
         if (!$method || !method_exists($this, $method)) {
             return null;
         }
 
-
         return $method;
     }
 
-    protected function getMethodArgs($methodName) {
-
+    protected function getMethodArgs($methodName)
+    {
     }
 
     protected function commandBotCreate($botName, $token, $dir)
     {
         echo "\nCreating a new bot.\n";
 
-        echo $botName." - ".$token." - ".$dir;
+        echo $botName . " - " . $token . " - " . $dir;
     }
 }
 

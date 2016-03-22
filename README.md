@@ -7,8 +7,10 @@ and extend.
 
 ## Usage
 
-For demo usage go to example bot directory - Bot/FirstBot and rename template.config.json to config.json (it is in
+For demo usage go to example bot directory - Bot/Example and rename template.config.json to config.json (it is in
 .gitignore file). Replace bot token with your own.
+
+Run ```php run.php -n Example```
 
 ## Current status
 

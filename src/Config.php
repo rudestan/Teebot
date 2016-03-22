@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Configuration class that stores all configuration values required to run bots.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author  Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot;
 
 use Teebot\Exception\Fatal;
@@ -7,17 +15,17 @@ use Teebot\Exception\Output;
 
 class Config
 {
-    const DEFAULT_TIMEOUT = 6;
+    const DEFAULT_TIMEOUT           = 6;
 
-    const BOT_PREFIX = 'bot';
+    const BOT_PREFIX                = 'bot';
 
     const COMMAND_NAMESPACE_PATTERN = 'Teebot\\Bot\\%s\\Command';
 
-    const EVENT_NAMESPACE_PATTERN = 'Teebot\\Bot\\%s\\EntityEvent';
+    const EVENT_NAMESPACE_PATTERN   = 'Teebot\\Bot\\%s\\EntityEvent';
 
-    const CONFIG_FILENAME = 'config.json';
+    const CONFIG_FILENAME           = 'config.json';
 
-    const BOT_DIR_PATTERN = '%s/../Bot/%s';
+    const BOT_DIR_PATTERN           = '%s/../Bot/%s';
 
     protected $botName = null;
 
@@ -43,11 +51,25 @@ class Config
 
     protected $botDir = null;
 
+    /**
+     * Constructs configuration object with either bot name or bot config file passed.
+     *
+     * @param string $botName   The name of the bot to execute
+     * @param string $botConfig Path to bot's configuration file
+     */
     public function __construct(string $botName = '', $botConfig = '')
     {
         $this->initBotConfiguration($botName, $botConfig);
     }
 
+    /**
+     * Initialises bot configuration via bot name or configuration file.
+     *
+     * @param string $botName   The name of the bot to execute
+     * @param string $botConfig Path to bot's configuration file
+     *
+     * @return bool
+     */
     public function initBotConfiguration(string $botName = '', $botConfig = '')
     {
         $this->botName = $botName;
@@ -61,7 +83,7 @@ class Config
             }
 
             if (empty($botConfig)) {
-                throw new Fatal("Path to configuration file was not sent!");
+                Output::log(new Fatal("Path to configuration file was not sent!"));
             }
 
             $this->loadConfig($botConfig);
@@ -72,7 +94,14 @@ class Config
         return true;
     }
 
-    protected function getBotDir($botName)
+    /**
+     * Returns bot directory built with default path pattern.
+     *
+     * @param string $botName The name of the bot to execute
+     *
+     * @return string
+     */
+    protected function getBotDir(string $botName) : string
     {
         $dir = sprintf(
             static::BOT_DIR_PATTERN,
@@ -81,25 +110,35 @@ class Config
         );
 
         if (!file_exists($dir)) {
-            throw new Fatal('Bot does not exist!');
+            Output::log(new Fatal('Bot does not exist!'));
         }
 
         return realpath($dir) . "/";
     }
 
-    protected function setNamespaces($botName)
+    /**
+     * Sets namespace for command and event entities classes to be able to load them via autoloader in the future.
+     *
+     * @param string $botName The name of the bot to execute
+     */
+    protected function setNamespaces(string $botName)
     {
-        $this->commandNamespace = sprintf(static::COMMAND_NAMESPACE_PATTERN, $botName);
+        $this->commandNamespace     = sprintf(static::COMMAND_NAMESPACE_PATTERN, $botName);
         $this->entityEventNamespace = sprintf(static::EVENT_NAMESPACE_PATTERN, $botName);
     }
 
+    /**
+     * Loads configuration file in JSON format.
+     *
+     * @param string $configFile Path to configuration file
+     */
     protected function loadConfig($configFile)
     {
         if (!is_file($configFile) || !is_readable($configFile)) {
-            throw new Fatal('File "' . $configFile . '" does not exists or not readable!');
+            Output::log(new Fatal('File "' . $configFile . '" does not exists or not readable!'));
         }
 
-        $config = file_get_contents($configFile);
+        $config      = file_get_contents($configFile);
         $configArray = json_decode($config, true);
 
         foreach ($configArray as $name => $value) {

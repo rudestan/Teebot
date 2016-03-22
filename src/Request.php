@@ -1,14 +1,24 @@
 <?php
 
+/**
+ * Request class that communicates with Telegram's web servers. Prepares an HTML request and instantiates
+ * the Response object.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author  Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot;
 
+use Teebot\Entity\AbstractEntity;
 use Teebot\Method\AbstractMethod;
 use Teebot\Exception\Critical;
 use Teebot\Exception\Output;
 
 class Request
 {
-    const METHOD_GET = 'GET';
+    const METHOD_GET             = 'GET';
 
     const CONTENT_TYPE_MULTIPART = 'Content-Type:multipart/form-data';
 
@@ -19,19 +29,50 @@ class Request
      */
     protected $config;
 
+    /**
+     * Constructs the Request object.
+     *
+     * @param Config $config
+     */
     public function __construct(Config $config)
     {
         $this->config = $config;
     }
 
+    /**
+     * Destructs current object and closes CURL session.
+     */
+    public function __destruct()
+    {
+        if ($this->ch) {
+            curl_close($this->ch);
+        }
+    }
+
+    /**
+     * Executes the Request to Telegram's servers and returns Response object.
+     *
+     * @param AbstractMethod      $method Teebot method's instance to get arguments from
+     * @param null|AbstractEntity $parent Parent entity that initiated the Request
+     *
+     * @return null|Response
+     */
     public function exec(AbstractMethod $method, $parent = null)
     {
         $entityClass = $method->getReturnEntity();
         $result      = $this->sendRequest($method);
-        //echo($result."\n");
+
         return $this->createResponseFromData($result, $entityClass, $parent);
     }
 
+    /**
+     * Prepares parameters that are required for sending and performs sending to Telegram's
+     * servers via CURL and returns the result from CURL.
+     *
+     * @param AbstractMethod $methodInstance
+     *
+     * @return mixed
+     */
     protected function sendRequest(AbstractMethod $methodInstance)
     {
         if (!$this->ch) {
@@ -68,6 +109,15 @@ class Request
         return curl_exec($this->ch);
     }
 
+    /**
+     * Creates the Response object from received data.
+     *
+     * @param string              $receivedData Received data from Telegram's servers
+     * @param AbstractEntity      $entityClass  Entity that should be passed to Response constructor
+     * @param null|AbstractEntity $parent       Parent entity
+     *
+     * @return null|Response
+     */
     public function createResponseFromData($receivedData, $entityClass, $parent = null)
     {
         $response = null;
@@ -81,14 +131,22 @@ class Request
         return $response;
     }
 
-    protected function buildUrl($method, $args = null)
+    /**
+     * Returns url for request to Telegram's bot API
+     *
+     * @param string     $methodName The name of Telegram's method to query
+     * @param null|array $args       Array of arguments to path to the method via GET string
+     *
+     * @return string
+     */
+    protected function buildUrl($methodName, $args = null)
     {
         $url = sprintf(
             '%s/%s%s/%s',
             $this->config->getUrl(),
             Config::BOT_PREFIX,
             $this->config->getToken(),
-            $method
+            $methodName
         );
 
         if ($args && strlen($args)) {
@@ -96,12 +154,5 @@ class Request
         }
 
         return $url;
-    }
-
-    public function __destruct()
-    {
-        if ($this->ch) {
-            curl_close($this->ch);
-        }
     }
 }

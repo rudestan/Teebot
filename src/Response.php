@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Response class which should be instantiated from received or passed raw JSON string.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot;
 
 use Teebot\Entity\Update;
@@ -21,13 +29,21 @@ class Response
 
     protected $parent;
 
-    public function __construct(string $rawData, $entityClass, $parent = null)
+    /**
+     * Creates an instanse of Response class from Raw JSON string and builds corresponding entity
+     * if passed in entity class. This class should be instantiated for every JSON response from Telegram.
+     *
+     * @param string              $rawData     Raw JSON string
+     * @param null|AbstractEntity $entityClass Entity class that should be instantiated with decoded JSON data
+     * @param null|AbstractEntity $parent      Parent class should be set as parent for newly instantiated entity
+     */
+    public function __construct(string $rawData, $entityClass = null, $parent = null)
     {
         $this->parent      = $parent;
         $this->decodedData = $this->decodeData($rawData);
 
         if (empty($this->decodedData)) {
-            throw new Critical('Error decoding data!');
+            Output::log(new Critical('Error decoding data!'));
         }
 
         $entityClass    = $this->isErrorReceived() ? Error::class : $entityClass;
@@ -35,7 +51,15 @@ class Response
         $this->entities = $this->buildEntities($entitiesSource, $entityClass);
     }
 
-    protected function decodeData($rawData) {
+    /**
+     * Returns JSON data decoded as an array.
+     *
+     * @param string $rawData JSON string
+     *
+     * @return array|mixed
+     */
+    protected function decodeData(string $rawData) : array
+    {
         if (!is_string($rawData) || !strlen($rawData)) {
             return [];
         }
@@ -43,7 +67,13 @@ class Response
         return json_decode($rawData, true);
     }
 
-    public function isErrorReceived() {
+    /**
+     * Checks whether an error response from Telegram was received.
+     *
+     * @return bool
+     */
+    public function isErrorReceived() : bool
+    {
         if ((isset($this->decodedData['ok']) && $this->decodedData['ok'] === true)) {
             return false;
         }
@@ -51,33 +81,14 @@ class Response
         return true;
     }
 
-    public function getEntities() : array
-    {
-        return $this->entities;
-    }
-
-    public function getEntityByOffset($offset = 0) {
-        return is_array($this->entities) && isset($this->entities[$offset]) ? $this->entities[$offset] : null;
-    }
-
-    public function getFirstEntity()
-    {
-        return $this->getEntityByOffset();
-    }
-
-    protected function getRawEntitiesList() : array
-    {
-        if (!is_array($this->decodedData)) {
-            return [];
-        }
-
-        if (isset($this->decodedData['result']) && is_array($this->decodedData['result'])) {
-            return $this->decodedData['result'];
-        }
-
-        return $this->decodedData;
-    }
-
+    /**
+     * Builds entity objects array from an array of raw entity data. Returns an array with built entities.
+     *
+     * @param array               $rawData     Raw entity data array
+     * @param null|AbstractEntity $entityClass Entity class
+     *
+     * @return array
+     */
     protected function buildEntities(array $rawData, $entityClass = null) : array
     {
         $entities = [];
@@ -112,13 +123,22 @@ class Response
         return $entities;
     }
 
+    /**
+     * Builds desired entity from raw entity's data array. Returns class entity
+     *
+     * @param array               $rawItemData  Array with raw entity's data
+     * @param null|AbstractEntity $entityClass  Entity class to instantiate, if not passed - default
+     *                                          Entity class will be used.
+     *
+     * @return AbstractEntity
+     */
     protected function buildEntity(array $rawItemData, $entityClass = null) : AbstractEntity
     {
         $entityClass = $entityClass ?? static::DEFAULT_ENTITY_TYPE;
-        $entity = null;
+        $entity      = null;
 
         if (!class_exists($entityClass)) {
-            throw new Critical('Entity "'.$entityClass.'" does not exists or not supported yet!');
+            Output::log(new Critical('Entity "' . $entityClass . '" does not exists or not supported yet!'));
         }
         /** @var AbstractEntity $entity */
         $entity = new $entityClass($rawItemData);
@@ -127,14 +147,81 @@ class Response
         return $entity;
     }
 
-    public function getEntitiesCount() : int {
+    /**
+     * Returns an array with entities
+     *
+     * @return array
+     */
+    public function getEntities() : array
+    {
+        return $this->entities;
+    }
+
+    /**
+     * Returns an entity at certain offset or null if entity does not exists.
+     *
+     * @param int $offset Offset
+     *
+     * @return mixed|null
+     */
+    public function getEntityByOffset(int $offset = 0)
+    {
+        return is_array($this->entities) && isset($this->entities[$offset]) ? $this->entities[$offset] : null;
+    }
+
+    /**
+     * Returns first entity. More meaningful wrapper for self::getEntityByOffset(0) method.
+     *
+     * @return mixed|null
+     */
+    public function getFirstEntity()
+    {
+        return $this->getEntityByOffset();
+    }
+
+    /**
+     * Returns raw entities list from decoded JSON data array.
+     *
+     * @return array
+     */
+    protected function getRawEntitiesList() : array
+    {
+        if (!is_array($this->decodedData)) {
+            return [];
+        }
+
+        if (isset($this->decodedData['result']) && is_array($this->decodedData['result'])) {
+            return $this->decodedData['result'];
+        }
+
+        return $this->decodedData;
+    }
+
+    /**
+     * Returns count of entities.
+     *
+     * @return int
+     */
+    public function getEntitiesCount() : int
+    {
         return count($this->entities);
     }
 
-    public function getLastUpdate() : int {
+    /**
+     * Returns last update id gathered from the last Update entity.
+     *
+     * @return int
+     */
+    public function getLastUpdate() : int
+    {
         return $this->lastUpdate;
     }
 
+    /**
+     * Returns an offset to skip previous updates in the listener mode.
+     *
+     * @return int
+     */
     public function getOffset() : int
     {
         return $this->lastUpdate + 1;
