@@ -34,7 +34,7 @@ abstract class AbstractEntity
     public function __construct(array $data = null)
     {
         $this->setProperties($data);
-        $this->initBuiltInEntities();
+        $this->initBuiltInEntities($data);
     }
 
     public function getEntityType() : string
@@ -42,7 +42,7 @@ abstract class AbstractEntity
         return static::ENTITY_TYPE;
     }
 
-    protected function initBuiltInEntities()
+    protected function initBuiltInEntities($data)
     {
         if (empty($this->builtInEntities)) {
             return;
@@ -53,7 +53,11 @@ abstract class AbstractEntity
             $initValues = null;
 
             if (property_exists($this, $name)) {
-                $initValues = $this->{$name};
+                if (isset($this->{$name})) {
+                    $initValues = $this->{$name};
+                } elseif (isset($data[$name])) {
+                    $initValues = $data[$name];
+                }
             }
 
             if ($initValues) {

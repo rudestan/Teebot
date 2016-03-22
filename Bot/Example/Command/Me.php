@@ -3,18 +3,15 @@
 namespace Teebot\Bot\Example\Command;
 
 use Teebot\Command\AbstractCommand;
-use Teebot\Method\GetMe;
+use Teebot\Method\SendMessage;
 
 class Me extends AbstractCommand
 {
     public function run()
     {
+        $sendMessage = (new SendMessage())
+            ->setText('Me triggered!');
 
-        var_dump($this->entity);
-
-        echo "Command /me triggered!";
-/*        (new GetMe())
-            ->setParent($this->entity)
-            ->trigger(false);*/
+        $this->reply($sendMessage);
     }
 }

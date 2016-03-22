@@ -17,10 +17,7 @@ class Executor
 {
     const COMMAND_UNKNOWN_CLASSNAME = 'Unknown';
 
-    const TYPE_COMMAND      = 'command';
-
-    const TYPE_ENTITY_EVENT = 'entity_event';
-
+    /** @var Executor */
     protected static $instance;
 
     /** @var Config $config */
@@ -49,25 +46,70 @@ class Executor
         return $this->config;
     }
 
+    /**
+     * Does initialisation steps
+     *
+     * @param Config $config Configuration object
+     */
     public function initWithConfig(Config $config)
     {
         $this->config  = $config;
         $this->request = new Request($config);
     }
 
+    /**
+     * Processes array of entities
+     *
+     * @param array $entities Array of entities passed either from response object or
+     * directly to the method
+     */
     public function processEntities(array $entities)
     {
         try {
             /** @var Update $entity */
             foreach ($entities as $entity) {
-                $this->executeEntityWorkflow($entity);
+                $entitiesFlow = $this->getNestedEntitiesFlow($entity);
+
+                if (empty($entitiesFlow)) {
+                    throw new Notice("Unknown entity! Skipping.");
+                }
+
+                $this->processNestedEntitiesFlow($entitiesFlow);
             }
         } catch (Notice $e) {
             Output::log($e);
         }
     }
 
-    // ------- processing
+    /**
+     * Returns nested entities flow array for passed entity
+     *
+     * @param Update $entity Update entity object
+     *
+     * @return array
+     */
+    protected function getNestedEntitiesFlow($entity)
+    {
+        if (!$entity instanceof Update) {
+            return [];
+        }
+
+        $updateTypeEntity = $entity->getUpdateTypeEntity();
+
+        $events = [
+            ['entity' => $entity],
+            ['entity' => $updateTypeEntity, 'parent' => $updateTypeEntity],
+        ];
+
+        if ($updateTypeEntity instanceof Message && $updateTypeEntity->getMessageTypeEntity()) {
+            $events[] = [
+                'entity' => $updateTypeEntity->getMessageTypeEntity(),
+                'parent' => $updateTypeEntity
+            ];
+        }
+
+        return $events;
+    }
 
     /**
      * Workflow hierarchy:
@@ -91,58 +133,24 @@ class Executor
      * 3. Inline Query
      * 4. Chosen result
      *
-     * @author Stanislav Drozdov <stanislav.drozdov@westwing.de>
-     *
-     * @param $entity
+     * @param array $eventFlow
      *
      * @throws Notice
      *
      * @return bool
      */
-    protected function executeEntityWorkflow($entity)
+    protected function processNestedEntitiesFlow(array $entitiesFlow)
     {
-        if (!$entity instanceof Update) {
-            throw new Notice("Unknown entity! Skipping.");
-        }
+        foreach ($entitiesFlow as $entityData) {
 
-        // try to execute EntityEvent Update
+            try {
+                $continue = $this->triggerEvent($entityData['entity'], $entityData['parent'] ?? null);
 
-        if (!$this->handleEntity(self::TYPE_ENTITY_EVENT, $entity)) {
-            return true;
-        }
-
-        echo "No main Update entity event found! Continue!\n";
-
-
-        // try to execute events related to Update entity if any
-        $entity = $entity->getUpdateTypeEntity();
-
-        if (!$this->handleEntity(self::TYPE_ENTITY_EVENT, $entity)) {
-            return true;
-        }
-
-        echo "No main Message/InlineQuery etc. entity event found! Continue!\n";
-
-        // if it is actually message then try to get in
-        if ($entity instanceof Message) {
-
-            $subEntity = $entity->getMessageTypeEntity();
-
-            // if it is an Event
-            if ($subEntity && $subEntity instanceof AbstractEntity && !$subEntity instanceof Command) {
-                if (!$this->handleEntity(self::TYPE_ENTITY_EVENT, $subEntity)) {
+                if (!$continue) {
                     return true;
                 }
-            }
-
-            echo "No Message build in entity event found! Continue!\n";
-
-            if ($subEntity instanceof Command) {
-                echo "Yes it is a command!\n";
-
-                if (!$this->handleEntity(self::TYPE_COMMAND, $subEntity, $entity)) {
-                    return true;
-                }
+            } catch (\Exception $e) {
+                Output::log($e);
             }
         }
 
@@ -150,29 +158,13 @@ class Executor
     }
 
     /**
-     * Returns whether the workflow should continue or not
+     * Returns full name (including namespace) of the command class to be able
+     * to instantiate it via autoloader.
      *
-     * @author Stanislav Drozdov <stanislav.drozdov@westwing.de>
-     * @param $entity
+     * @param string $command
      *
-     * @return bool
+     * @return string
      */
-    protected function handleEntity($type = self::TYPE_ENTITY_EVENT, $entity, $parentEntity = null)
-    {
-        try {
-            $result = $type == self::TYPE_COMMAND ? $this->runCommand($entity, $parentEntity)
-                : $this->triggerEvent($entity, $parentEntity);
-
-            if ($result == true) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            Output::log($e);
-        }
-
-        return false;
-    }
-
     protected function getCommandClass($command)
     {
         $parts = explode(Command::COMMAND_PARTS_DELIMITER, $command);
@@ -196,57 +188,90 @@ class Executor
         return $className;
     }
 
-    protected function getEntityClass($type)
+    /**
+     * Returns full name (including namespace) of the entity event class to be able
+     * to instantiate it via autoloader.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function getEntityEventClass($type)
     {
         $nameSpace = $this->config->getEntityEventNamespace(); // @TODO: fix if namespace is not set
 
         return $nameSpace . "\\" . $type;
     }
 
-    protected function runCommand(Command $entity, $parent = null)
-    {
-        $className = $this->getCommandClass($entity->getName());
 
-        if (class_exists($className)) {
-            /** @var AbstractCommand $instance */
-            $instance = new $className($entity->getArgs());
+    /**
+     * Executes the event and returns should stop or continue workflow
+     *
+     * @param AbstractEntity $entity
+     * @param AbstractEntity $parent
+     *
+     * @return bool
+     */
+    protected function triggerEvent(AbstractEntity $entity, AbstractEntity $parent = null)
+    {
+        $instance = $this->getEvent($entity);
+
+        if ($instance instanceof AbstractEntityEvent || $instance instanceof AbstractCommand) {
             $instance->setEntity($parent);
 
             return $instance->run();
         }
 
-        return null;
-    }
-
-    /**
-     * Executes the event and returns should stop or continue workflow
-     *
-     * @author Stanislav Drozdov <stanislav.drozdov@westwing.de>
-     * @param AbstractEntity $entity
-     *
-     * @return bool
-     */
-    protected function triggerEvent(AbstractEntity $entity, $parent = null)
-    {
-        $type      = $entity->getEntityType();
-        $className = $this->getEntityClass($type);
-
-        if (class_exists($className)) {
-
-            /** @var AbstractEntityEvent $instance */
-            $instance = new $className();
-
-            if ($instance instanceof AbstractEntityEvent) {
-                $instance->setEntity($parent);
-
-                return $instance->run();
-            }
-        }
-
         return true;
     }
 
-    // ---------------- eo processing
+    protected function getEvent($entity)
+    {
+        if ($this->config->getEvents()) {
+            return $this->getPreDefinedEventObject($entity);
+        }
+
+        return $this->getDefaultEventObject($entity);
+    }
+
+    protected function getPreDefinedEventObject($entity)
+    {
+        $preDefinedEvents = $this->config->getEvents();
+        $entityEventType  = $entity->getEntityType();
+
+        foreach ($preDefinedEvents as $preDefinedEvent) {
+            if ($preDefinedEvent['type'] == $entityEventType) {
+                $className = $preDefinedEvent['class'];
+                $args      = $entity instanceof Command ? $entity->getArgs() : [];
+
+                if (class_exists($className)) {
+                    return new $className($args);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    protected function getDefaultEventObject($entity)
+    {
+        $args      = [];
+        $className = null;
+
+        if ($entity instanceof Command) {
+            $args      = $entity->getArgs();
+            $className = $this->getCommandClass($entity->getName());
+        } elseif ($entity instanceof AbstractEntityEvent) {
+            $className = $this->getEntityEventClass($entity->getEntityType());
+        }
+
+        if ($className && class_exists($className)) {
+            /** @var AbstractCommand|AbstractEntity $instance */
+            return new $className($args);
+        }
+
+        return null;
+    }
 
     public function callRemoteMethod(AbstractMethod $method, $silentMode = false, $parent = null)
     {
@@ -258,7 +283,7 @@ class Executor
 
     public function runWebhookResponse($data, $silentMode = false)
     {
-        $response = new Response($data, Message::class);
+        $response = new Response($data, Update::class);
 
         return $this->processResponse($response, $silentMode);
     }

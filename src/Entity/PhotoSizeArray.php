@@ -21,6 +21,8 @@ class PhotoSizeArray extends AbstractEntity
         $photoSizes = $this->initPhotoSizesFromData($data);
 
         $this->setPhotoSizes($photoSizes);
+
+        parent::__construct($data);
     }
 
     /**
@@ -57,7 +59,7 @@ class PhotoSizeArray extends AbstractEntity
         return $this->getPhotoSizeWithMinMaxFileSize(static::MIN_FILE_SIZE);
     }
 
-    public function getPhotoWithMaxFileSize()
+    public function getPhotoSizeWithMaxFileSize()
     {
         return $this->getPhotoSizeWithMinMaxFileSize(static::MAX_FILE_SIZE);
     }

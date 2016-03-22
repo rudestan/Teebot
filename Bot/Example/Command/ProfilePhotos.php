@@ -28,7 +28,8 @@ class ProfilePhotos extends AbstractCommand
             /** @var PhotoSize $photoWithMaxSize */
             $photoWithMaxSize = $result
                 ->getFirstEntity()
-                ->getPhotoWithMinFileSize();
+                ->getPhotoByOffset(0)
+                ->getPhotoSizeWithMaxFileSize();
 
             $result = (new GetFile())
                 ->setFileId($photoWithMaxSize->getFileId())
@@ -51,6 +52,8 @@ class ProfilePhotos extends AbstractCommand
                         ->setChatId($this->getChatId())
                         ->setPhoto($localPhotoPath)
                         ->trigger();
+
+                    unlink($localPhotoPath);
                 }
             }
         }

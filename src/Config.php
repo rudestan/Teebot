@@ -35,6 +35,8 @@ class Config
 
     protected $log_file = null;
 
+    protected $events;
+
     protected $commandNamespace = null;
 
     protected $entityEventNamespace = null;
@@ -185,6 +187,14 @@ class Config
     public function getLogFile()
     {
         return $this->log_file;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEvents()
+    {
+        return $this->events;
     }
 
     /**

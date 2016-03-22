@@ -54,4 +54,17 @@ abstract class AbstractCommand
             ->setText($text)
             ->trigger();
     }
+
+    protected function reply(SendMessage $sendMessage) {
+        $chatId = $this->getChatId();
+
+        if (!$chatId) {
+            return false;
+        }
+
+        return $sendMessage
+            ->setParent($this->entity)
+            ->setChatId($chatId)
+            ->trigger();
+    }
 }
