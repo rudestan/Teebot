@@ -2,13 +2,16 @@
 
 namespace Teebot\Entity;
 
+use Teebot\Entity\Inline\InlineQuery;
+use Teebot\Entity\Inline\ChosenInlineResult;
+
 class Update extends AbstractEntity
 {
-    const ENTITY_TYPE              = 'Update';
+    const ENTITY_TYPE               = 'Update';
 
-    const TYPE_MESSAGE             = 'Message';
+    const TYPE_MESSAGE              = 'Message';
 
-    const TYPE_INLINE_QUERY        = 'InlineQuery';
+    const TYPE_INLINE_QUERY         = 'InlineQuery';
 
     const TYPE_CHOSEN_INLINE_RESULT = 'ChosenInlineResult';
 

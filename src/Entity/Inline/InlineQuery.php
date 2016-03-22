@@ -1,6 +1,9 @@
 <?php
 
-namespace Teebot\Entity;
+namespace Teebot\Entity\Inline;
+
+use Teebot\Entity\AbstractEntity;
+use Teebot\Entity\User;
 
 class InlineQuery extends AbstractEntity
 {
