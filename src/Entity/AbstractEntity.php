@@ -15,6 +15,8 @@ abstract class AbstractEntity
 
     protected $builtInEntities = [];
 
+    protected $supportedProperties = [];
+
     /**
      * @return mixed
      */
@@ -31,8 +33,12 @@ abstract class AbstractEntity
         $this->parent = $parent;
     }
 
-    public function __construct(array $data = null)
+    public function __construct(array $data = [])
     {
+        if (empty($data)) {
+            return;
+        }
+        
         $this->setProperties($data);
         $this->initBuiltInEntities($data);
     }

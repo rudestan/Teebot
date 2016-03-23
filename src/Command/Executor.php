@@ -3,6 +3,7 @@
 namespace Teebot\Command;
 
 use Teebot\Entity\Command;
+use Teebot\Entity\Error;
 use Teebot\Entity\Update;
 use Teebot\Exception\Notice;
 use Teebot\Exception\Output;
@@ -90,6 +91,11 @@ class Executor
      */
     protected function getNestedEntitiesFlow($entity)
     {
+        if ($entity instanceof Error) {
+            return [
+                ['entity' => $entity]
+            ];
+        }
         if (!$entity instanceof Update) {
             return [];
         }
@@ -217,7 +223,7 @@ class Executor
         $instance = $this->getEvent($entity);
 
         if ($instance instanceof AbstractEntityEvent || $instance instanceof AbstractCommand) {
-            $instance->setEntity($parent);
+            $instance->setEntity($parent ?? $entity);
 
             return $instance->run();
         }
@@ -234,7 +240,7 @@ class Executor
         return $this->getDefaultEventObject($entity);
     }
 
-    protected function getPreDefinedEventObject($entity)
+    protected function getPreDefinedEventObject(AbstractEntity $entity)
     {
         $preDefinedEvents = $this->config->getEvents();
         $entityEventType  = $entity->getEntityType();
@@ -242,7 +248,16 @@ class Executor
         foreach ($preDefinedEvents as $preDefinedEvent) {
             if ($preDefinedEvent['type'] == $entityEventType) {
                 $className = $preDefinedEvent['class'];
-                $args      = $entity instanceof Command ? $entity->getArgs() : [];
+                $args      = [];
+
+                if ($entity instanceof Command) {
+                    $args    = $entity->getArgs();
+                    $command = $entity->getName();
+
+                    if (isset($preDefinedEvent['command']) && $preDefinedEvent['command'] != $command) {
+                        continue;
+                    }
+                }
 
                 if (class_exists($className)) {
                     return new $className($args);
@@ -261,7 +276,7 @@ class Executor
         if ($entity instanceof Command) {
             $args      = $entity->getArgs();
             $className = $this->getCommandClass($entity->getName());
-        } elseif ($entity instanceof AbstractEntityEvent) {
+        } elseif ($entity instanceof AbstractEntity) {
             $className = $this->getEntityEventClass($entity->getEntityType());
         }
 
@@ -281,7 +296,7 @@ class Executor
         return $this->processResponse($response, $silentMode);
     }
 
-    public function runWebhookResponse($data, $silentMode = false)
+    public function getWebhookResponse($data, $silentMode = false)
     {
         $response = new Response($data, Update::class);
 

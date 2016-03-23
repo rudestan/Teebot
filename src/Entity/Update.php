@@ -7,15 +7,9 @@ use Teebot\Entity\Inline\ChosenInlineResult;
 
 class Update extends AbstractEntity
 {
-    const ENTITY_TYPE               = 'Update';
+    const ENTITY_TYPE = 'Update';
 
-    const TYPE_MESSAGE              = 'Message';
-
-    const TYPE_INLINE_QUERY         = 'InlineQuery';
-
-    const TYPE_CHOSEN_INLINE_RESULT = 'ChosenInlineResult';
-
-    protected $updateType   = Message::ENTITY_TYPE;
+    protected $updateType = Message::ENTITY_TYPE;
 
     protected $update_id;
 
@@ -123,13 +117,13 @@ class Update extends AbstractEntity
         $updateTypeEntity = null;
 
         switch ($this->getUpdateType()) {
-            case static::TYPE_MESSAGE:
+            case Message::ENTITY_TYPE:
                 $updateTypeEntity = $this->message;
                 break;
-            case static::TYPE_INLINE_QUERY:
+            case InlineQuery::ENTITY_TYPE:
                 $updateTypeEntity = $this->inline_query;
                 break;
-            case static::TYPE_CHOSEN_INLINE_RESULT:
+            case ChosenInlineResult::ENTITY_TYPE:
                 $updateTypeEntity = $this->chosen_inline_result;
                 break;
         }

@@ -50,52 +50,6 @@ abstract class AbstractMethod {
         return static::RETURN_ENTITY;
     }
 
-    public function getPropertiesAsString()
-    {
-        $properties = $this->getPropertiesAsArray();
-
-        return $properties ? http_build_query($properties) : '';
-    }
-
-    public function getPropertiesAsArray()
-    {
-        $properties = [];
-
-        foreach ($this->supportedProperties as $name => $isRequired) {
-
-            $getterMethod = $this->getSetGetMethodName("get", $name);
-
-            if ($getterMethod) {
-                $properties[$name] = $this->{$getterMethod}();
-
-                continue;
-            }
-
-            if (property_exists($this, $name)) {
-                $properties[$name] = $this->{$name};
-            }
-        }
-
-        try {
-            $this->validateArgs($properties);
-        } catch (Critical $e) {
-            Output::log($e);
-
-            $properties = [];
-        }
-
-        return $properties;
-    }
-
-    protected function validateArgs($args)
-    {
-        foreach ($this->supportedProperties as $property => $isRequired) {
-            if ($isRequired === true && empty($args[$property])) {
-                throw new Critical('Required property "'.$property.'" is not set!');
-            }
-        }
-    }
-
     public function trigger($silentMode = true)
     {
         $executor = Executor::getInstance();

@@ -22,8 +22,8 @@ class AnswerInlineQuery extends AbstractMethod
         'inline_query_id' => true,
         'results'         => true,
         'cache_time'      => false,
-        'is_personal'     => true,
-        'next_offset'     => true
+        'is_personal'     => false,
+        'next_offset'     => false
     ];
 
     /**

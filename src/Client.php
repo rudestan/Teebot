@@ -11,13 +11,16 @@ use Teebot\Exception\Output;
 
 class Client
 {
-    const DEFAULT_DELAY = 2;
+    const DEFAULT_LIMIT  = 1;
+
+    const DEFAULT_OFFSET = -1;
 
     /**
-     * @var Executor $executor
+     * @var Executor $executor Executor object
      */
     protected $executor;
 
+    /** @var int $timeout getUpdates timeout and sleep timer for the listener */
     protected $timeout;
 
     protected $cliOptions = [
@@ -35,15 +38,11 @@ class Client
     }
 
     protected function init($args) {
-        try {
-            $botName   = $this->getBotName($args);
-            $botConfig = $this->getBotConfig($args);
+        $botName   = $this->getBotName($args);
+        $botConfig = $this->getBotConfig($args);
 
-            if (!$botName && !$botConfig) {
-                throw new Fatal("Bot name or config should be specified!");
-            }
-        } catch (Fatal $e) {
-            Output::log($e);
+        if (!$botName && !$botConfig) {
+            Output::log(new Fatal("Bot name or config should be specified!"));
         }
 
         $config = new Config($botName, $botConfig);
@@ -63,28 +62,33 @@ class Client
         return $args['c'] ?? $args['config'] ?? '';
     }
 
-    protected function initArgs()
+    public function getUpdates($offset = self::DEFAULT_LIMIT, $limit = self::DEFAULT_OFFSET, $silentMode = false)
     {
-        return [
-            'limit'   => 1,
-            'timeout' => $this->timeout,
-            'offset'  => -1
-        ];
+        $method = (new GetUpdates())
+            ->setOffset($offset)
+            ->setLimit($limit)
+            ->setTimeout($this->timeout);
+
+        return $this->executor->callRemoteMethod($method, $silentMode);
+    }
+
+    public function flush()
+    {
+        $response = $this->getUpdates(static::DEFAULT_OFFSET, static::DEFAULT_LIMIT, true);
+
+        return $response instanceof Response ? $response->getOffset() : -1;
     }
 
     public function listen()
     {
-        // Flush old messages and reset offset to the last position
-        $method   = new GetUpdates($this->initArgs());
-        $response = $this->executor->callRemoteMethod($method, true);
+        $offset = $this->flush();
 
         while (1) {
+            $response = $this->getUpdates($offset);
 
-            if ($response && $response instanceof Response) {
-                $method->setOffset($response->getOffset());
+            if ($response instanceof Response) {
+                $offset = $response->getOffset();
             }
-
-            $response = $this->executor->callRemoteMethod($method);
 
             sleep($this->timeout);
         }
@@ -106,6 +110,6 @@ class Client
             return null;
         }
 
-        return $this->executor->runWebhookResponse($receivedData, $silentMode);
+        return $this->executor->getWebhookResponse($receivedData, $silentMode);
     }
 }

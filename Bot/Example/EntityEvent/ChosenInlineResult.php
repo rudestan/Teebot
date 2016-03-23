@@ -4,12 +4,13 @@ namespace Teebot\Bot\Example\EntityEvent;
 
 use Teebot\Command\AbstractEntityEvent;
 
-class Message extends AbstractEntityEvent
+class ChosenInlineResult extends AbstractEntityEvent
 {
+    /** @var \Teebot\Entity\Inline\ChosenInlineResult $entity */
+    protected $entity;
+
     public function run()
     {
-        //echo "Message received!";
-
         return true;
     }
 }

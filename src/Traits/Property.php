@@ -2,6 +2,9 @@
 
 namespace Teebot\Traits;
 
+use Teebot\Exception\Output;
+use Teebot\Exception\Critical;
+
 trait Property
 {
     protected function setProperties(array $data)
@@ -34,6 +37,58 @@ trait Property
 
         if (property_exists($this, $name)) {
             $this->{$name} = $value;
+        }
+    }
+
+    public function getPropertiesAsString()
+    {
+        $properties = $this->getPropertiesArray();
+
+        return $properties ? http_build_query($properties) : '';
+    }
+
+    public function getPropertiesArray($validate = true)
+    {
+        $properties = [];
+
+        if (empty($this->supportedProperties)) {
+            return $properties;
+        }
+
+        foreach ($this->supportedProperties as $name => $isRequired) {
+
+            $getterMethod = $this->getSetGetMethodName("get", $name);
+
+            if ($getterMethod) {
+                $properties[$name] = $this->{$getterMethod}();
+
+                continue;
+            }
+
+            if (property_exists($this, $name)) {
+                $properties[$name] = $this->{$name};
+            }
+        }
+
+        if ($validate) {
+            try {
+                $this->validateProperties($properties);
+            } catch (Critical $e) {
+                Output::log($e);
+
+                $properties = [];
+            }
+        }
+
+        return $properties;
+    }
+
+    protected function validateProperties($properties)
+    {
+        foreach ($this->supportedProperties as $propertyName => $isRequired) {
+            if ($isRequired === true && empty($properties[$propertyName])) {
+                throw new Critical('Required property "'.$propertyName.'" is not set!');
+            }
         }
     }
 }

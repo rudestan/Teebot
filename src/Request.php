@@ -97,7 +97,7 @@ class Request
                 $curlOptions[CURLOPT_SAFE_UPLOAD] = 1;
             }
 
-            $curlOptions[CURLOPT_POSTFIELDS] = $methodInstance->getPropertiesAsArray();
+            $curlOptions[CURLOPT_POSTFIELDS] = $methodInstance->getPropertiesArray();
 
             $curlOptions[CURLOPT_URL] = $this->buildUrl($name);
         } else {

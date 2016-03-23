@@ -7,7 +7,8 @@
   "catch_unknown_command": false,
   "events": [
       {
-        "type":  "Command",
+        "command": "Me",
+        "type": "Command",
         "class": "Teebot\\Bot\\Example\\Command\\Me"
       }
   ]
