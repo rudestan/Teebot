@@ -2,15 +2,11 @@
 
 namespace Teebot\Entity\Inline;
 
-use Teebot\Entity\AbstractEntity;
-
-class InlineQueryResultMpeg4Gif extends AbstractEntity
+class InlineQueryResultMpeg4Gif extends InlineQueryResultAbstract
 {
     const ENTITY_TYPE = 'InlineQueryResultMpeg4Gif';
 
-    protected $type;
-
-    protected $id;
+    const RESULT_TYPE = 'mpeg4_gif';
 
     protected $mpeg4_url;
 
@@ -18,15 +14,7 @@ class InlineQueryResultMpeg4Gif extends AbstractEntity
 
     protected $mpeg4_height;
 
-    protected $thumb_url;
-
-    protected $title;
-
     protected $caption;
 
     protected $message_text;
-
-    protected $parse_mode;
-
-    protected $disable_web_page_preview;
 }

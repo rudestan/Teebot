@@ -2,31 +2,19 @@
 
 namespace Teebot\Entity\Inline;
 
-use Teebot\Entity\AbstractEntity;
-
-class InlineQueryResultArticle extends AbstractEntity
+class InlineQueryResultArticle extends InlineQueryResultAbstract
 {
     const ENTITY_TYPE = 'InlineQueryResultArticle';
 
-    protected $type;
-
-    protected $id;
-
-    protected $title;
+    const RESULT_TYPE = 'article';
 
     protected $message_text;
-
-    protected $parse_mode;
-
-    protected $disable_web_page_preview;
 
     protected $url;
 
     protected $hide_url;
 
     protected $description;
-
-    protected $thumb_url;
 
     protected $thumb_width;
 

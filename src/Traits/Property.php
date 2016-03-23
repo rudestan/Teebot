@@ -59,13 +59,13 @@ trait Property
 
             $getterMethod = $this->getSetGetMethodName("get", $name);
 
-            if ($getterMethod) {
+            if ($getterMethod && $this->{$getterMethod}() !== null) {
                 $properties[$name] = $this->{$getterMethod}();
 
                 continue;
             }
 
-            if (property_exists($this, $name)) {
+            if (property_exists($this, $name) && $this->{$name} !== null) {
                 $properties[$name] = $this->{$name};
             }
         }

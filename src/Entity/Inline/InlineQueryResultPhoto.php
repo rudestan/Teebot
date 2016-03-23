@@ -2,15 +2,11 @@
 
 namespace Teebot\Entity\Inline;
 
-use Teebot\Entity\AbstractEntity;
-
-class InlineQueryResultPhoto extends AbstractEntity
+class InlineQueryResultPhoto extends InlineQueryResultAbstract
 {
     const ENTITY_TYPE = 'InlineQueryResultPhoto';
 
     const RESULT_TYPE = 'photo';
-
-    protected $id;
 
     protected $photo_url;
 
@@ -18,29 +14,29 @@ class InlineQueryResultPhoto extends AbstractEntity
 
     protected $photo_height;
 
-    protected $thumb_url;
-
-    protected $title;
-
     protected $description;
 
     protected $caption;
 
     protected $message_text;
 
-    protected $parse_mode;
-
-    protected $disable_web_page_preview;
-
     protected $supportedProperties = [
-        'type'      => true,
-        'id'        => true,
-        'photo_url' => true,
-        'thumb_url' => true
+        'type'                     => true,
+        'id'                       => true,
+        'photo_url'                => true,
+        'photo_width'              => false,
+        'photo_height'             => false,
+        'thumb_url'                => true,
+        'title'                    => false,
+        'description'              => false,
+        'caption'                  => false,
+        'message_text'             => false,
+        'parse_mode'               => false,
+        'disable_web_page_preview' => false
     ];
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPhotoUrl()
     {
@@ -48,7 +44,9 @@ class InlineQueryResultPhoto extends AbstractEntity
     }
 
     /**
-     * @param mixed $photo_url
+     * @param string $photo_url
+     *
+     * @return $this
      */
     public function setPhotoUrl($photo_url)
     {
@@ -58,7 +56,7 @@ class InlineQueryResultPhoto extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getPhotoWidth()
     {
@@ -66,7 +64,9 @@ class InlineQueryResultPhoto extends AbstractEntity
     }
 
     /**
-     * @param mixed $photo_width
+     * @param int $photo_width
+     *
+     * @return $this
      */
     public function setPhotoWidth($photo_width)
     {
@@ -76,7 +76,7 @@ class InlineQueryResultPhoto extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getPhotoHeight()
     {
@@ -84,47 +84,13 @@ class InlineQueryResultPhoto extends AbstractEntity
     }
 
     /**
-     * @param mixed $photo_height
+     * @param int $photo_height
+     *
+     * @return $this
      */
     public function setPhotoHeight($photo_height)
     {
         $this->photo_height = $photo_height;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getThumbUrl()
-    {
-        return (string) $this->thumb_url;
-    }
-
-    /**
-     * @param mixed $thumb_url
-     */
-    public function setThumbUrl($thumb_url)
-    {
-        $this->thumb_url = $thumb_url;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param mixed $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
 
         return $this;
     }
@@ -138,7 +104,9 @@ class InlineQueryResultPhoto extends AbstractEntity
     }
 
     /**
-     * @param mixed $description
+     * @param string $description
+     *
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -156,29 +124,13 @@ class InlineQueryResultPhoto extends AbstractEntity
     }
 
     /**
-     * @param mixed $caption
+     * @param string $caption
+     *
+     * @return $this
      */
     public function setCaption($caption)
     {
         $this->caption = $caption;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getParseMode()
-    {
-        return $this->parse_mode;
-    }
-
-    /**
-     * @param mixed $parse_mode
-     */
-    public function setParseMode($parse_mode)
-    {
-        $this->parse_mode = $parse_mode;
 
         return $this;
     }
@@ -192,55 +144,13 @@ class InlineQueryResultPhoto extends AbstractEntity
     }
 
     /**
-     * @param mixed $message_text
+     * @param string $message_text
+     *
+     * @return $this
      */
     public function setMessageText($message_text)
     {
         $this->message_text = $message_text;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDisableWebPagePreview()
-    {
-        return $this->disable_web_page_preview;
-    }
-
-    /**
-     * @param mixed $disable_web_page_preview
-     */
-    public function setDisableWebPagePreview($disable_web_page_preview)
-    {
-        $this->disable_web_page_preview = $disable_web_page_preview;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getType()
-    {
-        return static::RESULT_TYPE;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return (string) $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
 
         return $this;
     }

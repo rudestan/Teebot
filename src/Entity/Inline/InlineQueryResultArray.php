@@ -21,7 +21,7 @@ class InlineQueryResultArray extends AbstractEntity
 
         /** @var AbstractEntity $entity */
         foreach ($this->entities as $entity) {
-            $properties = $entity->getPropertiesArray(false);
+            $properties = $entity->getPropertiesArray();
             $result[]   = $properties;
         }
 
