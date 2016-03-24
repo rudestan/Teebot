@@ -4,8 +4,10 @@ namespace Teebot\Bot\Example\EntityEvent;
 
 use Teebot\Command\AbstractEntityEvent;
 use Teebot\Entity\Inline\InlineQueryResultArray;
+use Teebot\Entity\Inline\InlineQueryResultArticle;
 use Teebot\Entity\Inline\InlineQueryResultGif;
 use Teebot\Entity\Inline\InlineQueryResultPhoto;
+use Teebot\Entity\Inline\InlineQueryResultVideo;
 use Teebot\Method\AnswerInlineQuery;
 
 class InlineQuery extends AbstractEntityEvent
@@ -21,11 +23,59 @@ class InlineQuery extends AbstractEntityEvent
 
         $query = strtolower($this->entity->getQuery());
 
-        $this->testGifs();
+        $this->testVideo();
 
         return;
     }
 
+    protected function testVideo()
+    {
+        $queryId = $this->entity->getId();
+
+        $resultVideo = (new InlineQueryResultVideo())
+            ->setVideoUrl('https://www.youtube.com/embed/R3my_mHRoto')
+            ->setMimeTypeHTML()
+            ->setTitle('Chick with tits')
+            ->setMessageText('Chick with tits!')
+            ->setThumbUrl('https://img-fotki.yandex.ru/get/6506/25232117.5/0_6c424_14b6ee9d_S.jpg')
+            ->setId(1);
+
+        $queryResultArray = (new InlineQueryResultArray())
+            ->addEntity($resultVideo);
+
+
+        (new AnswerInlineQuery())
+            ->setInlineQueryId($queryId)
+            ->setResults($queryResultArray->getEncodedEntities())
+            ->trigger();
+    }
+
+    protected function testArticleAndPhoto()
+    {
+        $queryId = $this->entity->getId();
+
+        $resultArticle = (new InlineQueryResultArticle())
+            ->setTitle('Hello article!')
+            ->setMessageText('This is an article!')
+            ->setId(1);
+
+        $picture = (new InlineQueryResultPhoto())
+            ->setPhotoUrl('https://img-fotki.yandex.ru/get/6506/25232117.5/0_6c424_14b6ee9d_M.jpg')
+            ->setThumbUrl('https://img-fotki.yandex.ru/get/6506/25232117.5/0_6c424_14b6ee9d_S.jpg')
+            ->setPhotoHeight(100)
+            ->setPhotoWidth(200)
+            ->setId(2);        
+
+        $queryResultArray = (new InlineQueryResultArray())
+            ->addEntity($resultArticle)
+            ->addEntity($picture);
+
+
+        (new AnswerInlineQuery())
+            ->setInlineQueryId($queryId)
+            ->setResults($queryResultArray->getEncodedEntities())
+            ->trigger();
+    }
 
     protected function testPhoto() {
         $queryId = $this->entity->getId();

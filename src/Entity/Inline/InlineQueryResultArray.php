@@ -13,6 +13,8 @@ class InlineQueryResultArray extends AbstractEntity
     public function addEntity($entity)
     {
         $this->entities[] = $entity;
+
+        return $this;
     }
 
     public function getEncodedEntities()
