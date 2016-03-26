@@ -15,7 +15,11 @@ use Teebot\Exception\Output;
 
 class Config
 {
-    const DEFAULT_TIMEOUT           = 6;
+    const DEFAULT_LIMIT             = 1;
+
+    const DEFAULT_OFFSET            = -1;
+
+    const REQUEST_TIMEOUT           = 6;
 
     const BOT_PREFIX                = 'bot';
 
@@ -31,15 +35,13 @@ class Config
 
     protected $token;
 
-    protected $url;
+    protected $url = 'https://api.telegram.org';
 
-    protected $timeout;
+    protected $timeout = 1;
 
     protected $method;
 
-    protected $catch_unknown_command = null;
-
-    protected $file_url = null;
+    protected $file_url = 'https://api.telegram.org/file/bot';
 
     protected $log_file = null;
 
@@ -149,7 +151,9 @@ class Config
     }
 
     /**
-     * @return mixed
+     * Returns bot token string, if the value was not set in config - default value will be used
+     * 
+     * @return string
      */
     public function getToken()
     {
@@ -157,7 +161,9 @@ class Config
     }
 
     /**
-     * @return mixed
+     * Returns Bot-API request url
+     * 
+     * @return string
      */
     public function getUrl()
     {
@@ -165,7 +171,9 @@ class Config
     }
 
     /**
-     * @return mixed
+     * Returns request timeout in seconds, if the value was not set in config - default value will be used
+     * 
+     * @return int
      */
     public function getTimeout()
     {
@@ -173,7 +181,9 @@ class Config
     }
 
     /**
-     * @return null
+     * Returns name of the bot if it was set
+     * 
+     * @return null|string
      */
     public function getBotName()
     {
@@ -181,7 +191,9 @@ class Config
     }
 
     /**
-     * @return mixed
+     * Returns request method name
+     * 
+     * @return string
      */
     public function getMethod()
     {
@@ -189,15 +201,9 @@ class Config
     }
 
     /**
-     * @return null
-     */
-    public function getCatchUnknownCommand()
-    {
-        return $this->catch_unknown_command;
-    }
-
-    /**
-     * @return null
+     * Returns command's name space if bots are placed in default Bot directory
+     * 
+     * @return string
      */
     public function getCommandNamespace()
     {
@@ -205,7 +211,9 @@ class Config
     }
 
     /**
-     * @return null
+     * Returns entity's name space if bots are placed in default Bot directory
+     * 
+     * @return string
      */
     public function getEntityEventNamespace()
     {
@@ -213,7 +221,10 @@ class Config
     }
 
     /**
-     * @return null
+     * Returns base url from the files to download from Telegram's storage servers, if the value
+     * was not set in config - default value will be used
+     * 
+     * @return string
      */
     public function getFileUrl()
     {
@@ -221,7 +232,9 @@ class Config
     }
 
     /**
-     * @return string|null
+     * Returns path to log file for Errors, if not set - all errors will be echoed.
+     *
+     * @return null|string
      */
     public function getLogFile()
     {
@@ -229,7 +242,9 @@ class Config
     }
 
     /**
-     * @return mixed
+     * Returns an array with defined events map, if not set default namespaces and mapping will be used.
+     *
+     * @return array
      */
     public function getEvents()
     {
@@ -237,7 +252,10 @@ class Config
     }
 
     /**
-     * @return null
+     * Returns base url for the files to download from Telegram's storage servers, token will be also added.
+     * If the value of file url was not set in config - default value will be used
+     *
+     * @return null|string
      */
     public function getFileBasePath()
     {

@@ -6,6 +6,7 @@ use Teebot\Command\AbstractEntityEvent;
 use Teebot\Entity\Inline\InlineQueryResultArray;
 use Teebot\Entity\Inline\InlineQueryResultArticle;
 use Teebot\Entity\Inline\InlineQueryResultGif;
+use Teebot\Entity\Inline\InlineQueryResultMpeg4Gif;
 use Teebot\Entity\Inline\InlineQueryResultPhoto;
 use Teebot\Entity\Inline\InlineQueryResultVideo;
 use Teebot\Method\AnswerInlineQuery;
@@ -23,9 +24,29 @@ class InlineQuery extends AbstractEntityEvent
 
         $query = strtolower($this->entity->getQuery());
 
-        $this->testVideo();
+        $this->testMpeg4Gif();
 
         return;
+    }
+
+    protected function testMpeg4Gif()
+    {
+        $queryId = $this->entity->getId();
+
+        $resultVideo = (new InlineQueryResultMpeg4Gif())
+            ->setMpeg4Url('http://storage.akamai.coub.com/get/bucket:12.21/p/coub/simple/cw_file/0f18dd89e09/2d8508ac124aa6290da0e/muted_mp4_med_size_1409439085_muted_med.mp4')
+            ->setMpeg4Width(335)
+            ->setMpeg4Height(188)
+            ->setId(1);
+
+        $queryResultArray = (new InlineQueryResultArray())
+            ->addEntity($resultVideo);
+
+
+        (new AnswerInlineQuery())
+            ->setInlineQueryId($queryId)
+            ->setResults($queryResultArray->getEncodedEntities())
+            ->trigger();
     }
 
     protected function testVideo()

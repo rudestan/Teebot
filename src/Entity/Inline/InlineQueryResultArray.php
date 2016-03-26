@@ -4,7 +4,7 @@ namespace Teebot\Entity\Inline;
 
 use Teebot\Entity\AbstractEntity;
 
-class InlineQueryResultArray extends AbstractEntity
+class InlineQueryResultArray
 {
     const ENTITY_TYPE = 'InlineQueryResultArray';
 

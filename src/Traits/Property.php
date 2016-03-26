@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Trait with methods to work with properties. Used in Method and Entity classes.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author  Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Traits;
 
 use Teebot\Exception\Output;
@@ -7,13 +15,14 @@ use Teebot\Exception\Critical;
 
 trait Property
 {
-    protected function setProperties(array $data)
-    {
-        foreach ($data as $name => $value) {
-            $this->setProperty($name, $value);
-        }
-    }
-
+    /**
+     * Returns camel cased property's getter or setter method name. Checks method for existence.
+     *
+     * @param string $prefix Prefix of the method e.g. "set" or "get"
+     * @param string $name   Method's name
+     *
+     * @return null|string
+     */
     protected function getSetGetMethodName($prefix, $name)
     {
         $setter = $prefix . str_replace("_", "", ucwords($name, "_"));
@@ -25,6 +34,24 @@ trait Property
         return null;
     }
 
+    /**
+     * Sets properties of the class from array.
+     *
+     * @param array $data An associative array with property => value data
+     */
+    protected function setProperties(array $data)
+    {
+        foreach ($data as $name => $value) {
+            $this->setProperty($name, $value);
+        }
+    }
+
+    /**
+     * Sets property of the class.
+     *
+     * @param string     $name  Property name
+     * @param null|mixed $value Value of the property
+     */
     protected function setProperty($name, $value = null)
     {
         $setterMethod = $this->getSetGetMethodName("set", $name);
@@ -40,6 +67,11 @@ trait Property
         }
     }
 
+    /**
+     * Returns properties as string. Used for building get query string if GET method was set.
+     *
+     * @return string
+     */
     public function getPropertiesAsString()
     {
         $properties = $this->getPropertiesArray();
@@ -47,6 +79,14 @@ trait Property
         return $properties ? http_build_query($properties) : '';
     }
 
+    /**
+     * Returns an array with properties. Array with supported properties should be defined
+     * in the class.
+     *
+     * @param bool $validate Flag whether validation for required properties should be applied
+     *
+     * @return array
+     */
     public function getPropertiesArray($validate = true)
     {
         $properties = [];
@@ -83,6 +123,13 @@ trait Property
         return $properties;
     }
 
+    /**
+     * Validates properties and checks which are required
+     *
+     * @param array $properties An associative array of the properties
+     *
+     * @throws Critical
+     */
     protected function validateProperties($properties)
     {
         foreach ($this->supportedProperties as $propertyName => $isRequired) {

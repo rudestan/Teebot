@@ -85,7 +85,7 @@ class Request
             CURLOPT_HEADER         => 0,
             CURLOPT_SSL_VERIFYHOST => 0,
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_TIMEOUT        => Config::DEFAULT_TIMEOUT
+            CURLOPT_TIMEOUT        => Config::REQUEST_TIMEOUT
         ];
 
         // Default method is always POST

@@ -1,70 +1,38 @@
 <?php
 
+/**
+ * Abstract command event class is base class for creating the command for received in response messages.
+ * Most methods are inherited from AbstractEntityEvent since command is actually and AbstractEntityEvent
+ * itself.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author  Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Command;
 
-use Teebot\Method\SendMessage;
-use Teebot\Entity\Message;
-use Teebot\Entity\AbstractEntity;
-
-abstract class AbstractCommand
+abstract class AbstractCommand extends AbstractEntityEvent
 {
-    protected $args = [];
+    protected $args = '';
 
-    /** @var AbstractEntity $entity */
-    protected $entity = null;
+    /**
+     * Returns arguments string for the command
+     *
+     * @return string
+     */
+    public function getArgs()
+    {
+        return $this->args;
+    }
 
-    abstract public function run();
-
-    public function __construct($args = [])
+    /**
+     * Sets argument string for the command
+     *
+     * @param string $args Arguments string
+     */
+    public function setArgs($args)
     {
         $this->args = $args;
-    }
-
-    public function getChatId()
-    {
-        if ($this->entity instanceof Message) {
-            return $this->entity->getChatId();
-        }
-
-        $parent = $this->entity->getParent();
-
-        if ($parent instanceof Message) {
-            return $parent->getChatId();
-        }
-
-        return null;
-    }
-
-    public function setEntity($entity)
-    {
-        $this->entity = $entity;
-    }
-
-    protected function sendMessage($text)
-    {
-        $chatId = $this->getChatId();
-
-        if (!$chatId) {
-            return false;
-        }
-
-        return (new SendMessage())
-            ->setParent($this->entity)
-            ->setChatId($chatId)
-            ->setText($text)
-            ->trigger();
-    }
-
-    protected function reply(SendMessage $sendMessage) {
-        $chatId = $this->getChatId();
-
-        if (!$chatId) {
-            return false;
-        }
-
-        return $sendMessage
-            ->setParent($this->entity)
-            ->setChatId($chatId)
-            ->trigger();
     }
 }

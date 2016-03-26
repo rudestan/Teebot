@@ -4,7 +4,6 @@
   "url": "https://api.telegram.org",
   "file_url": "https://api.telegram.org/file/bot",
   "timeout": 3,
-  "catch_unknown_command": false,
   "events": [
       {
         "command": "Me",

@@ -103,7 +103,7 @@ class Message extends AbstractEntity
 
     public function isCommand() {
 
-        return preg_match(Command::COMMAND_PATTERN, (string) $this->text);
+        return preg_match(Command::PATTERN, (string) $this->text);
     }
 
     /**

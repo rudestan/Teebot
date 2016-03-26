@@ -6,13 +6,13 @@ class Command extends AbstractEntity
 {
     const ENTITY_TYPE             = 'Command';
 
-    const COMMAND_PREFIX          = '/';
+    const PREFIX          = '/';
 
-    const COMMAND_ARGS_SEPARATOR  = ' ';
+    const ARGS_SEPARATOR  = ' ';
 
-    const COMMAND_PARTS_DELIMITER = '_';
+    const PARTS_DELIMITER = '_';
 
-    const COMMAND_PATTERN = '/^\/[a-zA-Z_]+.*$/';
+    const PATTERN = '/^\/[a-zA-Z_]+.*$/';
 
     protected $text;
 
@@ -61,12 +61,12 @@ class Command extends AbstractEntity
     {
         $command = null;
 
-        if (!is_string($text) || !strlen($text) || $text[0] !== static::COMMAND_PREFIX) {
+        if (!is_string($text) || !strlen($text) || $text[0] !== static::PREFIX) {
             return $command;
         }
 
-        if (strpos($text, static::COMMAND_ARGS_SEPARATOR) !== false) {
-            $parts = explode(static::COMMAND_ARGS_SEPARATOR, $text);
+        if (strpos($text, static::ARGS_SEPARATOR) !== false) {
+            $parts = explode(static::ARGS_SEPARATOR, $text);
 
             $text = trim($parts[0]);
         }
@@ -78,7 +78,7 @@ class Command extends AbstractEntity
 
     protected function getArgsFromText($command, $text)
     {
-        $length = strlen(static::COMMAND_PREFIX . $command);
+        $length = strlen(static::PREFIX . $command);
 
         $argString = trim(substr($text, $length));
 

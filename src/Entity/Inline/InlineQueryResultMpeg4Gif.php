@@ -19,17 +19,16 @@ class InlineQueryResultMpeg4Gif extends InlineQueryResultAbstract
     protected $message_text;
 
     protected $supportedProperties = [
-        'type'                     => true,
-        'id'                       => true,
-        'mpeg4_url'                => true,
-        'mpeg4_width'              => false,
-        'mpeg4_height'             => false,
-        'thumb_url'                => true,
-        'parse_mode'               => false,
-        'title'                    => false,
-        'caption'                  => false,
-        'message_text'             => false,
-        'parse_mode'               => false,
+        'type' => true,
+        'id' => true,
+        'mpeg4_url' => true,
+        'mpeg4_width' => false,
+        'mpeg4_height' => false,
+        'thumb_url' => false,
+        'title' => false,
+        'caption' => false,
+        'message_text' => false,
+        'parse_mode' => false,
         'disable_web_page_preview' => false
     ];
 
