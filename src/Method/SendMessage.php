@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Class that represents Telegram's Bot-API "sendMessage" method.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Method;
 
 use Teebot\Entity\Message;
@@ -48,6 +56,8 @@ class SendMessage extends AbstractMethod
 
     /**
      * @param mixed $chat_id
+     *
+     * @return $this
      */
     public function setChatId($chat_id)
     {
@@ -66,6 +76,8 @@ class SendMessage extends AbstractMethod
 
     /**
      * @param mixed $text
+     *
+     * @return $this
      */
     public function setText($text)
     {
@@ -84,6 +96,8 @@ class SendMessage extends AbstractMethod
 
     /**
      * @param mixed $parse_mode
+     *
+     * @return $this
      */
     public function setParseMode($parse_mode)
     {
@@ -102,6 +116,8 @@ class SendMessage extends AbstractMethod
 
     /**
      * @param mixed $disable_web_page_preview
+     *
+     * @return $this
      */
     public function setDisableWebPagePreview($disable_web_page_preview)
     {
@@ -120,6 +136,8 @@ class SendMessage extends AbstractMethod
 
     /**
      * @param mixed $disable_notification
+     *
+     * @return $this
      */
     public function setDisableNotification($disable_notification)
     {
@@ -138,6 +156,8 @@ class SendMessage extends AbstractMethod
 
     /**
      * @param mixed $reply_to_message_id
+     *
+     * @return $this
      */
     public function setReplyToMessageId($reply_to_message_id)
     {

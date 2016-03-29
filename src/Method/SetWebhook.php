@@ -1,6 +1,15 @@
 <?php
 
+/**
+ * Class that represents Telegram's Bot-API "setWebhook" method.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Method;
+
 use Teebot\Traits\File;
 use Teebot\Entity\InputFile;
 use Teebot\Entity\Message;
@@ -42,6 +51,11 @@ class SetWebhook extends AbstractMethod
         return $this;
     }
 
+    /**
+     * Removes webhook
+     *
+     * @return $this
+     */
     public function removeHook()
     {
         return $this->setUrl('');

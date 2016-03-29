@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Class that represents Telegram's Bot-API "sendVoice" method.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Method;
 
 use Teebot\Entity\Message;

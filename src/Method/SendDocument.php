@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Class that represents Telegram's Bot-API "sendDocument" method.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Method;
 
 use Teebot\Entity\Message;
@@ -13,8 +21,6 @@ class SendDocument extends AbstractMethod
     const NAME          = 'sendDocument';
 
     const RETURN_ENTITY = Message::class;
-
-    const FILE_SIZE_LIMIT_MB = 50;
 
     protected $chat_id;
 

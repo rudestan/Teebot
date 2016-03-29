@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Class that represents Telegram's Bot-API "answerInlineQuery" method.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Method;
 
 class AnswerInlineQuery extends AbstractMethod
@@ -27,7 +35,9 @@ class AnswerInlineQuery extends AbstractMethod
     ];
 
     /**
-     * @return mixed
+     * Returns the id of query.
+     *
+     * @return string
      */
     public function getInlineQueryId()
     {
@@ -35,7 +45,9 @@ class AnswerInlineQuery extends AbstractMethod
     }
 
     /**
-     * @param mixed $inline_query_id
+     * Sets inline query id.
+     *
+     * @param string $inline_query_id
      *
      * @return $this
      */
@@ -47,6 +59,8 @@ class AnswerInlineQuery extends AbstractMethod
     }
 
     /**
+     * Returns result.
+     *
      * @return mixed
      */
     public function getResults()
@@ -55,6 +69,8 @@ class AnswerInlineQuery extends AbstractMethod
     }
 
     /**
+     * Sets result
+     *
      * @param mixed $results
      *
      * @return $this
@@ -67,6 +83,8 @@ class AnswerInlineQuery extends AbstractMethod
     }
 
     /**
+     * Returns cache time.
+     *
      * @return mixed
      */
     public function getCacheTime()
@@ -75,6 +93,8 @@ class AnswerInlineQuery extends AbstractMethod
     }
 
     /**
+     * Sets cache time.
+     *
      * @param mixed $cache_time
      *
      * @return $this
@@ -87,6 +107,8 @@ class AnswerInlineQuery extends AbstractMethod
     }
 
     /**
+     * Returns is personal flag.
+     *
      * @return mixed
      */
     public function getIsPersonal()
@@ -95,6 +117,8 @@ class AnswerInlineQuery extends AbstractMethod
     }
 
     /**
+     * Sets is personal flag
+     *
      * @param mixed $is_personal
      *
      * @return $this
@@ -107,6 +131,8 @@ class AnswerInlineQuery extends AbstractMethod
     }
 
     /**
+     * Returns next offset.
+     *
      * @return mixed
      */
     public function getNextOffset()
@@ -115,6 +141,8 @@ class AnswerInlineQuery extends AbstractMethod
     }
 
     /**
+     * Sets next offset.
+     *
      * @param mixed $next_offset
      *
      * @return $this

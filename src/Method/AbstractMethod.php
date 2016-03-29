@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Base abstract class for supported by Telegram Method classes.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Method;
 
 use Teebot\Entity\AbstractEntity;
@@ -19,10 +27,17 @@ abstract class AbstractMethod {
 
     const RETURN_ENTITY   = null;
 
-    protected $parent              = null;
+    protected $parent = null;
 
-    protected $hasAttachedData     = false;
+    protected $hasAttachedData = false;
 
+    protected $reply_markup;
+
+    /**
+     * List of properties supported by method in format: property name => required or not
+     *
+     * @var array
+     */
     protected $supportedProperties = [];
 
     protected $supportedMarkups = [
@@ -31,6 +46,11 @@ abstract class AbstractMethod {
         ForceReply::class
     ];
 
+    /**
+     * Constructs extended method's class and sets properties from array if passed.
+     *
+     * @param array $args
+     */
     public function __construct($args = [])
     {
         if (empty($args)) {
@@ -40,16 +60,33 @@ abstract class AbstractMethod {
         $this->setProperties($args);
     }
 
+    /**
+     * Returns method's name.
+     *
+     * @return string
+     */
     public function getName()
     {
         return static::NAME;
     }
 
+    /**
+     * Returns entity's name that should be return in method execution result.
+     *
+     * @return string
+     */
     public function getReturnEntity()
     {
         return static::RETURN_ENTITY;
     }
 
+    /**
+     * Triggers execution of the method
+     *
+     * @param bool $silentMode Execute method silently without processing the result
+     *
+     * @return \Teebot\Response
+     */
     public function trigger($silentMode = true)
     {
         $executor = Executor::getInstance();
@@ -57,11 +94,23 @@ abstract class AbstractMethod {
         return $executor->callRemoteMethod($this, $silentMode, $this->parent);
     }
 
+    /**
+     * Returns flag which idicates that method has attached data (audio, voice, video, photo etc.)
+     *
+     * @return bool
+     */
     public function hasAttachedData()
     {
         return $this->hasAttachedData;
     }
 
+    /**
+     * Checks that passed markup is currently supported
+     *
+     * @param AbstractEntity $markup Markup class instance
+     *
+     * @return bool
+     */
     protected function isValidMarkup(AbstractEntity $markup)
     {
         foreach ($this->supportedMarkups as $className) {
@@ -73,6 +122,13 @@ abstract class AbstractMethod {
         return false;
     }
 
+    /**
+     * Sets reply markup class
+     *
+     * @param AbstractEntity $markup Markup class instance
+     *
+     * @return $this
+     */
     public function setReplyMarkup(AbstractEntity $markup)
     {
         try {
@@ -93,6 +149,8 @@ abstract class AbstractMethod {
     }
 
     /**
+     * Returns parent entity which triggered method's execution.
+     *
      * @return AbstractEntity
      */
     public function getParent()
@@ -101,11 +159,13 @@ abstract class AbstractMethod {
     }
 
     /**
+     * Sets parent entity which triggered method's execution.
+     *
      * @param AbstractEntity $parent
      *
      * @return $this
      */
-    public function setParent($parent)
+    public function setParent(AbstractEntity $parent)
     {
         $this->parent = $parent;
 

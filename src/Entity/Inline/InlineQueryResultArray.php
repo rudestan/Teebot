@@ -6,8 +6,6 @@ use Teebot\Entity\AbstractEntity;
 
 class InlineQueryResultArray
 {
-    const ENTITY_TYPE = 'InlineQueryResultArray';
-
     protected $entities;
 
     public function addEntity($entity)

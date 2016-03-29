@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Class that represents Telegram's Bot-API "getMe" method.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Method;
 
 use Teebot\Entity\User;

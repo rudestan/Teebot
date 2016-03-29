@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Class that represents Telegram's Bot-API "sendPhoto" method.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Method;
 
 use Teebot\Entity\Message;
@@ -45,6 +53,8 @@ class SendPhoto extends AbstractMethod
 
     /**
      * @param mixed $chat_id
+     * 
+     * @return $this
      */
     public function setChatId($chat_id)
     {
@@ -83,6 +93,8 @@ class SendPhoto extends AbstractMethod
 
     /**
      * @param mixed $caption
+     *
+     * @return $this
      */
     public function setCaption($caption)
     {
@@ -101,6 +113,8 @@ class SendPhoto extends AbstractMethod
 
     /**
      * @param mixed $disable_notification
+     *
+     * @return $this
      */
     public function setDisableNotification($disable_notification)
     {
@@ -119,6 +133,8 @@ class SendPhoto extends AbstractMethod
 
     /**
      * @param mixed $reply_to_message_id
+     *
+     * @return $this
      */
     public function setReplyToMessageId($reply_to_message_id)
     {

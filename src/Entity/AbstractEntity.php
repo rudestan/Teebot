@@ -1,8 +1,15 @@
 <?php
 
+/**
+ * Base abstract class for supported by Telegram entity classes.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Entity;
 
-use Teebot\Command\Executor;
 use Teebot\Traits\Property;
 
 abstract class AbstractEntity
@@ -18,7 +25,9 @@ abstract class AbstractEntity
     protected $supportedProperties = [];
 
     /**
-     * @return mixed
+     * Returns parent entity
+     *
+     * @return AbstractEntity
      */
     public function getParent()
     {
@@ -26,13 +35,20 @@ abstract class AbstractEntity
     }
 
     /**
-     * @param mixed $parent
+     * Sets parent entity
+     *
+     * @param AbstractEntity $parent Parent entity
      */
-    public function setParent($parent)
+    public function setParent(AbstractEntity $parent)
     {
         $this->parent = $parent;
     }
 
+    /**
+     * Constructs extended entity's class and sets properties from array if passed.
+     *
+     * @param array $data Array with properties to set
+     */
     public function __construct(array $data = [])
     {
         if (empty($data)) {
@@ -43,12 +59,22 @@ abstract class AbstractEntity
         $this->initBuiltInEntities($data);
     }
 
+    /**
+     * Returns entity type
+     *
+     * @return string
+     */
     public function getEntityType() : string
     {
         return static::ENTITY_TYPE;
     }
 
-    protected function initBuiltInEntities($data)
+    /**
+     * Initialises built-in entity classes if any.
+     *
+     * @param array $data Array with data to pass to newly created instance of built-in entity
+     */
+    protected function initBuiltInEntities(array $data)
     {
         if (empty($this->builtInEntities)) {
             return;

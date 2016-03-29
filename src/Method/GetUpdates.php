@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Class that represents Telegram's Bot-API "getUpdates" method.
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Method;
 
 class GetUpdates extends AbstractMethod
@@ -28,6 +36,8 @@ class GetUpdates extends AbstractMethod
 
     /**
      * @param mixed $offset
+     *
+     * @return $this
      */
     public function setOffset($offset)
     {
@@ -46,6 +56,8 @@ class GetUpdates extends AbstractMethod
 
     /**
      * @param int $limit
+     *
+     * @return $this
      */
     public function setLimit($limit)
     {
@@ -64,6 +76,8 @@ class GetUpdates extends AbstractMethod
 
     /**
      * @param int $timeout
+     *
+     * @return $this
      */
     public function setTimeout($timeout)
     {

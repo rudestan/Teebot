@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Critical exception class
+ *
+ * @package Teebot (Telegram bot framework)
+ *
+ * @author Stanislav Drozdov <rudestan@gmail.com>
+ */
+
 namespace Teebot\Exception;
 
 class Critical extends AbstractException
