@@ -68,17 +68,10 @@ abstract class AbstractEntityEvent
      */
     protected function sendMessage($text)
     {
-        $chatId = $this->getChatId();
-
-        if ($chatId) {
-            return false;
-        }
-
-        return (new SendMessage())
-            ->setParent($this->entity)
-            ->setChatId($chatId)
-            ->setText($text)
-            ->trigger();
+        return $this->reply(
+            (new SendMessage())
+                ->setText($text)
+        );
     }
 
     /**
@@ -91,7 +84,7 @@ abstract class AbstractEntityEvent
     protected function reply(SendMessage $sendMessage) {
         $chatId = $this->getChatId();
 
-        if (!$chatId) {
+        if ((int) $chatId == 0) {
             return false;
         }
 

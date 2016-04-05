@@ -163,7 +163,7 @@ class Message extends AbstractEntity
     }
 
     /**
-     * @return Command
+     * @return array|Command
      */
     public function getCommand()
     {

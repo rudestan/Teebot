@@ -149,7 +149,7 @@ class Request
             $methodName
         );
 
-        if ($args && strlen($args)) {
+        if (!empty($args)) {
             $url .= '?' . $args;
         }
 
