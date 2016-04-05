@@ -11,7 +11,6 @@
 
 namespace Teebot;
 
-use Teebot\Exception;
 use Teebot\Method\GetUpdates;
 use Teebot\Command\Executor;
 use Teebot\Exception\Fatal;
