@@ -6,6 +6,9 @@ use Teebot\Command\AbstractCommand;
 
 class User extends AbstractCommand
 {
+    /** @var \Teebot\Entity\User */
+    protected $entity;
+
     public function run()
     {
         $text = sprintf(

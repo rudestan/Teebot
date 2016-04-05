@@ -68,8 +68,6 @@ class InlineQueryResultVideo extends InlineQueryResultAbstract
     public function getMimeType()
     {
         return $this->mime_type;
-
-        return $this;
     }
 
     /**

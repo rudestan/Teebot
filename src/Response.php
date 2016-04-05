@@ -34,7 +34,7 @@ class Response
      * if passed in entity class. This class should be instantiated for every JSON response from Telegram.
      *
      * @param string              $rawData     Raw JSON string
-     * @param null|AbstractEntity $entityClass Entity class that should be instantiated with decoded JSON data
+     * @param null|string         $entityClass Entity class that should be instantiated with decoded JSON data
      * @param null|AbstractEntity $parent      Parent class should be set as parent for newly instantiated entity
      */
     public function __construct(string $rawData, $entityClass = null, $parent = null)
@@ -84,8 +84,8 @@ class Response
     /**
      * Builds entity objects array from an array of raw entity data. Returns an array with built entities.
      *
-     * @param array               $rawData     Raw entity data array
-     * @param null|AbstractEntity $entityClass Entity class
+     * @param array       $rawData     Raw entity data array
+     * @param null|string $entityClass Entity class
      *
      * @return array
      */
@@ -126,9 +126,8 @@ class Response
     /**
      * Builds desired entity from raw entity's data array. Returns class entity
      *
-     * @param array               $rawItemData  Array with raw entity's data
-     * @param null|AbstractEntity $entityClass  Entity class to instantiate, if not passed - default
-     *                                          Entity class will be used.
+     * @param array       $rawItemData Array with raw entity's data
+     * @param null|string $entityClass Entity class to instantiate, if not passed - default Entity class will be used.
      *
      * @return AbstractEntity
      */

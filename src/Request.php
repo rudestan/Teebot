@@ -113,7 +113,7 @@ class Request
      * Creates the Response object from received data.
      *
      * @param string              $receivedData Received data from Telegram's servers
-     * @param AbstractEntity      $entityClass  Entity that should be passed to Response constructor
+     * @param string              $entityClass  Entity class name that should be passed to Response constructor
      * @param null|AbstractEntity $parent       Parent entity
      *
      * @return null|Response
@@ -134,8 +134,8 @@ class Request
     /**
      * Returns url for request to Telegram's bot API
      *
-     * @param string     $methodName The name of Telegram's method to query
-     * @param null|array $args       Array of arguments to path to the method via GET string
+     * @param string      $methodName The name of Telegram's method to query
+     * @param null|string $args       String with arguments to pass to the method via GET
      *
      * @return string
      */

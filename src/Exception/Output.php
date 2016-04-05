@@ -11,12 +11,18 @@
 namespace Teebot\Exception;
 
 use Teebot\Command\Executor;
+use Teebot\Config;
 
 class Output
 {
     public static function log($e)
     {
-        $logFile = Executor::getInstance()->getConfig()->getLogFile();
+        $logFile = null;
+
+        if (Executor::getInstance()->getConfig() instanceof Config) {
+            $logFile = Executor::getInstance()->getConfig()->getLogFile();
+        }
+
         $type    = "\\Exception";
         $pattern = "%s";
 
@@ -25,7 +31,7 @@ class Output
             $pattern = $e->getColorMessagePattern();
         }
 
-        if ($logFile && (!file_exists($logFile) || is_writable($logFile))) {
+        if ($logFile !== null && is_writable($logFile)) {
             $fh = fopen($logFile, "a");
 
             $logString = sprintf(
@@ -44,7 +50,7 @@ class Output
         }
 
         if ($e instanceof Fatal) {
-            exit;
+            exit();
         }
     }
 }

@@ -39,7 +39,7 @@ abstract class AbstractEntity
      *
      * @param AbstractEntity $parent Parent entity
      */
-    public function setParent(AbstractEntity $parent)
+    public function setParent(AbstractEntity $parent = null)
     {
         $this->parent = $parent;
     }

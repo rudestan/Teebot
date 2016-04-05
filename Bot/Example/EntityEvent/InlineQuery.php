@@ -22,8 +22,6 @@ class InlineQuery extends AbstractEntityEvent
             return;
         }
 
-        $query = strtolower($this->entity->getQuery());
-
         $this->testMpeg4Gif();
 
         return;

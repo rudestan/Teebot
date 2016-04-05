@@ -70,7 +70,7 @@ abstract class AbstractEntityEvent
     {
         $chatId = $this->getChatId();
 
-        if (!$chatId) {
+        if ($chatId) {
             return false;
         }
 

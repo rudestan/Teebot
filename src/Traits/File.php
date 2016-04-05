@@ -11,9 +11,12 @@
 namespace Teebot\Traits;
 
 use Teebot\Entity\InputFile;
+use \CURLFile;
 
 trait File
 {
+    protected $hasAttachedData = false;
+
     /**
      * Creates an InputFile instance for handling file uploads.
      *
@@ -26,8 +29,8 @@ trait File
         $inputFile = new InputFile($file);
         $file      = $inputFile->getFileForUpload();
 
-        if ($file instanceof \CURLFile) {
-            $this->hasAttachedData = ($file instanceof \CURLFile);
+        if ($file instanceof CURLFile) {
+            $this->hasAttachedData = ($file instanceof CURLFile);
         }
 
         return $file;

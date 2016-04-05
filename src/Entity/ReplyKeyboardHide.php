@@ -9,10 +9,30 @@ class ReplyKeyboardHide extends AbstractEntity {
     protected $selective;
 
     /**
-     * @param boolean $hide_keyboard
+     * Always sets hide keyboard flag to true
      */
-    public function setHideKeyboard($hide_keyboard)
+    public function setHideKeyboard()
     {
         $this->hide_keyboard = true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSelective()
+    {
+        return $this->selective;
+    }
+
+    /**
+     * @param mixed $selective
+     *
+     * @return $this
+     */
+    public function setSelective($selective)
+    {
+        $this->selective = $selective;
+        
+        return $this;
     }
 }

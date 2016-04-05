@@ -240,7 +240,7 @@ class Executor
             if ($preDefinedEvent['type'] == $entityEventType) {
                 $className = $preDefinedEvent['class'];
 
-                if ($entity instanceof Command && $isCommand == true) {
+                if ($entity instanceof Command && $isCommand === true) {
                     $command = $entity->getName();
 
                     if (isset($preDefinedEvent['command']) && $preDefinedEvent['command'] != $command) {
@@ -270,7 +270,7 @@ class Executor
     {
         $className = null;
 
-        if ($entity instanceof Command && $isCommand == true) {
+        if ($entity instanceof Command && $isCommand === true) {
             $ucName    = ucwords($entity->getName(), Command::PARTS_DELIMITER);
             $name      = str_replace(Command::PARTS_DELIMITER, '', $ucName);
 
@@ -292,7 +292,7 @@ class Executor
      * @param AbstractMethod $method     Method instance
      * @param bool           $silentMode If set to true then the events, mapped (in config or by default)
      *                                   to the entities in the result will not be triggered
-     * @param AbstractMethod $parent     Parent entity (if any)
+     * @param AbstractEntity $parent     Parent entity (if any)
      *
      * @return Response
      */
@@ -332,7 +332,7 @@ class Executor
      */
     protected function processResponse(Response $response, $silentMode = false)
     {
-        if (!empty($response->getEntities()) && ($silentMode == false || $response->isErrorReceived())) {
+        if (!empty($response->getEntities()) && ($silentMode === false || $response->isErrorReceived())) {
             $this->processEntities($response->getEntities());
         }
 

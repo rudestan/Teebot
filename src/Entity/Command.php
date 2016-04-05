@@ -22,10 +22,8 @@ class Command extends AbstractEntity
 
     public function __construct(array $data)
     {
-        $command = null;
-        $args    = null;
-
         if (isset($data['text'])) {
+            $args    = null;
             $command = $this->getCommandFromText($data['text']);
 
             if ($command) {

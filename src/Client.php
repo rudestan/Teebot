@@ -145,13 +145,13 @@ class Client
      * Returns Response object built from received data. Method should be used if
      * bot is running in webhook mode.
      *
-     * @param array $receivedData Received data from Telegram's webhook call. Not required, but could
-     *                            be passed manually. If not passed - php input will be used to get the data.
-     * @param bool  $silentMode   If set to true then the events, mapped to
-     *                            the entities in the result will not be triggered
+     * @param string $receivedData Received data from Telegram's webhook call. Not required, but could
+     *                             be passed manually. If not passed - php input will be used to get the data.
+     * @param bool   $silentMode   If set to true then the events, mapped to
+     *                             the entities in the result will not be triggered
      * @return Response
      */
-    public function webhook($receivedData = [], $silentMode = false)
+    public function webhook($receivedData = '', $silentMode = false)
     {
         if (empty($receivedData)) {
             $receivedData = file_get_contents("php://input");

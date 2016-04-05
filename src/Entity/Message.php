@@ -26,7 +26,7 @@ class Message extends AbstractEntity
     /** @var Message $reply_to_message */
     protected $reply_to_message;
 
-    /** @var Command $command */
+    /** @var array|Command $command */
     protected $command;
 
     protected $text;
@@ -37,7 +37,7 @@ class Message extends AbstractEntity
     /** @var Document $document */
     protected $document;
 
-    /** @var PhotoSize $photo */
+    /** @var PhotoSizeArray $photo */
     protected $photo;
 
     /** @var Sticker $sticker */
