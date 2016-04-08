@@ -71,9 +71,9 @@ class ExecutorTest extends AbstractTestCase
      *
      * @dataProvider dataProviderProcessEntities
      *
-     * @covers       Executor::processEntities()
-     * @covers       Executor::getEntitiesFlow()
-     * @covers       Executor::processEntitiesFlow()
+     * @covers       Teebot\Command\Executor::processEntities()
+     * @covers       Teebot\Command\Executor::getEntitiesFlow()
+     * @covers       Teebot\Command\Executor::processEntitiesFlow()
      *
      * @param array $mainEntity Main entity class
      * @param string $expectedClass Expected class of main entity

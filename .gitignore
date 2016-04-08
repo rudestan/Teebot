@@ -3,3 +3,4 @@ config.json
 vendor
 Bot/*
 !Bot/Example
+build

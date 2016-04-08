@@ -1,13 +1,11 @@
 Teebot
 ========
 
+[![Build Status](https://travis-ci.org/rudestan/Teebot.svg?branch=master)](https://travis-ci.org/rudestan/Teebot) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/rudestan/Teebot/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/rudestan/Teebot/?branch=master) [![Coverage Status](https://coveralls.io/repos/github/rudestan/Teebot/badge.svg?branch=master)](https://coveralls.io/github/rudestan/Teebot?branch=master)
+
 Teebot is yet another Telegram bot API framework. It's main difference from other similar frameworks - ability
 to create and maintain multi bots at the same time. Additionally it is well structured, easy to understand
 and extend.
-
-### State
-
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/rudestan/Teebot/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/rudestan/Teebot/?branch=master) [![Build Status](https://travis-ci.org/rudestan/Teebot.svg?branch=master)](https://travis-ci.org/rudestan/Teebot)
 
 ## Usage
 
