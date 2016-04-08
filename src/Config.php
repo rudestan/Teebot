@@ -12,9 +12,12 @@ namespace Teebot;
 
 use Teebot\Exception\Fatal;
 use Teebot\Exception\Output;
+use Teebot\Traits\Property;
 
 class Config
 {
+    use Property;
+
     const DEFAULT_LIMIT             = 1;
 
     const DEFAULT_OFFSET            = -1;
@@ -88,7 +91,7 @@ class Config
                 Output::log(new Fatal("Path to configuration file was not sent!"));
             }
 
-            $this->loadConfig($botConfig);
+            $this->loadConfigFile($botConfig);
         } catch (Fatal $e) {
             Output::log($e);
         }
@@ -134,7 +137,7 @@ class Config
      *
      * @param string $configFile Path to configuration file
      */
-    protected function loadConfig($configFile)
+    protected function loadConfigFile($configFile)
     {
         if (!is_file($configFile) || !is_readable($configFile)) {
             Output::log(new Fatal('File "' . $configFile . '" does not exists or not readable!'));
@@ -143,11 +146,7 @@ class Config
         $config      = file_get_contents($configFile);
         $configArray = json_decode($config, true);
 
-        foreach ($configArray as $name => $value) {
-            if (property_exists($this, $name)) {
-                $this->{$name} = $value;
-            }
-        }
+        $this->setProperties($configArray);
     }
 
     /**

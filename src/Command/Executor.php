@@ -75,6 +75,8 @@ class Executor
      *
      * @param array $entities Array of entities (Update or Error) passed either from response object or
      *                        directly to the method
+     *
+     * @return bool
      */
     public function processEntities(array $entities)
     {
@@ -87,11 +89,13 @@ class Executor
                     throw new Notice("Unknown entity! Skipping.");
                 }
 
-                $this->processEntitiesFlow($entitiesFlow);
+                return $this->processEntitiesFlow($entitiesFlow);
             }
         } catch (Notice $e) {
             Output::log($e);
         }
+
+        return false;
     }
 
     /**
