@@ -7,7 +7,7 @@ and extend.
 
 ### State
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/rudestan/Teebot/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/rudestan/Teebot/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/rudestan/Teebot/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/rudestan/Teebot/?branch=master) [![Build Status](https://travis-ci.org/rudestan/Teebot.svg?branch=master)](https://travis-ci.org/rudestan/Teebot)
 
 ## Usage
 
