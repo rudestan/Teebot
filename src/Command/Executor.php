@@ -118,7 +118,7 @@ class Executor
      *
      * @return array
      */
-    protected function getEntitiesFlow($entity)
+    public function getEntitiesFlow($entity)
     {
         if ($entity instanceof Error) {
             return [
