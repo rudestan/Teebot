@@ -1,5 +1,9 @@
 <?php
 
+namespace TeebotTest\Command;
+
+use Symfony\Component\Config\Definition\Exception\Exception;
+use TeebotTest\AbstractTestCase;
 use Teebot\Command\Executor;
 use Teebot\Entity\Update;
 use Teebot\Entity\Error;
@@ -27,21 +31,21 @@ class ExecutorTest extends AbstractTestCase
             [
                 new Update([   // decoded from json data for "update" entity
                     'update_id' => '696864219',
-                    'message' => [
+                    'message'   => [
                         'message_id' => '3891',
-                        'from' => [
-                            'id' => '56293731',
+                        'from'       => [
+                            'id'         => '56293731',
                             'first_name' => 'Stan',
-                            'last_name' => 'Drozdov'
+                            'last_name'  => 'Drozdov'
                         ],
-                        'chat' => [
-                            'id' => '56293731',
+                        'chat'       => [
+                            'id'         => '56293731',
                             'first_name' => 'Stan',
-                            'last_name' => 'Drozdov',
-                            'type' => 'private'
+                            'last_name'  => 'Drozdov',
+                            'type'       => 'private'
                         ],
-                        'date' => '1460071727',
-                        'text' => 'Text'
+                        'date'       => '1460071727',
+                        'text'       => 'Text'
                     ]
                 ]),
                 Update::class,
@@ -50,18 +54,12 @@ class ExecutorTest extends AbstractTestCase
             ],
             [
                 new Error([
-                    'error_code' => '400',
+                    'error_code'  => '400',
                     'description' => 'Wrong parameters sent!'
                 ]),
                 Error::class,
                 null,
                 true
-            ],
-            [
-                new \stdClass(),
-                stdClass::class,
-                null,
-                false
             ]
         ];
     }
@@ -71,13 +69,10 @@ class ExecutorTest extends AbstractTestCase
      *
      * @dataProvider dataProviderProcessEntities
      *
-     * @covers       Teebot\Command\Executor::processEntities()
-     * @covers       Teebot\Command\Executor::getEntitiesFlow()
-     * @covers       Teebot\Command\Executor::processEntitiesFlow()
-     *
-     * @param array $mainEntity Main entity class
-     * @param string $expectedClass Expected class of main entity
-     * @param string $updateType Type of the update (if it is Update)
+     * @param array  $mainEntity     Main entity class
+     * @param string $expectedClass  Expected class of main entity
+     * @param string $updateType     Type of the update (if it is Update)
+     * @param bool   $expectedResult Expected result of method's execution
      */
     public function testProcessEntities($mainEntity, $expectedClass, $updateType, $expectedResult)
     {
@@ -91,6 +86,22 @@ class ExecutorTest extends AbstractTestCase
 
         if ($mainEntity instanceof Update) {
             $this->assertSame($mainEntity->getUpdateType(), $updateType);
+        }
+    }
+
+    /**
+     * Tests that processEntities throws an exception
+     */
+    public function testException()
+    {
+        $entities = [
+            new \stdClass(),
+        ];
+
+        try {
+            $this->executor->processEntities($entities);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(Notice::class, $e);
         }
     }
 }

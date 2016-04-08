@@ -1,8 +1,10 @@
 <?php
 
+namespace TeebotTest;
+
 use Teebot\Config;
 
-abstract class AbstractTestCase extends PHPUnit_Framework_TestCase
+abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
 {
     protected function getConfigMock()
     {

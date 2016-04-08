@@ -20,6 +20,7 @@
   },
   "autoload": {
     "psr-4": {
+      "TeebotTest\\": "./test",
       "Teebot\\Bot\\": "./Bot",
       "Teebot\\": "./src"
     }

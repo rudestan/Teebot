@@ -77,25 +77,27 @@ class Executor
      *                        directly to the method
      *
      * @return bool
+     *
+     * @throws Notice
      */
     public function processEntities(array $entities)
     {
-        try {
-            /** @var Update $entity */
-            foreach ($entities as $entity) {
-                $entitiesFlow = $this->getEntitiesFlow($entity);
+        /** @var Update $entity */
+        foreach ($entities as $entity) {
+            $entitiesFlow = $this->getEntitiesFlow($entity);
 
-                if (empty($entitiesFlow)) {
-                    throw new Notice("Unknown entity! Skipping.");
-                }
-
-                return $this->processEntitiesFlow($entitiesFlow);
+            if (empty($entitiesFlow)) {
+                throw new Notice("Unknown entity! Skipping.");
             }
-        } catch (Notice $e) {
-            Output::log($e);
+
+            $result = $this->processEntitiesFlow($entitiesFlow);
+
+            if ($result == false) {
+                throw new Notice("Failed to process the entity!");
+            }
         }
 
-        return false;
+        return true;
     }
 
     /**
