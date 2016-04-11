@@ -107,6 +107,26 @@ class SendMessage extends AbstractMethod
     }
 
     /**
+     * @return $this
+     */
+    public function setHTMLParseMode()
+    {
+        $this->parse_mode = static::PARSE_MODE_HTML;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setMarkdownParseMode()
+    {
+        $this->parse_mode = static::PARSE_MODE_MARKDOWN;
+
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function getDisableWebPagePreview()
