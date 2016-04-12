@@ -3,6 +3,7 @@
 namespace Teebot\Entity\Inline;
 
 use Teebot\Entity\AbstractEntity;
+use Teebot\Entity\Location;
 use Teebot\Entity\User;
 
 class InlineQuery extends AbstractEntity
@@ -13,12 +14,15 @@ class InlineQuery extends AbstractEntity
 
     protected $from;
 
+    protected $location;
+
     protected $query;
 
     protected $offset;
 
     protected $builtInEntities = [
-        'from' => User::class
+        'from'     => User::class,
+        'location' => Location::class
     ];
 
     /**

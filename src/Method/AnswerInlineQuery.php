@@ -10,6 +10,8 @@
 
 namespace Teebot\Method;
 
+use Teebot\Entity\Inline\InlineQueryResultArray;
+
 class AnswerInlineQuery extends AbstractMethod
 {
     const NAME          = 'answerInlineQuery';
@@ -18,6 +20,7 @@ class AnswerInlineQuery extends AbstractMethod
 
     protected $inline_query_id;
 
+    /** @var InlineQueryResultArray */
     protected $results;
 
     protected $cache_time;
@@ -26,12 +29,18 @@ class AnswerInlineQuery extends AbstractMethod
 
     protected $next_offset;
 
+    protected $switch_pm_text;
+
+    protected $switch_pm_parameter;
+
     protected $supportedProperties = [
-        'inline_query_id' => true,
-        'results'         => true,
-        'cache_time'      => false,
-        'is_personal'     => false,
-        'next_offset'     => false
+        'inline_query_id'     => true,
+        'results'             => true,
+        'cache_time'          => false,
+        'is_personal'         => false,
+        'next_offset'         => false,
+        'switch_pm_text'      => false,
+        'switch_pm_parameter' => false
     ];
 
     /**
@@ -150,6 +159,46 @@ class AnswerInlineQuery extends AbstractMethod
     public function setNextOffset($next_offset)
     {
         $this->next_offset = $next_offset;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSwitchPmText()
+    {
+        return $this->switch_pm_text;
+    }
+
+    /**
+     * @param mixed $switch_pm_text
+     *
+     * @return $this
+     */
+    public function setSwitchPmText($switch_pm_text)
+    {
+        $this->switch_pm_text = $switch_pm_text;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSwitchPmParameter()
+    {
+        return $this->switch_pm_parameter;
+    }
+
+    /**
+     * @param mixed $switch_pm_parameter
+     *
+     * @return $this
+     */
+    public function setSwitchPmParameter($switch_pm_parameter)
+    {
+        $this->switch_pm_parameter = $switch_pm_parameter;
 
         return $this;
     }

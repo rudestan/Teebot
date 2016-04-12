@@ -15,6 +15,7 @@ use Teebot\Exception\Critical;
 use Teebot\Command\Executor;
 use Teebot\Exception\Output;
 use Teebot\Traits\Property;
+use Teebot\Entity\Inline\InlineKeyboardMarkup;
 use Teebot\Entity\ReplyKeyboardMarkup;
 use Teebot\Entity\ReplyKeyboardHide;
 use Teebot\Entity\ForceReply;
@@ -41,6 +42,7 @@ abstract class AbstractMethod {
     protected $supportedProperties = [];
 
     protected $supportedMarkups = [
+        InlineKeyboardMarkup::class,
         ReplyKeyboardMarkup::class,
         ReplyKeyboardHide::class,
         ForceReply::class

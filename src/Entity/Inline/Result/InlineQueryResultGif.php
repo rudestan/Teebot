@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Entity\Inline;
+namespace Teebot\Entity\Inline\Result;
 
 class InlineQueryResultGif extends InlineQueryResultAbstract
 {
@@ -16,8 +16,6 @@ class InlineQueryResultGif extends InlineQueryResultAbstract
 
     protected $caption;
 
-    protected $message_text;
-
     protected $supportedProperties = [
         'type'                     => true,
         'id'                       => true,
@@ -27,9 +25,8 @@ class InlineQueryResultGif extends InlineQueryResultAbstract
         'thumb_url'                => true,
         'title'                    => false,
         'caption'                  => false,
-        'message_text'             => false,
-        'parse_mode'               => false,
-        'disable_web_page_preview' => false
+        'reply_markup'             => false,
+        'input_message_content'    => true,
     ];
 
     /**
@@ -108,26 +105,6 @@ class InlineQueryResultGif extends InlineQueryResultAbstract
     public function setCaption($caption)
     {
         $this->caption = $caption;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMessageText()
-    {
-        return $this->message_text;
-    }
-
-    /**
-     * @param mixed $message_text
-     *
-     * @return $this
-     */
-    public function setMessageText($message_text)
-    {
-        $this->message_text = $message_text;
 
         return $this;
     }

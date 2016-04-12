@@ -1,71 +1,35 @@
 <?php
 
-namespace Teebot\Entity\Inline;
+namespace Teebot\Entity\Inline\Input;
 
-use Teebot\Entity\AbstractEntity;
-
-abstract class InlineQueryResultAbstract extends AbstractEntity
+class InputTextMessageContent extends InputMessageContent
 {
+    const ENTITY_TYPE         = 'InputTextMessageContent';
+
     const PARSE_MODE_MARKDOWN = 'Markdown';
 
     const PARSE_MODE_HTML     = 'HTML';
 
-    const RESULT_TYPE         = 'InlineQueryResultAbstract';
-
-    protected $id;
-    
-    protected $title;
+    protected $message_text;
 
     protected $parse_mode;
 
     protected $disable_web_page_preview;
 
-    protected $thumb_url;
+    protected $supportedProperties = [
+        'message_text'             => true,
+        'parse_mode'               => false,
+        'disable_web_page_preview' => false,
+    ];
 
     /**
-     * @return string
-     */
-    public function getType()
-    {
-        return static::RESULT_TYPE;
-    }
-
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return (string) $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     *
-     * @return mixed
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
+     * @param mixed $message_text
      *
      * @return $this
      */
-    public function setTitle($title)
+    public function setMessageText($message_text)
     {
-        $this->title = $title;
+        $this->message_text = $message_text;
 
         return $this;
     }
@@ -106,26 +70,6 @@ abstract class InlineQueryResultAbstract extends AbstractEntity
     public function setParseModeHTML()
     {
         $this->parse_mode = self::PARSE_MODE_HTML;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getThumbUrl()
-    {
-        return (string) $this->thumb_url;
-    }
-
-    /**
-     * @param string $thumb_url
-     *
-     * @return $this
-     */
-    public function setThumbUrl($thumb_url)
-    {
-        $this->thumb_url = $thumb_url;
 
         return $this;
     }

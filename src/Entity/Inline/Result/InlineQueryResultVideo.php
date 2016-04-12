@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Entity\Inline;
+namespace Teebot\Entity\Inline\Result;
 
 class InlineQueryResultVideo extends InlineQueryResultAbstract
 {
@@ -39,7 +39,9 @@ class InlineQueryResultVideo extends InlineQueryResultAbstract
         'video_height'             => false,
         'video_duration'           => false,
         'thumb_url'                => true,
-        'description'              => false
+        'description'              => false,
+        'reply_markup'             => false,
+        'input_message_content'    => true,
     ];
 
     /**

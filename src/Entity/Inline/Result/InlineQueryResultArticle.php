@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Entity\Inline;
+namespace Teebot\Entity\Inline\Result;
 
 class InlineQueryResultArticle extends InlineQueryResultAbstract
 {
@@ -24,9 +24,8 @@ class InlineQueryResultArticle extends InlineQueryResultAbstract
         'type'                     => true,
         'id'                       => true,
         'title'                    => true,
-        'message_text'             => true,
-        'parse_mode'               => false,
-        'disable_web_page_preview' => false,
+        'input_message_content'    => true,
+        'reply_markup'             => false,
         'url'                      => false,
         'hide_url'                 => false,
         'description'              => false,

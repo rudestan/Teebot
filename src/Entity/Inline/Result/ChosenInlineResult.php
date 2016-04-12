@@ -1,8 +1,9 @@
 <?php
 
-namespace Teebot\Entity\Inline;
+namespace Teebot\Entity\Inline\Result;
 
 use Teebot\Entity\AbstractEntity;
+use Teebot\Entity\Location;
 use Teebot\Entity\User;
 
 class ChosenInlineResult extends AbstractEntity
@@ -13,10 +14,15 @@ class ChosenInlineResult extends AbstractEntity
 
     protected $from;
 
+    protected $location;
+
+    protected $inline_message_id;
+
     protected $query;
 
     protected $builtInEntities = [
-        'from' => User::class
+        'from'     => User::class,
+        'location' => Location::class
     ];
 
     /**
@@ -49,6 +55,46 @@ class ChosenInlineResult extends AbstractEntity
     public function setFrom($from)
     {
         $this->from = $from;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param mixed $location
+     *
+     * @return $this
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInlineMessageId()
+    {
+        return $this->inline_message_id;
+    }
+
+    /**
+     * @param mixed $inline_message_id
+     *
+     * @return $this
+     */
+    public function setInlineMessageId($inline_message_id)
+    {
+        $this->inline_message_id = $inline_message_id;
+
+        return $this;
     }
 
     /**

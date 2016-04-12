@@ -33,7 +33,7 @@ class SendMessage extends AbstractMethod
     protected $disable_notification;
 
     protected $reply_to_message_id;
-
+    
     protected $reply_markup;
 
     protected $supportedProperties = [
