@@ -138,4 +138,18 @@ trait Property
             }
         }
     }
+
+    /**
+     * Returns object's properties encoded as JSON string
+     *
+     * @param bool $validate Flag whether validation for required properties should be applied
+     *
+     * @return string
+     */
+    public function asJson($validate = true)
+    {
+        $properties = $this->getPropertiesArray($validate);
+
+        return json_encode($properties);
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace Teebot\Entity;
 
+use Teebot\Command\Executor;
+
 class Command extends AbstractEntity
 {
     const ENTITY_TYPE             = 'Command';
@@ -12,7 +14,11 @@ class Command extends AbstractEntity
 
     const PARTS_DELIMITER = '_';
 
-    const PATTERN = '/^\/[a-zA-Z_]+.*$/';
+    const PATTERN_COMMAND_ON_FIRST = '/^\/[a-zA-Z_]+.*$/';
+
+    const PATTERN_COMMAND_ON_ANY = '/\/[a-zA-Z_]+.*$/';
+
+    const PATTERN_COMMAND_DATA = '/.*\/(?P<name>\w+)\b(?P<args>.*)$/';
 
     protected $text;
 
@@ -24,16 +30,14 @@ class Command extends AbstractEntity
     {
         if (isset($data['text'])) {
             $args    = null;
-            $command = $this->getCommandFromText($data['text']);
+            $command = $this->getCommandDataFromText($data['text']);
 
             if ($command) {
-                $args = $this->getArgsFromText($command, $data['text']);
+                $data = [
+                    'name' => $command['name'],
+                    'args' => $command['args']
+                ];
             }
-
-            $data = [
-                'name' => $command,
-                'args' => $args
-            ];
         }
 
         parent::__construct($data);
@@ -55,35 +59,25 @@ class Command extends AbstractEntity
         return $this->args;
     }
 
-    protected function getCommandFromText($text)
+    protected function getCommandDataFromText($text)
     {
-        $command = null;
+        $commandOnFirst = Executor::getInstance()->getConfig()->getCommandOnFirst();
+        $command        = null;
 
-        if (!is_string($text) || !strlen($text) || $text[0] !== static::PREFIX) {
+        if (!is_string($text) ||
+            !strlen($text) ||
+            ($commandOnFirst === true && $text[0] != self::PREFIX) ||
+            strpos($text, self::PREFIX) === false
+        ) {
             return $command;
         }
 
-        if (strpos($text, static::ARGS_SEPARATOR) !== false) {
-            $parts = explode(static::ARGS_SEPARATOR, $text);
+        preg_match(self::PATTERN_COMMAND_DATA, $text, $matches);
 
-            $text = trim($parts[0]);
+        if ($matches) {
+            $matches = array_map('trim', $matches);
         }
 
-        $command = trim(substr($text, 1, strlen($text) - 1));
-
-        return $command;
-    }
-
-    protected function getArgsFromText($command, $text)
-    {
-        $length = strlen(static::PREFIX . $command);
-
-        $argString = trim(substr($text, $length));
-
-        if (strlen($argString)) {
-            return $argString;
-        }
-
-        return null;
+        return $matches;
     }
 }

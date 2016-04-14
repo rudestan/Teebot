@@ -30,7 +30,7 @@ class Config
 
     const EVENT_NAMESPACE_PATTERN   = 'Teebot\\Bot\\%s\\EntityEvent';
 
-    const CONFIG_FILENAME           = 'config.json';
+    const CONFIG_FILENAME           = 'config.php';
 
     const BOT_DIR_PATTERN           = '%s/../Bot/%s';
 
@@ -49,6 +49,8 @@ class Config
     protected $log_file = null;
 
     protected $events;
+
+    protected $command_on_first = true;
 
     protected $commandNamespace = null;
 
@@ -143,10 +145,9 @@ class Config
             Output::log(new Fatal('File "' . $configFile . '" does not exists or not readable!'));
         }
 
-        $config      = file_get_contents($configFile);
-        $configArray = json_decode($config, true);
+        $config = require_once($configFile);
 
-        $this->setProperties($configArray);
+        $this->setProperties($config);
     }
 
     /**
@@ -197,6 +198,16 @@ class Config
     public function getMethod()
     {
         return $this->method;
+    }
+
+    /**
+     * Returns whether command should be searched on first position in text.
+     *
+     * @return boolean
+     */
+    public function getCommandOnFirst()
+    {
+        return $this->command_on_first;
     }
 
     /**

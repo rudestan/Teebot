@@ -1,6 +1,6 @@
-config.json
 .idea
 vendor
 Bot/*
 !Bot/Example
+Bot/Example/config.php
 build

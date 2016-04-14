@@ -2,6 +2,9 @@
 
 namespace Teebot\Entity;
 
+use Teebot\Command\Executor;
+use Teebot\Config;
+
 class Message extends AbstractEntity
 {
     const ENTITY_TYPE             = 'Message';
@@ -101,9 +104,17 @@ class Message extends AbstractEntity
         parent::__construct($data);
     }
 
-    public function isCommand() {
+    public function isCommand()
+    {
+        $commandOnFirst = Executor::getInstance()->getConfig()->getCommandOnFirst();
+        
+        if ($commandOnFirst === true) {
+            $pattern = Command::PATTERN_COMMAND_ON_FIRST;
+        } else {
+            $pattern = Command::PATTERN_COMMAND_ON_ANY;
+        }    
 
-        return preg_match(Command::PATTERN, (string) $this->text);
+        return preg_match($pattern, (string) $this->text);
     }
 
     /**

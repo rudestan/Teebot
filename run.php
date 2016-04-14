@@ -5,9 +5,18 @@
  *
  * @author Stan Drozdov <rudestan@gmail.com>
  */
-
 define('ROOT_DIR', realpath(__DIR__));
-require_once ROOT_DIR . '/vendor/autoload.php';
+
+$paths = [
+    ROOT_DIR . '/vendor/autoload.php',
+    ROOT_DIR . '/../../autoload.php'
+];
+
+foreach ($paths as $path) {
+    if (file_exists($path)) {
+        require_once($path);
+    }
+}
 
 $client = new Teebot\Client();
 

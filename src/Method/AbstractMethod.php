@@ -151,6 +151,21 @@ abstract class AbstractMethod {
     }
 
     /**
+     * Returns reply markup as JSON encoded string if reply_markup is an instance of AbstractEntity
+     *
+     * @return string|mixed
+     */
+    public function getReplyMarkup()
+    {
+        if ($this->reply_markup instanceof AbstractEntity) {
+
+            return str_replace('\\\\', '\\', $this->reply_markup->asJson());
+        }
+
+        return $this->reply_markup;
+    }
+
+    /**
      * Returns parent entity which triggered method's execution.
      *
      * @return AbstractEntity
