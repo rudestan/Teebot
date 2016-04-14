@@ -231,13 +231,12 @@ class Executor
 
     /**
      * Returns mapped event class from the configuration (if it was previously defined)
-     * 
-     * @param AbstractEntity $entity    Entity for which the corresponding event should be triggered 
-     * @param bool           $isCommand Boolean flag which indicates that passed entity should
-     *                                  be treated as a command     
+     *
+     * @param AbstractEntity $entity    Entity for which the corresponding event should be triggered
+     *                                  be treated as a command
      * @return null|string
      */
-    protected function getMappedEventClass(AbstractEntity $entity, $isCommand)
+    protected function getMappedEventClass(AbstractEntity $entity)
     {
         $preDefinedEvents = $this->config->getEvents();
         $entityEventType  = $entity->getEntityType();
@@ -246,10 +245,8 @@ class Executor
             if ($preDefinedEvent['type'] == $entityEventType) {
                 $className = $preDefinedEvent['class'];
 
-                if ($entity instanceof Command && $isCommand === true) {
-                    $command = $entity->getName();
-
-                    if (isset($preDefinedEvent['command']) && $preDefinedEvent['command'] != $command) {
+                if ($entity instanceof Command) {
+                    if (!$this->isCommandSupported($preDefinedEvent, $entity->getName())) {
                         continue;
                     }
                 }
@@ -261,6 +258,19 @@ class Executor
         }
 
         return null;
+    }
+
+    /**
+     * Checks whether command is defined in config and matches the current one
+     *
+     * @param array  $preDefinedEvent Pre defined event data
+     * @param string $command         Command name
+     *
+     * @return bool
+     */
+    protected function isCommandSupported($preDefinedEvent, $command)
+    {
+        return isset($preDefinedEvent['command']) && strtolower($preDefinedEvent['command']) == strtolower($command);
     }
 
     /**
