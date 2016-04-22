@@ -2,7 +2,7 @@
 
 namespace Teebot\Entity;
 
-use Teebot\Command\Executor;
+use Teebot\Command\Handler;
 use Teebot\Exception\Critical;
 use Teebot\Exception\Output;
 
@@ -82,7 +82,7 @@ class File extends AbstractEntity
             return null;
         }
 
-        $basePath = Executor::getInstance()
+        $basePath = Handler::getInstance()
             ->getConfig()
             ->getFileBasePath();
 

@@ -13,6 +13,7 @@ namespace Teebot\Command;
 
 use Teebot\Entity\Command;
 use Teebot\Entity\Error;
+use Teebot\Entity\MessageEntity;
 use Teebot\Entity\Update;
 use Teebot\Exception\Notice;
 use Teebot\Exception\Output;
@@ -20,12 +21,13 @@ use Teebot\Method\AbstractMethod;
 use Teebot\Request;
 use Teebot\Entity\AbstractEntity;
 use Teebot\Entity\Message;
+use Teebot\Entity\MessageEntityArray;
 use Teebot\Config;
 use Teebot\Response;
 
-class Executor
+class Handler
 {
-    /** @var Executor */
+    /** @var Handler */
     protected static $instance;
 
     /** @var Config $config */
@@ -37,7 +39,7 @@ class Executor
     /**
      * Returns a singletone instance of executor
      *
-     * @return Executor
+     * @return Handler
      */
     public static function getInstance()
     {
@@ -84,13 +86,13 @@ class Executor
     {
         /** @var Update $entity */
         foreach ($entities as $entity) {
-            $entitiesFlow = $this->getEntitiesFlow($entity);
+            $entitiesFlow = $this->getEntitiesChain($entity);
 
             if (empty($entitiesFlow)) {
                 throw new Notice("Unknown entity! Skipping.");
             }
 
-            $result = $this->processEntitiesFlow($entitiesFlow);
+            $result = $this->processEntitiesChain($entitiesFlow);
 
             if ($result == false) {
                 throw new Notice("Failed to process the entity!");
@@ -101,7 +103,7 @@ class Executor
     }
 
     /**
-     * Returns flow generated from nested sub-entities of the passed entity
+     * Returns entities chain generated from nested sub-entities of the passed entity
      *
      * Generated hierarchy of the events:
      *
@@ -118,7 +120,7 @@ class Executor
      *
      * @return array
      */
-    public function getEntitiesFlow($entity)
+    public function getEntitiesChain($entity)
     {
         if ($entity instanceof Error) {
             return [
@@ -145,12 +147,15 @@ class Executor
                 'parent' => $updateTypeEntity
             ];
 
-            if ($messageTypeEntity instanceof Command) {
-                $events[] = [
-                    'entity' => $messageTypeEntity,
-                    'parent' => $updateTypeEntity,
-                    'is_command' => true
-                ];
+            if ($messageTypeEntity instanceof MessageEntityArray) {
+                $entities = $messageTypeEntity->getEntities();
+
+                foreach ($entities as $entity) {
+                    $events[] = [
+                        'entity' => $entity,
+                        'parent' => $updateTypeEntity
+                    ];
+                }
             }
         }
 
@@ -158,7 +163,7 @@ class Executor
     }
 
     /**
-     * Processes generated entities flow, if triggered event returns false stops processing
+     * Processes generated entities chain, if triggered event returns false stops processing
      *
      * @param array $entitiesFlow Array of entities flow
      *
@@ -166,16 +171,12 @@ class Executor
      *
      * @return bool
      */
-    protected function processEntitiesFlow(array $entitiesFlow)
+    protected function processEntitiesChain(array $entitiesFlow)
     {
         foreach ($entitiesFlow as $entityData) {
 
             try {
-                $continue = $this->triggerEvent(
-                    $entityData['entity'],
-                    $entityData['parent'] ?? null,
-                    $entityData['is_command'] ?? false
-                );
+                $continue = $this->triggerEventForEntity($entityData['entity'], $entityData['parent'] ?? null);
 
                 if (!$continue) {
                     return true;
@@ -196,34 +197,28 @@ class Executor
      *
      * @param AbstractEntity $entity    Entity for which the corresponding event should be triggered
      * @param AbstractEntity $parent    Entity's parent if any
-     * @param bool           $isCommand Boolean flag which indicates that passed entity should
-     *                                  be treated as a command
      *
      * @return bool
      */
-    protected function triggerEvent(AbstractEntity $entity, AbstractEntity $parent = null, $isCommand = false)
+    protected function triggerEventForEntity(AbstractEntity $entity, AbstractEntity $parent = null)
     {
-        if ($this->config->getEvents()) {
-            $eventClassName = $this->getMappedEventClass($entity, $isCommand);
-        } else {
-            $eventClassName = $this->getDefaultEventClass($entity, $isCommand);
-        }
+        $eventClass = $this->getEventClass($entity);
 
-        if (class_exists($eventClassName)) {
-            $eventClass = new $eventClassName();
+        if (class_exists($eventClass)) {
+            $event = new $eventClass();
 
-            if (!$eventClass instanceof AbstractEntityEvent && !$eventClass instanceof AbstractCommand) {
+            if (!$event instanceof AbstractEntityEvent && !$event instanceof AbstractCommand) {
                 return true;
             }
 
             /** @var AbstractCommand $eventClass */
-            if ($eventClassName instanceof AbstractCommand && $entity instanceof Command) {
-                $eventClass->setArgs($entity->getArgs());
+            if ($event instanceof AbstractCommand && $entity instanceof MessageEntity && $entity->isCommand()) {
+                $event->setArgs($entity->getArgs());
             }
 
-            $eventClass->setEntity($parent ?? $entity);
+            $event->setEntity($parent ?? $entity);
 
-            return $eventClass->run();
+            return $event->run();
         }
 
         return true;
@@ -236,17 +231,18 @@ class Executor
      *                                  be treated as a command
      * @return null|string
      */
-    protected function getMappedEventClass(AbstractEntity $entity)
+    protected function getEventClass(AbstractEntity $entity)
     {
         $preDefinedEvents = $this->config->getEvents();
         $entityEventType  = $entity->getEntityType();
 
         foreach ($preDefinedEvents as $preDefinedEvent) {
+
             if ($preDefinedEvent['type'] == $entityEventType) {
                 $className = $preDefinedEvent['class'];
 
-                if ($entity instanceof Command) {
-                    if (!$this->isCommandSupported($preDefinedEvent, $entity->getName())) {
+                if ($entity instanceof MessageEntity && $entity->isCommand()) {
+                    if (!$this->isCommandSupported($preDefinedEvent, $entity->getCommand())) {
                         continue;
                     }
                 }
@@ -271,35 +267,6 @@ class Executor
     protected function isCommandSupported($preDefinedEvent, $command)
     {
         return isset($preDefinedEvent['command']) && strtolower($preDefinedEvent['command']) == strtolower($command);
-    }
-
-    /**
-     * Returns default event class
-     *
-     * @param AbstractEntity $entity    Entity for which the corresponding event should be triggered
-     * @param bool           $isCommand Boolean flag which indicates that passed entity should
-     *                                  be treated as a command
-     * 
-     * @return null|string
-     */
-    protected function getDefaultEventClass($entity, $isCommand)
-    {
-        $className = null;
-
-        if ($entity instanceof Command && $isCommand === true) {
-            $ucName    = ucwords($entity->getName(), Command::PARTS_DELIMITER);
-            $name      = str_replace(Command::PARTS_DELIMITER, '', $ucName);
-
-            $className = $this->config->getCommandNamespace() . "\\" . $name;
-        } elseif ($entity instanceof AbstractEntity) {
-            $className = $this->config->getEntityEventNamespace() . "\\". $entity->getEntityType();
-        }
-
-        if ($className && class_exists($className)) {
-            return $className;
-        }
-
-        return null;
     }
 
     /**

@@ -64,7 +64,7 @@ abstract class AbstractEntity
      *
      * @return string
      */
-    public function getEntityType() : string
+    public function getEntityType()
     {
         return static::ENTITY_TYPE;
     }

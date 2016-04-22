@@ -12,7 +12,7 @@ namespace Teebot\Method;
 
 use Teebot\Entity\AbstractEntity;
 use Teebot\Exception\Critical;
-use Teebot\Command\Executor;
+use Teebot\Command\Handler;
 use Teebot\Exception\Output;
 use Teebot\Traits\Property;
 use Teebot\Entity\Inline\InlineKeyboardMarkup;
@@ -91,7 +91,7 @@ abstract class AbstractMethod {
      */
     public function trigger($silentMode = true)
     {
-        $executor = Executor::getInstance();
+        $executor = Handler::getInstance();
 
         return $executor->callRemoteMethod($this, $silentMode, $this->parent);
     }

@@ -2,7 +2,7 @@
 
 namespace Teebot\Entity;
 
-use Teebot\Command\Executor;
+use Teebot\Command\Handler;
 use Teebot\Config;
 
 class Message extends AbstractEntity
@@ -29,10 +29,10 @@ class Message extends AbstractEntity
     /** @var Message $reply_to_message */
     protected $reply_to_message;
 
-    /** @var array|Command $command */
-    protected $command;
-
     protected $text;
+
+    /** @var MessageEntityArray */
+    protected $entities;
 
     /** @var Audio $audio */
     protected $audio;
@@ -83,6 +83,8 @@ class Message extends AbstractEntity
 
     protected $migrate_from_chat_id;
 
+    protected $pinned_message;
+
     protected $builtInEntities = [
         'from'     => User::class,
         'chat'     => Chat::class,
@@ -94,7 +96,7 @@ class Message extends AbstractEntity
         'contact'  => Contact::class,
         'audio'    => Audio::class,
         'photo'    => PhotoSizeArray::class,
-        'command'  => Command::class,
+        'entities' => MessageEntityArray::class
     ];
 
     public function __construct(array $data)
@@ -102,19 +104,6 @@ class Message extends AbstractEntity
         $data = $data['message'] ?? $data;
 
         parent::__construct($data);
-    }
-
-    public function isCommand()
-    {
-        $commandOnFirst = Executor::getInstance()->getConfig()->getCommandOnFirst();
-        
-        if ($commandOnFirst === true) {
-            $pattern = Command::PATTERN_COMMAND_ON_FIRST;
-        } else {
-            $pattern = Command::PATTERN_COMMAND_ON_ANY;
-        }    
-
-        return preg_match($pattern, (string) $this->text);
     }
 
     /**
@@ -159,10 +148,6 @@ class Message extends AbstractEntity
     public function setText($text)
     {
         $this->text = $text;
-
-        if ($this->isCommand()) {
-            $this->command = ['text' => $text];
-        }
     }
 
     /**
@@ -174,20 +159,31 @@ class Message extends AbstractEntity
     }
 
     /**
-     * @return array|Command
+     * @return array
      */
-    public function getCommand()
+    public function getEntities()
     {
-        return $this->command;
+        return $this->entities;
     }
 
     /**
-     * @param Command $command
+     * @param array $entities
      */
-    public function setCommand($command)
+    public function setEntities($entities)
     {
-        $this->command = $command;
-        $this->setMessageType($command);
+        if (is_array($entities)) {
+            $source = $this->getText();
+
+            $entities = array_map(function($element) use ($source) {
+                $element['source'] = $source;
+
+                return $element;
+            }, $entities);
+        }
+        
+
+        $this->entities = $entities;
+        $this->setMessageType($entities);
     }
 
     /**
@@ -380,8 +376,8 @@ class Message extends AbstractEntity
             case PhotoSizeArray::ENTITY_TYPE:
                 $messageTypeEntity = $this->photo;
                 break;
-            case Command::ENTITY_TYPE:
-                $messageTypeEntity = $this->command;
+            case MessageEntityArray::ENTITY_TYPE:
+                $messageTypeEntity = $this->entities;
                 break;
         }
 

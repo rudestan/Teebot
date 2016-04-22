@@ -34,7 +34,7 @@ class Config
 
     const BOT_DIR_PATTERN           = '%s/../Bot/%s';
 
-    protected $botName = null;
+    protected $name = null;
 
     protected $token;
 
@@ -61,36 +61,26 @@ class Config
     /**
      * Constructs configuration object with either bot name or bot config file passed.
      *
-     * @param string $botName   The name of the bot to execute
      * @param string $botConfig Path to bot's configuration file
      */
-    public function __construct(string $botName = '', $botConfig = '')
+    public function __construct($botConfig = '')
     {
-        $this->initBotConfiguration($botName, $botConfig);
+        $this->initBotConfiguration($botConfig);
     }
 
     /**
      * Initialises bot configuration via bot name or configuration file.
      *
-     * @param string $botName   The name of the bot to execute
      * @param string $botConfig Path to bot's configuration file
      *
      * @return bool
      */
-    public function initBotConfiguration(string $botName = '', $botConfig = '')
+    public function initBotConfiguration($botConfig = '')
     {
-        $this->botName = $botName;
-
         try {
-            if (!empty($botName)) {
-                $this->botDir = $this->getBotDir($botName);
-                $botConfig    = $this->botDir . static::CONFIG_FILENAME;
-
-                $this->setNamespaces($botName);
-            }
 
             if (empty($botConfig)) {
-                Output::log(new Fatal("Path to configuration file was not sent!"));
+                Output::log(new Fatal("Path to configuration file was not set!"));
             }
 
             $this->loadConfigFile($botConfig);
@@ -99,39 +89,6 @@ class Config
         }
 
         return true;
-    }
-
-    /**
-     * Returns bot directory built with default path pattern.
-     *
-     * @param string $botName The name of the bot to execute
-     *
-     * @return string
-     */
-    protected function getBotDir(string $botName) : string
-    {
-        $dir = sprintf(
-            static::BOT_DIR_PATTERN,
-            __DIR__,
-            $botName
-        );
-
-        if (!file_exists($dir)) {
-            Output::log(new Fatal('Bot does not exist!'));
-        }
-
-        return realpath($dir) . "/";
-    }
-
-    /**
-     * Sets namespace for command and event entities classes to be able to load them via autoloader in the future.
-     *
-     * @param string $botName The name of the bot to execute
-     */
-    protected function setNamespaces(string $botName)
-    {
-        $this->commandNamespace     = sprintf(static::COMMAND_NAMESPACE_PATTERN, $botName);
-        $this->entityEventNamespace = sprintf(static::EVENT_NAMESPACE_PATTERN, $botName);
     }
 
     /**
@@ -185,9 +142,9 @@ class Config
      * 
      * @return null|string
      */
-    public function getBotName()
+    public function getName()
     {
-        return $this->botName;
+        return $this->name;
     }
 
     /**

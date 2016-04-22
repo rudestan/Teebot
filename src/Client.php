@@ -12,14 +12,14 @@
 namespace Teebot;
 
 use Teebot\Method\GetUpdates;
-use Teebot\Command\Executor;
+use Teebot\Command\Handler;
 use Teebot\Exception\Fatal;
 use Teebot\Exception\Output;
 
 class Client
 {
     /**
-     * @var Executor $executor Executor object
+     * @var Handler $executor Command handler object
      */
     protected $executor;
 
@@ -27,8 +27,8 @@ class Client
     protected $timeout;
 
     protected $cliOptions = [
-        'short' => 'n:c:',
-        'long'  => ['name:', 'config']
+        'short' => 'c:',
+        'long'  => ['config']
     ];
 
     /**
@@ -52,30 +52,17 @@ class Client
      * @param array $args Array of initialisation arguments
      */
     protected function init($args) {
-        $botName   = $this->getBotName($args);
         $botConfig = $this->getBotConfig($args);
 
-        if (!$botName && !$botConfig) {
-            Output::log(new Fatal("Bot name or config should be specified!"));
+        if (!$botConfig) {
+            Output::log(new Fatal("Config should be specified!"));
         }
 
-        $config = new Config($botName, $botConfig);
+        $config = new Config($botConfig);
         $this->timeout = $config->getTimeout();
 
-        $this->executor = Executor::getInstance();
+        $this->executor = Handler::getInstance();
         $this->executor->initWithConfig($config);
-    }
-
-    /**
-     * Returns bot name from initialisation arguments
-     *
-     * @param array $args Array with initialisation values
-     *
-     * @return string
-     */
-    protected function getBotName($args)
-    {
-        return $args['n'] ?? $args['name'] ?? '';
     }
 
     /**

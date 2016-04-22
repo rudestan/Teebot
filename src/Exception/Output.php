@@ -10,7 +10,7 @@
 
 namespace Teebot\Exception;
 
-use Teebot\Command\Executor;
+use Teebot\Command\Handler;
 use Teebot\Config;
 
 class Output
@@ -19,8 +19,8 @@ class Output
     {
         $logFile = null;
 
-        if (Executor::getInstance()->getConfig() instanceof Config) {
-            $logFile = Executor::getInstance()->getConfig()->getLogFile();
+        if (Handler::getInstance()->getConfig() instanceof Config) {
+            $logFile = Handler::getInstance()->getConfig()->getLogFile();
         }
 
         $type    = "\\Exception";

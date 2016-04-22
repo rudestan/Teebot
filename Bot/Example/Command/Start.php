@@ -24,6 +24,7 @@ class Start extends AbstractCommand
             ->setText('\ud83d\udcb0 /balance');
 
         $keyboardMarkup = (new ReplyKeyboardMarkup())
+            ->setResizeKeyboard(true)
             ->setKeyboard([
                 [$button]
             ]);
