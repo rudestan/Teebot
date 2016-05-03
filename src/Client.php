@@ -74,7 +74,7 @@ class Client
      */
     protected function getBotConfig($args)
     {
-        return $args['c'] ?? $args['config'] ?? '';
+        return isset($args['c']) ? $args['c'] : (isset($args['config']) ? $args['config'] : null);
     }
 
     /**

@@ -37,7 +37,7 @@ class Response
      * @param null|string         $entityClass Entity class that should be instantiated with decoded JSON data
      * @param null|AbstractEntity $parent      Parent class should be set as parent for newly instantiated entity
      */
-    public function __construct(string $rawData, $entityClass = null, $parent = null)
+    public function __construct($rawData, $entityClass = null, $parent = null)
     {
         $this->parent      = $parent;
         $this->decodedData = $this->decodeData($rawData);
@@ -58,7 +58,7 @@ class Response
      *
      * @return array|mixed
      */
-    protected function decodeData(string $rawData) : array
+    protected function decodeData($rawData)
     {
         if (!is_string($rawData) || !strlen($rawData)) {
             return [];
@@ -72,7 +72,7 @@ class Response
      *
      * @return bool
      */
-    public function isErrorReceived() : bool
+    public function isErrorReceived()
     {
         if ((isset($this->decodedData['ok']) && $this->decodedData['ok'] === true)) {
             return false;
@@ -89,7 +89,7 @@ class Response
      *
      * @return array
      */
-    protected function buildEntities(array $rawData, $entityClass = null) : array
+    protected function buildEntities(array $rawData, $entityClass = null)
     {
         $entities = [];
         $entity   = null;
@@ -131,9 +131,9 @@ class Response
      *
      * @return AbstractEntity
      */
-    protected function buildEntity(array $rawItemData, $entityClass = null) : AbstractEntity
+    protected function buildEntity(array $rawItemData, $entityClass = null)
     {
-        $entityClass = $entityClass ?? static::DEFAULT_ENTITY_TYPE;
+        $entityClass = $entityClass ? $entityClass : static::DEFAULT_ENTITY_TYPE;
         $entity      = null;
 
         if (!class_exists($entityClass)) {
@@ -151,7 +151,7 @@ class Response
      *
      * @return array
      */
-    public function getEntities() : array
+    public function getEntities()
     {
         return $this->entities;
     }
@@ -163,7 +163,7 @@ class Response
      *
      * @return mixed|null
      */
-    public function getEntityByOffset(int $offset = 0)
+    public function getEntityByOffset($offset = 0)
     {
         return is_array($this->entities) && isset($this->entities[$offset]) ? $this->entities[$offset] : null;
     }
@@ -183,7 +183,7 @@ class Response
      *
      * @return array
      */
-    protected function getRawEntitiesList() : array
+    protected function getRawEntitiesList()
     {
         if (!is_array($this->decodedData)) {
             return [];
@@ -201,7 +201,7 @@ class Response
      *
      * @return int
      */
-    public function getEntitiesCount() : int
+    public function getEntitiesCount()
     {
         return count($this->entities);
     }
@@ -211,7 +211,7 @@ class Response
      *
      * @return int
      */
-    public function getLastUpdate() : int
+    public function getLastUpdate()
     {
         return $this->lastUpdate;
     }
@@ -221,7 +221,7 @@ class Response
      *
      * @return int
      */
-    public function getOffset() : int
+    public function getOffset()
     {
         return $this->lastUpdate + 1;
     }

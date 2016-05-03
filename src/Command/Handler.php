@@ -86,13 +86,13 @@ class Handler
     {
         /** @var Update $entity */
         foreach ($entities as $entity) {
-            $entitiesFlow = $this->getEntitiesChain($entity);
+            $entitiesChain = $this->getEntitiesChain($entity);
 
-            if (empty($entitiesFlow)) {
+            if (empty($entitiesChain)) {
                 throw new Notice("Unknown entity! Skipping.");
             }
 
-            $result = $this->processEntitiesChain($entitiesFlow);
+            $result = $this->processEntitiesChain($entitiesChain);
 
             if ($result == false) {
                 throw new Notice("Failed to process the entity!");
@@ -176,7 +176,8 @@ class Handler
         foreach ($entitiesFlow as $entityData) {
 
             try {
-                $continue = $this->triggerEventForEntity($entityData['entity'], $entityData['parent'] ?? null);
+                $parent   = isset($entityData['parent']) ? $entityData['parent'] : null;
+                $continue = $this->triggerEventForEntity($entityData['entity'], $parent);
 
                 if (!$continue) {
                     return true;
@@ -216,7 +217,9 @@ class Handler
                 $event->setArgs($entity->getArgs());
             }
 
-            $event->setEntity($parent ?? $entity);
+            $referencedEntity = $parent ? $parent : $entity;
+
+            $event->setEntity($referencedEntity);
 
             return $event->run();
         }
@@ -235,6 +238,10 @@ class Handler
     {
         $preDefinedEvents = $this->config->getEvents();
         $entityEventType  = $entity->getEntityType();
+
+        if (!is_array($preDefinedEvents)) {
+            return null;
+        }
 
         foreach ($preDefinedEvents as $preDefinedEvent) {
 

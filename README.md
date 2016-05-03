@@ -9,10 +9,10 @@ and extend.
 
 ## Usage
 
-For demo usage go to example bot directory - Bot/Example and rename template.config.json to config.json (it is in
+For demo usage go to example bot directory - Bot/Example and rename template.config.php to config.php (it is in
 .gitignore file). Replace bot token with your own.
 
-Run ```php run.php -n Example```
+Run ```php run.php -c Bot/Example/config.php```
 
 ## Current status
 
@@ -21,4 +21,4 @@ changed during future updates. Additionally no documentation and tests available
 
 ## Capability
 
-PHP 7.0 and higher
+PHP 5.6 and higher

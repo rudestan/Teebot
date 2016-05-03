@@ -2,7 +2,7 @@
 
 namespace Teebot\Entity\Inline\Input;
 
-class InputTextMessageContent extends InputMessageContent
+class InputTextMessageContent extends InputMessageContentAbstract
 {
     const ENTITY_TYPE         = 'InputTextMessageContent';
 

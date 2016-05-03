@@ -4,7 +4,7 @@ namespace TeebotTest\Command;
 
 use Teebot\Config;
 use TeebotTest\AbstractTestCase;
-use Teebot\Command\Executor;
+use Teebot\Command\Handler;
 use Teebot\Entity\Update;
 use Teebot\Entity\Error;
 use Teebot\Entity\Message;
@@ -13,17 +13,17 @@ use Teebot\Entity\From;
 use Teebot\Exception\Notice;
 use Teebot\Entity\AbstractEntity;
 
-class ExecutorTest extends AbstractTestCase
+class HandlerTest extends AbstractTestCase
 {
-    /** @var Executor */
-    protected $executor;
+    /** @var Handler */
+    protected $handler;
 
     public function setUp()
     {
         $config = $this->getConfigMock();
 
-        $this->executor = Executor::getInstance();
-        $this->executor->initWithConfig($config);
+        $this->handler = Handler::getInstance();
+        $this->handler->initWithConfig($config);
     }
 
     public function dataProviderProcessEntities()
@@ -70,7 +70,7 @@ class ExecutorTest extends AbstractTestCase
      */
     public function testGetConfig()
     {
-        $this->assertInstanceOf(Config::class, $this->executor->getConfig());
+        $this->assertInstanceOf(Config::class, $this->handler->getConfig());
     }
 
     /**
@@ -89,7 +89,7 @@ class ExecutorTest extends AbstractTestCase
 
         $entities = [$mainEntity];
 
-        $result = $this->executor->processEntities($entities);
+        $result = $this->handler->processEntities($entities);
 
         $this->assertSame($expectedResult, $result);
 
@@ -108,7 +108,7 @@ class ExecutorTest extends AbstractTestCase
         ];
 
         try {
-            $this->executor->processEntities($entities);
+            $this->handler->processEntities($entities);
         } catch (\Exception $e) {
             $this->assertInstanceOf(Notice::class, $e);
         }
@@ -119,7 +119,7 @@ class ExecutorTest extends AbstractTestCase
      *
      * @return array
      */
-    public function dataProviderGetEntitiesFlow()
+    public function dataProviderGetEntitiesChain()
     {
         $entities = $this->dataProviderProcessEntities();
 
@@ -145,16 +145,16 @@ class ExecutorTest extends AbstractTestCase
     }
 
     /**
-     * Tests getEntitiesFlow() method which builds an event flow from received nested entities
+     * Tests getEntitiesChain() method which builds an event flow from received nested entities
      *
-     * @dataProvider dataProviderGetEntitiesFlow
+     * @dataProvider dataProviderGetEntitiesChain
      *
      * @param AbstractEntity $entity        Entity
      * @param array          $instancesFlow Instances flow
      */
-    public function testGetEntitiesFlow($entity, $instancesFlow)
+    public function testGetEntitiesChain($entity, $instancesFlow)
     {
-        $flow = $this->executor->getEntitiesFlow($entity);
+        $flow = $this->handler->getEntitiesChain($entity);
 
         for ($i = 0; $i < count($flow); $i++) {
             $flowStep      = $flow[$i];

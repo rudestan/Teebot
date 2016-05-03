@@ -101,7 +101,7 @@ class Message extends AbstractEntity
 
     public function __construct(array $data)
     {
-        $data = $data['message'] ?? $data;
+        $data = isset($data['message']) ? $data['message'] : $data;
 
         parent::__construct($data);
     }
