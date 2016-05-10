@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Entity\Inline\Inline\Result;
+namespace Teebot\Entity\Inline\Result;
 
 class InlineQueryResultCachedVoice extends InlineQueryResultAbstract
 {
