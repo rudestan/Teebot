@@ -26,6 +26,8 @@ class HandlerTest extends AbstractTestCase
         $this->handler->initWithConfig($config);
     }
 
+    public function registerMockObject($object) {}
+
     public function dataProviderProcessEntities()
     {
         return [
