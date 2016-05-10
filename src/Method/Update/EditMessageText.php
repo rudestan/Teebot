@@ -11,6 +11,7 @@
 namespace Teebot\Method\Update;
 
 use Teebot\Entity\Message;
+use Teebot\Method\AbstractMethod;
 
 class EditMessageText extends AbstractMethod
 {
