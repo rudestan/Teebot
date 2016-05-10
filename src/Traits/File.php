@@ -15,8 +15,6 @@ use \CURLFile;
 
 trait File
 {
-    protected $hasAttachedData = false;
-
     /**
      * Creates an InputFile instance for handling file uploads.
      *
