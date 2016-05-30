@@ -64,7 +64,13 @@ class Response
             return [];
         }
 
-        return json_decode($rawData, true);
+        try {
+            $result = json_decode($rawData, true);
+        } catch (\Exception $e) {
+            return [];
+        }
+
+        return $result;
     }
 
     /**
@@ -185,7 +191,7 @@ class Response
      */
     protected function getRawEntitiesList()
     {
-        if (!is_array($this->decodedData)) {
+        if (!is_array($this->decodedData) || empty($this->decodedData)) {
             return [];
         }
 
