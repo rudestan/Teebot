@@ -4,3 +4,4 @@ Bot/*
 !Bot/Example
 Bot/Example/config.php
 build
+.env

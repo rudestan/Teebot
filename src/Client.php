@@ -11,70 +11,44 @@
 
 namespace Teebot;
 
-use Teebot\Method\GetUpdates;
-use Teebot\Command\Handler;
-use Teebot\Exception\Fatal;
-use Teebot\Exception\Output;
+use Teebot\Api\Command\Processor;
+use Teebot\Api\HttpClient;
+use Teebot\Api\Traits\ConfigAware as ConfigAwareTrait;
+use Teebot\Configuration\Service\AbstractContainer as ConfigContainer;
+use Teebot\Configuration\TeebotConfig as Config;
+use Teebot\Api\Method\GetUpdates;
+use Teebot\Api\Response;
 
 class Client
 {
-    /**
-     * @var Handler $executor Command handler object
-     */
-    protected $executor;
+    use ConfigAwareTrait;
 
-    /** @var int $timeout getUpdates timeout and sleep timer for the listener */
-    protected $timeout;
-
-    protected $cliOptions = [
-        'short' => 'c:',
-        'long'  => ['config']
-    ];
-
-    /**
-     * Constructs Client instance and initialises configuration and default values.
-     *
-     * @param array $args Array of arguments to create the client, otherwise arguments from command line
-     * will be used.
-     */
-    public function __construct($args = [])
+    public function __construct(ConfigContainer $configContainer)
     {
-        if (empty($args)) {
-            $args = getopt($this->cliOptions['short'], $this->cliOptions['long']);
-        }
-
-        $this->init($args);
+        $this->setConfig($configContainer);
+        $this
+            ->getProcessor()
+            ->setConfig($configContainer);
+        $this
+            ->getHttpClient()
+            ->setConfig($configContainer)
+            ->init();
     }
 
     /**
-     * Initialises the client and loads Configuration.
-     *
-     * @param array $args Array of initialisation arguments
+     * @return Processor
      */
-    protected function init($args) {
-        $botConfig = $this->getBotConfig($args);
-
-        if (!$botConfig) {
-            Output::log(new Fatal("Config should be specified!"));
-        }
-
-        $config = new Config($botConfig);
-        $this->timeout = $config->getTimeout();
-
-        $this->executor = Handler::getInstance();
-        $this->executor->initWithConfig($config);
+    public function getProcessor()
+    {
+        return Processor::getInstance();
     }
 
     /**
-     * Returns configuration file path from initialisation arguments
-     *
-     * @param array $args Array with initialisation values
-     *
-     * @return string
+     * @return HttpClient
      */
-    protected function getBotConfig($args)
+    public function getHttpClient()
     {
-        return isset($args['c']) ? $args['c'] : (isset($args['config']) ? $args['config'] : null);
+        return HttpClient::getInstance();
     }
 
     /**
@@ -86,14 +60,14 @@ class Client
      *                         the entities in the result will not be triggered
      * @return Response
      */
-    public function getUpdates($offset = Config::DEFAULT_LIMIT, $limit = Config::DEFAULT_OFFSET, $silentMode = false)
+    public function getUpdates($offset = Config::DEFAULT_OFFSET, $limit = Config::DEFAULT_LIMIT, $silentMode = false)
     {
         $method = (new GetUpdates())
             ->setOffset($offset)
             ->setLimit($limit)
-            ->setTimeout($this->timeout);
+            ->setTimeout($this->getConfigValue('timeout'));
 
-        return $this->executor->callRemoteMethod($method, $silentMode);
+        return $this->getProcessor()->callRemoteMethod($method, $silentMode);
     }
 
     /**
@@ -124,7 +98,7 @@ class Client
                 $offset = $response->getOffset();
             }
 
-            sleep($this->timeout);
+            sleep($this->getConfigValue('timeout'));
         }
     }
 
@@ -148,6 +122,6 @@ class Client
             return null;
         }
 
-        return $this->executor->getWebhookResponse($receivedData, $silentMode);
+        return $this->getProcessor()->getWebhookResponse($receivedData, $silentMode);
     }
 }

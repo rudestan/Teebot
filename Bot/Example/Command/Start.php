@@ -2,10 +2,10 @@
 
 namespace Teebot\Bot\Example\Command;
 
-use Teebot\Command\AbstractCommand;
-use Teebot\Method\SendMessage;
-use Teebot\Entity\ReplyKeyboardMarkup;
-use Teebot\Entity\KeyboardButton;
+use Teebot\Api\Command\AbstractCommand;
+use Teebot\Api\Method\SendMessage;
+use Teebot\Api\Entity\ReplyKeyboardMarkup;
+use Teebot\Api\Entity\KeyboardButton;
 
 class Start extends AbstractCommand
 {

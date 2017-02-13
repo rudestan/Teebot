@@ -2,10 +2,7 @@
 
 namespace Teebot\Bot\Example\EntityEvent;
 
-use Teebot\Command\AbstractEntityEvent;
-use Teebot\Method\SendMessage;
-use Teebot\Entity\MessageEntityArray;
-use Teebot\Entity\MessageEntity;
+use Teebot\Api\Command\AbstractEntityEvent;
 
 class EntityArray extends AbstractEntityEvent
 {
