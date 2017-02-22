@@ -19,7 +19,14 @@ use Teebot\Api\Method\AbstractMethod;
 
 abstract class AbstractEntityEvent
 {
-    /** @var AbstractEntity $entity */
+    /**
+     * @var Processor $processor
+     */
+    protected $processor;
+
+    /**
+     * @var AbstractEntity $entity
+     */
     protected $entity = null;
 
     /**
@@ -51,13 +58,29 @@ abstract class AbstractEntityEvent
     }
 
     /**
+     * @param Processor $processor
+     *
+     * @return AbstractEntityEvent
+     */
+    public function setProcessor(Processor $processor)
+    {
+        $this->processor = $processor;
+
+        return $this;
+    }
+
+    /**
      * Sets entity
      *
      * @param AbstractEntity $entity Entity object
+     *
+     * @return AbstractEntityEvent
      */
     public function setEntity(AbstractEntity $entity)
     {
         $this->entity = $entity;
+
+        return $this;
     }
 
     /**
@@ -65,7 +88,7 @@ abstract class AbstractEntityEvent
      *
      * @param string $text Message text
      *
-     * @return bool|\Teebot\Response
+     * @return bool|\Teebot\Api\Response
      */
     protected function sendMessage($text)
     {
@@ -80,7 +103,7 @@ abstract class AbstractEntityEvent
      *
      * @param AbstractMethod $sendMessage Object of the SendMessage method
      *
-     * @return bool|\Teebot\Response
+     * @return bool|\Teebot\Api\Response
      */
     protected function reply(AbstractMethod $sendMessage) {
         $chatId = $this->getChatId();
@@ -89,9 +112,8 @@ abstract class AbstractEntityEvent
             return false;
         }
 
-        return $sendMessage
-            ->setParent($this->entity)
-            ->setChatId($chatId)
-            ->trigger();
+        $sendMessage->setChatId($chatId);
+
+        return $this->processor->call($sendMessage, true, $this->entity);
     }
 }

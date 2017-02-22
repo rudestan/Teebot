@@ -83,18 +83,6 @@ abstract class AbstractMethod {
     }
 
     /**
-     * Triggers execution of the method
-     *
-     * @param bool $silentMode Execute method silently without processing the result
-     *
-     * @return \Teebot\Api\Response
-     */
-    public function trigger($silentMode = true)
-    {
-        return Processor::getInstance()->callRemoteMethod($this, $silentMode, $this->parent);
-    }
-
-    /**
      * Returns flag which idicates that method has attached data (audio, voice, video, photo etc.)
      *
      * @return bool

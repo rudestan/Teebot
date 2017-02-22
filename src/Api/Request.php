@@ -18,6 +18,20 @@ use Teebot\Api\Exception\Output;
 
 class Request
 {
+    /**
+     * @var HttpClient $client
+     */
+    protected $httpClient;
+
+    /**
+     * Request constructor.
+     *
+     * @param HttpClient $httpClient
+     */
+    public function __construct(HttpClient $httpClient)
+    {
+        $this->httpClient = $httpClient;
+    }
 
     /**
      * Executes the Request to Telegram's servers and returns Response object.
@@ -37,7 +51,6 @@ class Request
 
     protected function send(AbstractMethod $methodInstance)
     {
-        $client  = HttpClient::getInstance();
         $options = [
             'query' => $methodInstance->getPropertiesArray(),
         ];
@@ -48,7 +61,7 @@ class Request
             ];
         }
 
-        return $client->request($methodInstance->getName(), $options);
+        return $this->httpClient->request($methodInstance->getName(), $options);
     }
 
     /**

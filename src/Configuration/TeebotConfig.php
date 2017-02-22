@@ -61,6 +61,12 @@ class TeebotConfig implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('logger')
+                    ->children()
+                        ->scalarNode('filename')
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

@@ -8,8 +8,6 @@ use Teebot\Command\Listener\Start;
 use Teebot\Command\Listener\Webhook;
 use Teebot\Command\Listener\Test;
 
-define('ROOT', realpath(__DIR__ . '/../'));
-
 $app = new Application();
 $app->addCommands(
     [

@@ -4,40 +4,30 @@ namespace Teebot\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Teebot\Api\Traits\ConfigAware;
+use Teebot\Configuration\Service\AbstractContainer as ConfigContainer;
 
 class HttpClient
 {
-    use ConfigAware;
-
     const METHOD_GET = 'GET';
 
     const METHOD_POST = 'POST';
 
     /**
-     * @var HttpClient
+     * @var ConfigContainer $config
      */
-    protected static $instance;
+    protected $config;
 
     /**
      * @var Client
      */
     protected $client;
 
-    public static function getInstance()
+    public function __construct(ConfigContainer $config)
     {
-        if (static::$instance === null) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
-    }
-
-    public function init()
-    {
+        $this->config = $config;
         $this->client = new Client([
             'base_uri' => $this->getBaseUri(),
-            $this->getConfigValue('timeout')
+            $this->config->get('timeout')
         ]);
     }
 
@@ -45,9 +35,9 @@ class HttpClient
     {
         return sprintf(
             '%s/%s%s/',
-            $this->getConfigValue('url'),
-            $this->getConfigValue('bot_prefix'),
-            $this->getConfigValue('token')
+            $this->config->get('url'),
+            $this->config->get('bot_prefix'),
+            $this->config->get('token')
         );
     }
 
@@ -55,7 +45,7 @@ class HttpClient
     {
         $method = static::METHOD_POST;
 
-        if (!isset($requestOptions['multipart']) && $this->getConfigValue('method') == static::METHOD_GET) {
+        if (!isset($requestOptions['multipart']) && $this->config->get('method') == static::METHOD_GET) {
             $method = static::METHOD_GET;
         }
 

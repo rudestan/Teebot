@@ -16,33 +16,33 @@ use Teebot\Api\Entity\MessageEntity;
 use Teebot\Api\Entity\Update;
 use Teebot\Api\Exception\Notice;
 use Teebot\Api\Exception\Output;
+use Teebot\Api\HttpClient;
 use Teebot\Api\Method\AbstractMethod;
 use Teebot\Api\Request;
 use Teebot\Api\Entity\AbstractEntity;
 use Teebot\Api\Entity\Message;
 use Teebot\Api\Entity\MessageEntityArray;
 use Teebot\Api\Response;
-use Teebot\Api\Traits\ConfigAware as ConfigAwareTrait;
+use Teebot\Configuration\Service\AbstractContainer as ConfigContainer;
 
 class Processor
 {
-    use ConfigAwareTrait;
+    /** @var ConfigContainer $config */
+    protected $config;
 
-    /** @var Request $request */
-    protected $request;
+    /** @var HttpClient $httpClient */
+    protected $httpClient;
 
     /**
-     * @var Processor
+     * Processor constructor.
+     *
+     * @param ConfigContainer $config
+     * @param HttpClient      $httpClient
      */
-    protected static $instance;
-
-    public static function getInstance()
+    public function __construct(ConfigContainer $config, HttpClient $httpClient)
     {
-        if (static::$instance === null) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
+        $this->config     = $config;
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -193,7 +193,9 @@ class Processor
 
             $referencedEntity = $parent ? $parent : $entity;
 
-            $event->setEntity($referencedEntity);
+            $event
+                ->setProcessor($this)
+                ->setEntity($referencedEntity);
 
             return $event->run();
         }
@@ -210,7 +212,7 @@ class Processor
      */
     protected function getEventClass(AbstractEntity $entity)
     {
-        $preDefinedEvents = $this->getConfigValue('events');
+        $preDefinedEvents = $this->config->get('events');
         $entityEventType  = $entity->getEntityType();
 
         if (!is_array($preDefinedEvents)) {
@@ -260,9 +262,9 @@ class Processor
      *
      * @return Response
      */
-    public function callRemoteMethod(AbstractMethod $method, $silentMode = false, $parent = null)
+    public function call(AbstractMethod $method, $silentMode = false, $parent = null)
     {
-        $request  = new Request();
+        $request  = new Request($this->httpClient);
         $response = $request->exec($method, $parent);
 
         return $this->processResponse($response, $silentMode);

@@ -11,9 +11,9 @@
 
 namespace Teebot;
 
+use Teebot\Api\Logger\Logger;
 use Teebot\Api\Command\Processor;
 use Teebot\Api\HttpClient;
-use Teebot\Api\Traits\ConfigAware as ConfigAwareTrait;
 use Teebot\Configuration\Service\AbstractContainer as ConfigContainer;
 use Teebot\Configuration\TeebotConfig as Config;
 use Teebot\Api\Method\GetUpdates;
@@ -21,34 +21,35 @@ use Teebot\Api\Response;
 
 class Client
 {
-    use ConfigAwareTrait;
-
-    public function __construct(ConfigContainer $configContainer)
-    {
-        $this->setConfig($configContainer);
-        $this
-            ->getProcessor()
-            ->setConfig($configContainer);
-        $this
-            ->getHttpClient()
-            ->setConfig($configContainer)
-            ->init();
-    }
+    /**
+     * @var ConfigContainer
+     */
+    protected $config;
 
     /**
-     * @return Processor
+     * @var Processor $processor
      */
-    public function getProcessor()
+    protected $processor;
+
+    protected $logger;
+
+    public function __construct(ConfigContainer $config)
     {
-        return Processor::getInstance();
+        define('TEEBOT_ROOT', realpath(__DIR__ . '/../'));
+
+        $this->init($config);/*
+
+        $this
+            ->getLogger()
+            ->setConfig($config)
+            ->init();*/
     }
 
-    /**
-     * @return HttpClient
-     */
-    public function getHttpClient()
+    protected function init($config)
     {
-        return HttpClient::getInstance();
+        $this->config    = $config;
+        $httpClient      = new HttpClient($config);
+        $this->processor = new Processor($config, $httpClient);
     }
 
     /**
@@ -65,9 +66,9 @@ class Client
         $method = (new GetUpdates())
             ->setOffset($offset)
             ->setLimit($limit)
-            ->setTimeout($this->getConfigValue('timeout'));
+            ->setTimeout($this->config->get('timeout'));
 
-        return $this->getProcessor()->callRemoteMethod($method, $silentMode);
+        return $this->processor->call($method, $silentMode);
     }
 
     /**
@@ -98,7 +99,7 @@ class Client
                 $offset = $response->getOffset();
             }
 
-            sleep($this->getConfigValue('timeout'));
+            sleep($this->config->get('timeout'));
         }
     }
 
@@ -122,6 +123,6 @@ class Client
             return null;
         }
 
-        return $this->getProcessor()->getWebhookResponse($receivedData, $silentMode);
+        return $this->processor->getWebhookResponse($receivedData, $silentMode);
     }
 }
