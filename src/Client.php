@@ -31,25 +31,23 @@ class Client
      */
     protected $processor;
 
+    /**
+     * @var Logger
+     */
     protected $logger;
 
     public function __construct(ConfigContainer $config)
     {
         define('TEEBOT_ROOT', realpath(__DIR__ . '/../'));
 
-        $this->init($config);/*
-
-        $this
-            ->getLogger()
-            ->setConfig($config)
-            ->init();*/
+        $this->init($config);
     }
 
     protected function init($config)
     {
         $this->config    = $config;
-        $httpClient      = new HttpClient($config);
-        $this->processor = new Processor($config, $httpClient);
+        $this->processor = new Processor($config, new HttpClient($config));
+        $this->logger    = new Logger($config);
     }
 
     /**
@@ -93,10 +91,14 @@ class Client
         $offset = $this->flush();
 
         while (1) {
-            $response = $this->getUpdates($offset);
+            try {
+                $response = $this->getUpdates($offset);
 
-            if ($response instanceof Response) {
-                $offset = $response->getOffset();
+                if ($response instanceof Response) {
+                    $offset = $response->getOffset();
+                }
+            } catch (\Exception $e){
+                //$this->logger->
             }
 
             sleep($this->config->get('timeout'));

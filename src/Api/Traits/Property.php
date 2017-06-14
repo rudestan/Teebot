@@ -10,8 +10,7 @@
 
 namespace Teebot\Api\Traits;
 
-use Teebot\Api\Exception\Output;
-use Teebot\Api\Exception\Critical;
+use Teebot\Api\Exception\PropertyException;
 
 trait Property
 {
@@ -111,13 +110,7 @@ trait Property
         }
 
         if ($validate) {
-            try {
-                $this->validateProperties($properties);
-            } catch (Critical $e) {
-                Output::log($e);
-
-                $properties = [];
-            }
+            $this->validateProperties($properties);
         }
 
         return $properties;
@@ -143,13 +136,13 @@ trait Property
      *
      * @param array $properties An associative array of the properties
      *
-     * @throws Critical
+     * @throws PropertyException
      */
     protected function validateProperties($properties)
     {
         foreach ($this->supportedProperties as $propertyName => $isRequired) {
             if ($isRequired === true && empty($properties[$propertyName])) {
-                throw new Critical('Required property "'.$propertyName.'" is not set!');
+                throw new PropertyException('Required property "'.$propertyName.'" is not set!');
             }
         }
     }

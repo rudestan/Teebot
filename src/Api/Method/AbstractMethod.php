@@ -10,10 +10,7 @@
 
 namespace Teebot\Api\Method;
 
-use Teebot\Api\Command\Processor;
 use Teebot\Api\Entity\AbstractEntity;
-use Teebot\Api\Exception\Critical;
-use Teebot\Api\Exception\Output;
 use Teebot\Api\Traits\Property;
 use Teebot\Api\Entity\Inline\InlineKeyboardMarkup;
 use Teebot\Api\Entity\ReplyKeyboardMarkup;
@@ -119,19 +116,7 @@ abstract class AbstractMethod {
      */
     public function setReplyMarkup(AbstractEntity $markup)
     {
-        try {
-            $isValidMarkup = $this->isValidMarkup($markup);
-
-            if (!$isValidMarkup) {
-                throw new Critical("Markup is not supported!");
-            }
-        } catch (Critical $e) {
-            Output::log($e);
-
-            $markup = null;
-        }
-
-        $this->reply_markup = $markup;
+        $this->reply_markup = !$this->isValidMarkup($markup) ? null : $markup;
 
         return $this;
     }

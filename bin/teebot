@@ -6,14 +6,12 @@ require __DIR__ . '/../vendor/autoload.php';
 use Symfony\Component\Console\Application;
 use Teebot\Command\Listener\Start;
 use Teebot\Command\Listener\Webhook;
-use Teebot\Command\Listener\Test;
 
 $app = new Application();
 $app->addCommands(
     [
         new Start(),
         new Webhook(),
-        new Test()
     ]
 );
 $app->run();

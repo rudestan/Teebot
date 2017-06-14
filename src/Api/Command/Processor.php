@@ -14,8 +14,8 @@ namespace Teebot\Api\Command;
 use Teebot\Api\Entity\Error;
 use Teebot\Api\Entity\MessageEntity;
 use Teebot\Api\Entity\Update;
-use Teebot\Api\Exception\Notice;
-use Teebot\Api\Exception\Output;
+use Teebot\Api\Exception\ProcessEntitiesChainException;
+use Teebot\Api\Exception\ProcessEntitiesException;
 use Teebot\Api\HttpClient;
 use Teebot\Api\Method\AbstractMethod;
 use Teebot\Api\Request;
@@ -54,7 +54,7 @@ class Processor
      *
      * @return bool
      *
-     * @throws Notice
+     * @throws ProcessEntitiesException
      */
     public function processEntities(array $entities)
     {
@@ -63,13 +63,13 @@ class Processor
             $entitiesChain = $this->getEntitiesChain($entity);
 
             if (empty($entitiesChain)) {
-                throw new Notice("Unknown entity! Skipping.");
+                throw new ProcessEntitiesException("Unknown entity! Skipping.");
             }
 
             $result = $this->processEntitiesChain($entitiesChain);
 
             if ($result == false) {
-                throw new Notice("Failed to process the entity!");
+                throw new ProcessEntitiesException("Failed to process the entity!");
             }
         }
 
@@ -141,7 +141,7 @@ class Processor
      *
      * @param array $entitiesFlow Array of entities flow
      *
-     * @throws Notice
+     * @throws ProcessEntitiesChainException
      *
      * @return bool
      */
@@ -157,7 +157,7 @@ class Processor
                     return true;
                 }
             } catch (\Exception $e) {
-                Output::log($e);
+                throw new ProcessEntitiesChainException('Process entities chain error', 0, $e);
             }
         }
 

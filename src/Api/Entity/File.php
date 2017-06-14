@@ -2,9 +2,7 @@
 
 namespace Teebot\Api\Entity;
 
-use Teebot\Api\Command\Handler;
-use Teebot\Api\Exception\Critical;
-use Teebot\Api\Exception\Output;
+use Teebot\Api\Exception\EntityException;
 
 class File extends AbstractEntity
 {
@@ -76,33 +74,16 @@ class File extends AbstractEntity
         return $this;
     }
 
-    public function getFullPath()
-    {
-        if (!$this->file_path) {
-            return null;
-        }
-
-        $basePath = Handler::getInstance()
-            ->getConfig()
-            ->getFileBasePath();
-
-        if (!$basePath) {
-            return null;
-        }
-
-        return $basePath . $this->file_path;
-    }
-
     public function download($storePath)
     {
         if (file_exists($storePath) && !is_writable($storePath)) {
-            throw new Critical('File "' . $storePath . '" is already exist!"');
+            throw new EntityException('File "' . $storePath . '" is already exist!"');
         }
 
-        $filePath = $this->getFullPath();
+        $filePath = $this->getFilePath();
 
         if (!$filePath) {
-            throw new Critical('Unable to get download path to file!');
+            throw new EntityException('Unable to get path to file!');
         }
 
         try {
@@ -110,7 +91,7 @@ class File extends AbstractEntity
 
             file_put_contents($storePath, $contents);
         } catch (\Exception $e) {
-            Output::log(new Critical($e->getMessage()));
+            throw new EntityException($e->getMessage(), $e->getCode(), $e);
         }
 
         return is_readable($storePath);

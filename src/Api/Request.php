@@ -13,8 +13,6 @@ namespace Teebot\Api;
 
 use Teebot\Api\Entity\AbstractEntity;
 use Teebot\Api\Method\AbstractMethod;
-use Teebot\Api\Exception\Critical;
-use Teebot\Api\Exception\Output;
 
 class Request
 {
@@ -75,14 +73,6 @@ class Request
      */
     public function createResponseFromData($receivedData, $entityClass, $parent = null)
     {
-        $response = null;
-
-        try {
-            $response = new Response($receivedData, $entityClass, $parent);
-        } catch (Critical $e) {
-            Output::log($e);
-        }
-
-        return $response;
+        return new Response($receivedData, $entityClass, $parent);
     }
 }

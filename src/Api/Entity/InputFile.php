@@ -2,8 +2,7 @@
 
 namespace Teebot\Api\Entity;
 
-use Teebot\Api\Exception\Critical;
-use Teebot\Api\Exception\Output;
+use Teebot\Api\Exception\EntityException;
 
 class InputFile
 {
@@ -21,7 +20,7 @@ class InputFile
     protected function initFileForUpload()
     {
         if (!$this->isFileReadable($this->file)) {
-            throw new Critical('File "' . $this->file . '" is not readable or does not exist!');
+            throw new EntityException('File "' . $this->file . '" is not readable or does not exist!');
         }
         return fopen($this->file, 'r');
     }
@@ -44,12 +43,6 @@ class InputFile
             return $file;
         }
 
-        try {
-            $file = $this->initFileForUpload();
-        } catch (\Exception $e) {
-            Output::log($e);
-        }
-
-        return $file;
+        return $this->initFileForUpload();
     }
 }

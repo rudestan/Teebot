@@ -4,29 +4,24 @@ namespace Teebot\Api\Logger;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger as Monolog;
-use Teebot\Api\Traits\ConfigAware;
+use Teebot\Configuration\Service\AbstractContainer as ConfigContainer;
 
 class Logger
 {
-    protected static $instance;
+    /**
+     * @var ConfigContainer $config
+     */
+    protected $config;
 
     /**
-     * @var Logger
+     * @var Monolog
      */
     protected $logger;
 
-    public static function getInstance()
+    public function __construct(ConfigContainer $config)
     {
-        if (static::$instance === null) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
-    }
-
-    public function init()
-    {
-        $filename     = TEEBOT_ROOT . $this->getConfigValue('logger.filename');
+        $this->config = $config;
+        $filename     = TEEBOT_ROOT . $this->config->get('logger.filename');
         $this->logger = new Monolog('Teebot');
         $this->logger->pushHandler(
             new StreamHandler($filename, Monolog::WARNING)

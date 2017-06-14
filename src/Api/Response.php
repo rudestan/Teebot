@@ -11,11 +11,10 @@
 namespace Teebot\Api;
 
 use Teebot\Api\Entity\Update;
-use Teebot\Api\Exception\Fatal;
+use Teebot\Api\Exception\BuildEntityException;
+use Teebot\Api\Exception\DecodingDataException;
 use Teebot\Api\Entity\AbstractEntity;
 use Teebot\Api\Entity\Error;
-use Teebot\Api\Exception\Critical;
-use Teebot\Api\Exception\Output;
 
 class Response
 {
@@ -36,6 +35,8 @@ class Response
      * @param string              $rawData     Raw JSON string
      * @param null|string         $entityClass Entity class that should be instantiated with decoded JSON data
      * @param null|AbstractEntity $parent      Parent class should be set as parent for newly instantiated entity
+     *
+     * @throws DecodingDataException
      */
     public function __construct($rawData, $entityClass = null, $parent = null)
     {
@@ -43,7 +44,7 @@ class Response
         $this->decodedData = $this->decodeData($rawData);
 
         if (empty($this->decodedData)) {
-            Output::log(new Critical('Error decoding data!'));
+            throw new DecodingDataException('Error decoding data!');
         }
 
         $entityClass    = $this->isErrorReceived() ? Error::class : $entityClass;
@@ -113,17 +114,13 @@ class Response
                 continue;
             }
 
-            try {
-                $entity = $this->buildEntity($rawItemData, $entityClass);
+            $entity = $this->buildEntity($rawItemData, $entityClass);
 
-                if ($entity && $entity instanceof Update) {
-                    $this->lastUpdate = (int) $entity->getUpdateId();
-                }
-
-                $entities[] = $entity;
-            } catch (Fatal $e) {
-                Output::log($e);
+            if ($entity && $entity instanceof Update) {
+                $this->lastUpdate = (int) $entity->getUpdateId();
             }
+
+            $entities[] = $entity;
         }
 
         return $entities;
@@ -136,6 +133,8 @@ class Response
      * @param null|string $entityClass Entity class to instantiate, if not passed - default Entity class will be used.
      *
      * @return AbstractEntity
+     *
+     * @throws BuildEntityException
      */
     protected function buildEntity(array $rawItemData, $entityClass = null)
     {
@@ -143,8 +142,9 @@ class Response
         $entity      = null;
 
         if (!class_exists($entityClass)) {
-            Output::log(new Critical('Entity "' . $entityClass . '" does not exists or not supported yet!'));
+            throw new BuildEntityException('Entity "' . $entityClass . '" does not exists or not supported yet!');
         }
+
         /** @var AbstractEntity $entity */
         $entity = new $entityClass($rawItemData);
         $entity->setParent($this->parent);
