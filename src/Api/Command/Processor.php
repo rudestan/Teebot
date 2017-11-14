@@ -288,7 +288,8 @@ class Processor
      */
     public function getWebhookResponse($data, $silentMode = false)
     {
-        $response = new Response($data, Update::class);
+        //$response = new Response($data, Update::class);
+        $response = new Response($data);
 
         return $this->processResponse($response, $silentMode);
     }

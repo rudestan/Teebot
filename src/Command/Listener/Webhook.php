@@ -6,8 +6,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Teebot\Client;
+use Teebot\Command\AbstractCommand;
 
-class Webhook extends AbstractListener
+class Webhook extends AbstractCommand
 {
     public function configure()
     {
@@ -27,6 +28,9 @@ class Webhook extends AbstractListener
         parent::execute($input, $output);
 
         $client = new Client($this->config);
-        $client->webhook();
+
+        $data = '{"ok":true,"result":[{"message":{"text":"/me","entities":[{"offset":0,"length":3,"type":"bot_command"}]}}]}';
+
+        $client->webhook($data);
     }
 }

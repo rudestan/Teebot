@@ -6,8 +6,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Teebot\Client;
+use Teebot\Command\AbstractCommand;
 
-class Start extends AbstractListener
+class Start extends AbstractCommand
 {
     public function configure()
     {

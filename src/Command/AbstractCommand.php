@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Command\Listener;
+namespace Teebot\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -9,7 +9,7 @@ use Symfony\Component\Console\Exception\RuntimeException;
 use Teebot\Configuration\TeebotContainer;
 use Teebot\Configuration\TeebotLoader as ConfigLoader;
 
-class AbstractListener extends Command
+class AbstractCommand extends Command
 {
     /**
      * @var string $path Bot path
@@ -40,7 +40,5 @@ class AbstractListener extends Command
         $path = $input->getArgument('path');
 
         $this->init($path);
-
-
     }
 }
