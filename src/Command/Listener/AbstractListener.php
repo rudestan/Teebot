@@ -25,13 +25,13 @@ class AbstractListener extends Command
 
     protected function init($path)
     {
-        $path = realpath($path);
+        $rPath = realpath($path);
 
-        if (!is_dir($path) || !is_readable($path)) {
-            throw new RuntimeException('Bot directory with such name does not exist or not readable.');
+        if (!is_dir($rPath) || !is_readable($rPath)) {
+            throw new RuntimeException(sprintf('Bot directory with absolute path "%s" does not exist or not readable.', $path));
         }
 
-        $configLoader = new ConfigLoader($path);
+        $configLoader = new ConfigLoader($rPath);
         $this->config = $configLoader->load();
     }
 

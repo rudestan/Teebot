@@ -16,23 +16,9 @@ abstract class AbstractContainer
 
     protected static $instance = null;
 
-    /**
-     * @return static
-     */
-    public static function getInstance()
-    {
-        if (static::$instance === null) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
-    }
-
-    public function initWithConfig(array $config)
+    public function __construct(array $config)
     {
         $this->values = $this->applyEnvParamsRecursively($config);
-
-        return $this;
     }
 
     protected function applyEnvParamsRecursively(array $data)

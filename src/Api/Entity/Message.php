@@ -4,7 +4,9 @@ namespace Teebot\Api\Entity;
 
 class Message extends AbstractEntity
 {
-    const ENTITY_TYPE             = 'Message';
+    const ENTITY_TYPE = 'Message';
+
+    const MESSAGE_TYPE_REGEXP_COMMAND = 'RegexpCommand';
 
     protected $messageType = self::ENTITY_TYPE;
 
@@ -379,5 +381,10 @@ class Message extends AbstractEntity
         }
 
         return $messageTypeEntity;
+    }
+
+    public function hasBuiltinRegexpCommand($pattern)
+    {
+        return (bool) preg_match($pattern, $this->getText());
     }
 }

@@ -11,5 +11,9 @@ teebot:
             command: 'Me'
             type: 'Command'
             class: Teebot\Bot\Example\Command\Me
+        -
+            command: '~boo~'
+            type: 'RegexpCommand'
+            class: Teebot\Bot\Example\Command\Boo
     logger:
         filename: 'Bot/Example/logs/log.txt'

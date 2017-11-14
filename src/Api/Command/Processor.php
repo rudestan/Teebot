@@ -139,16 +139,15 @@ class Processor
     /**
      * Processes generated entities chain, if triggered event returns false stops processing
      *
-     * @param array $entitiesFlow Array of entities flow
+     * @param array $entitiesChain Array of entities
      *
      * @throws ProcessEntitiesChainException
      *
      * @return bool
      */
-    protected function processEntitiesChain(array $entitiesFlow)
+    protected function processEntitiesChain(array $entitiesChain)
     {
-        foreach ($entitiesFlow as $entityData) {
-
+        foreach ($entitiesChain as $entityData) {
             try {
                 $parent   = isset($entityData['parent']) ? $entityData['parent'] : null;
                 $continue = $this->triggerEventForEntity($entityData['entity'], $parent);
@@ -187,7 +186,7 @@ class Processor
             }
 
             /** @var AbstractCommand $eventClass */
-            if ($event instanceof AbstractCommand && $entity instanceof MessageEntity && $entity->isCommand()) {
+            if ($event instanceof AbstractCommand && $entity instanceof MessageEntity && $entity->isNativeCommand()) {
                 $event->setArgs($entity->getArgs());
             }
 
@@ -220,19 +219,26 @@ class Processor
         }
 
         foreach ($preDefinedEvents as $preDefinedEvent) {
+            $className = null;
+
+            if ($preDefinedEvent['type'] == Message::MESSAGE_TYPE_REGEXP_COMMAND) {
+                if ($entity instanceof Message && $entity->hasBuiltinRegexpCommand($preDefinedEvent['command'])) {
+                    $className = $preDefinedEvent['class'];
+                }
+            }
 
             if ($preDefinedEvent['type'] == $entityEventType) {
                 $className = $preDefinedEvent['class'];
 
-                if ($entity instanceof MessageEntity && $entity->isCommand()) {
+                if ($entity instanceof MessageEntity && $entity->isNativeCommand()) {
                     if (!$this->isCommandSupported($preDefinedEvent, $entity->getCommand())) {
                         continue;
                     }
                 }
+            }
 
-                if (class_exists($className)) {
-                    return $className;
-                }
+            if ($className && class_exists($className)) {
+                return $className;
             }
         }
 

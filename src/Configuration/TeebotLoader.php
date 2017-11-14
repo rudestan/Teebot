@@ -13,8 +13,6 @@ class TeebotLoader extends AbstractLoader
 
     protected function initContainer($config)
     {
-        $container = TeebotContainer::getInstance();
-
-        return $container->initWithConfig($config);
+        return new TeebotContainer($config);
     }
 }

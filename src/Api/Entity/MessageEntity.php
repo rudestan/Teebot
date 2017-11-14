@@ -77,7 +77,7 @@ class MessageEntity extends AbstractEntity
         return $type;
     }
 
-    public function isCommand()
+    public function isNativeCommand()
     {
         return $this->type === self::TYPE_BOT_COMMAND;
     }
@@ -89,7 +89,7 @@ class MessageEntity extends AbstractEntity
 
     protected function parseSource()
     {
-        if ($this->isCommand()) {
+        if ($this->isNativeCommand()) {
             $args = mb_substr($this->source, $this->offset, $this->offset + $this->length, 'UTF-8');
 
             if (preg_match('/([^\/]+)/', $args, $matches)) {
@@ -142,7 +142,7 @@ class MessageEntity extends AbstractEntity
 
     public function getCommand()
     {
-        if (!$this->isCommand()) {
+        if (!$this->isNativeCommand()) {
             return null;
         }
 
