@@ -19,7 +19,8 @@
     "symfony/config": "^3.2",
     "guzzlehttp/guzzle": "^6.2",
     "monolog/monolog": "^1.22",
-    "symfony/dependency-injection": "^3.2"
+    "symfony/dependency-injection": "^3.2",
+    "symfony/yaml": "^3.3"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.4"

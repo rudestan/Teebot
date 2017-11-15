@@ -7,7 +7,7 @@ use Teebot\Command\Listener\Webhook;
 use Teebot\Command\Emulator\Message;
 
 $autoloadFiles = [
-        __DIR__ . '/../vendor/autoload.php',
+        __DIR__ . '/../autoload.php',
         __DIR__ . '/../../../autoload.php',
 ];
 
