@@ -1,12 +1,21 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
-
 use Symfony\Component\Console\Application;
 use Teebot\Command\Listener\Start;
 use Teebot\Command\Listener\Webhook;
 use Teebot\Command\Emulator\Message;
+
+$autoloadFiles = [
+        __DIR__ . '/../vendor/autoload.php',
+        __DIR__ . '/../../../autoload.php',
+];
+
+foreach ($autoloadFiles as $autoloadFile) {
+    if (file_exists($autoloadFile)) {
+        require_once $autoloadFile;
+    }
+}
 
 $app = new Application();
 $app->addCommands(
