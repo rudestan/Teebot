@@ -12,7 +12,7 @@ namespace Teebot\Api\Entity;
 
 use Teebot\Api\Traits\Property;
 
-abstract class AbstractEntity
+abstract class AbstractEntity implements EntityInterface
 {
     use Property;
 
@@ -23,26 +23,6 @@ abstract class AbstractEntity
     protected $builtInEntities = [];
 
     protected $supportedProperties = [];
-
-    /**
-     * Returns parent entity
-     *
-     * @return AbstractEntity
-     */
-    public function getParent()
-    {
-        return $this->parent;
-    }
-
-    /**
-     * Sets parent entity
-     *
-     * @param AbstractEntity $parent Parent entity
-     */
-    public function setParent(AbstractEntity $parent = null)
-    {
-        $this->parent = $parent;
-    }
 
     /**
      * Constructs extended entity's class and sets properties from array if passed.
@@ -67,6 +47,26 @@ abstract class AbstractEntity
     public function getEntityType()
     {
         return static::ENTITY_TYPE;
+    }
+
+    /**
+     * Sets parent entity
+     *
+     * @param EntityInterface $parent Parent entity
+     */
+    public function setParent(EntityInterface $parent = null)
+    {
+        $this->parent = $parent;
+    }
+
+    /**
+     * Returns parent entity
+     *
+     * @return AbstractEntity
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     /**

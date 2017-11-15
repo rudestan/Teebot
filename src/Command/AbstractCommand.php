@@ -6,8 +6,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Exception\RuntimeException;
-use Teebot\Configuration\TeebotContainer;
-use Teebot\Configuration\TeebotLoader as ConfigLoader;
+use Teebot\Configuration\Container;
+use Teebot\Configuration\Loader as ConfigLoader;
 
 class AbstractCommand extends Command
 {
@@ -19,7 +19,7 @@ class AbstractCommand extends Command
     protected $client;
 
     /**
-     * @var TeebotContainer
+     * @var Container
      */
     protected $config;
 

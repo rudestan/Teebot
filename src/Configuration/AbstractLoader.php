@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Configuration\Service;
+namespace Teebot\Configuration;
 
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Exception\FileLoaderLoadException;

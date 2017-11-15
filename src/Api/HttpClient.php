@@ -4,7 +4,7 @@ namespace Teebot\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Teebot\Configuration\Service\AbstractContainer as ConfigContainer;
+use Teebot\Configuration\AbstractContainer as ConfigContainer;
 
 class HttpClient
 {

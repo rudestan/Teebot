@@ -5,7 +5,7 @@ namespace Teebot\Configuration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class TeebotConfig implements ConfigurationInterface
+class Config implements ConfigurationInterface
 {
     const DEFAULT_NAME = 'Teebot_test';
 
@@ -58,6 +58,10 @@ class TeebotConfig implements ConfigurationInterface
                             ->scalarNode('command')->end()
                             ->scalarNode('type')->end()
                             ->scalarNode('class')->end()
+                            ->arrayNode('params')
+                                ->useAttributeAsKey('key')
+                                ->prototype('scalar')->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()

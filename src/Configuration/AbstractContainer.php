@@ -1,6 +1,6 @@
 <?php
 
-namespace Teebot\Configuration\Service;
+namespace Teebot\Configuration;
 
 use \RecursiveArrayIterator;
 use \RecursiveIteratorIterator;

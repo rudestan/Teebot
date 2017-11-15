@@ -4,7 +4,7 @@ namespace Teebot\Api\Logger;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger as Monolog;
-use Teebot\Configuration\Service\AbstractContainer as ConfigContainer;
+use Teebot\Configuration\AbstractContainer as ConfigContainer;
 
 class Logger
 {
@@ -26,6 +26,11 @@ class Logger
         $this->logger->pushHandler(
             new StreamHandler($filename, Monolog::WARNING)
         );
+    }
+
+    public function exception(\Exception $exception)
+    {
+        $this->logger->warning($exception->getMessage());
     }
 
     public function warning($msg)

@@ -2,8 +2,6 @@
 
 namespace Teebot\Api\Entity;
 
-use Teebot\Api\Entity\MessageEntity;
-
 class MessageEntityArray extends AbstractEntity
 {
     const ENTITY_TYPE      = 'MessageEntityArray';

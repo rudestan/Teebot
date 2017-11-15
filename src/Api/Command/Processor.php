@@ -11,19 +11,20 @@
 
 namespace Teebot\Api\Command;
 
+use Teebot\Api\Entity\AbstractEntity;
 use Teebot\Api\Entity\Error;
+use Teebot\Api\Entity\Message;
 use Teebot\Api\Entity\MessageEntity;
+use Teebot\Api\Entity\MessageEntityArray;
 use Teebot\Api\Entity\Update;
 use Teebot\Api\Exception\ProcessEntitiesChainException;
 use Teebot\Api\Exception\ProcessEntitiesException;
 use Teebot\Api\HttpClient;
 use Teebot\Api\Method\AbstractMethod;
 use Teebot\Api\Request;
-use Teebot\Api\Entity\AbstractEntity;
-use Teebot\Api\Entity\Message;
-use Teebot\Api\Entity\MessageEntityArray;
 use Teebot\Api\Response;
-use Teebot\Configuration\Service\AbstractContainer as ConfigContainer;
+use Teebot\Configuration\AbstractContainer as ConfigContainer;
+use Teebot\Configuration\ValueObject\EventConfig;
 
 class Processor
 {
@@ -98,7 +99,7 @@ class Processor
     {
         if ($entity instanceof Error) {
             return [
-                ['entity' => $entity]
+                ['entity' => $entity],
             ];
         }
         if (!$entity instanceof Update) {
@@ -118,7 +119,7 @@ class Processor
 
             $events[] = [
                 'entity' => $messageTypeEntity,
-                'parent' => $updateTypeEntity
+                'parent' => $updateTypeEntity,
             ];
 
             if ($messageTypeEntity instanceof MessageEntityArray) {
@@ -127,7 +128,7 @@ class Processor
                 foreach ($entities as $entity) {
                     $events[] = [
                         'entity' => $entity,
-                        'parent' => $updateTypeEntity
+                        'parent' => $updateTypeEntity,
                     ];
                 }
             }
@@ -176,7 +177,13 @@ class Processor
      */
     protected function triggerEventForEntity(AbstractEntity $entity, AbstractEntity $parent = null)
     {
-        $eventClass = $this->getEventClass($entity);
+        $eventConfiguration = $this->getEventConfiguration($entity);
+
+        if ($eventConfiguration === null) {
+            return true;
+        }
+
+        $eventClass = $eventConfiguration->getClass();
 
         if (class_exists($eventClass)) {
             $event = new $eventClass();
@@ -194,6 +201,7 @@ class Processor
 
             $event
                 ->setProcessor($this)
+                ->setParams($eventConfiguration->getParams())
                 ->setEntity($referencedEntity);
 
             return $event->run();
@@ -203,13 +211,13 @@ class Processor
     }
 
     /**
-     * Returns mapped event class from the configuration (if it was previously defined)
+     * Returns event configuration item search by the data from entity
      *
      * @param AbstractEntity $entity    Entity for which the corresponding event should be triggered
      *                                  be treated as a command
-     * @return null|string
+     * @return null|EventConfig
      */
-    protected function getEventClass(AbstractEntity $entity)
+    protected function getEventConfiguration(AbstractEntity $entity)
     {
         $preDefinedEvents = $this->config->get('events');
         $entityEventType  = $entity->getEntityType();
@@ -218,27 +226,28 @@ class Processor
             return null;
         }
 
+        /** @var EventConfig $preDefinedEvent */
         foreach ($preDefinedEvents as $preDefinedEvent) {
             $className = null;
 
-            if ($preDefinedEvent['type'] == Message::MESSAGE_TYPE_REGEXP_COMMAND) {
-                if ($entity instanceof Message && $entity->hasBuiltinRegexpCommand($preDefinedEvent['command'])) {
-                    $className = $preDefinedEvent['class'];
+            if ($preDefinedEvent->getType() == Message::MESSAGE_TYPE_REGEXP_COMMAND) {
+                if ($entity instanceof Message && $entity->hasBuiltinRegexpCommand($preDefinedEvent->getCommand())) {
+                    $className = $preDefinedEvent->getClass();
                 }
             }
 
-            if ($preDefinedEvent['type'] == $entityEventType) {
-                $className = $preDefinedEvent['class'];
+            if ($preDefinedEvent->getType() == $entityEventType) {
+                $className = $preDefinedEvent->getClass();
 
                 if ($entity instanceof MessageEntity && $entity->isNativeCommand()) {
-                    if (!$this->isCommandSupported($preDefinedEvent, $entity->getCommand())) {
+                    if (!$this->isCommandSupported($preDefinedEvent->getCommand(), $entity->getCommand())) {
                         continue;
                     }
                 }
             }
 
             if ($className && class_exists($className)) {
-                return $className;
+                return $preDefinedEvent;
             }
         }
 
@@ -248,14 +257,14 @@ class Processor
     /**
      * Checks whether command is defined in config and matches the current one
      *
-     * @param array  $preDefinedEvent Pre defined event data
-     * @param string $command         Command name
+     * @param string|null $preDefinedCommand Pre command
+     * @param string      $command           Command name
      *
      * @return bool
      */
-    protected function isCommandSupported($preDefinedEvent, $command)
+    protected function isCommandSupported($preDefinedCommand, $command)
     {
-        return isset($preDefinedEvent['command']) && strtolower($preDefinedEvent['command']) == strtolower($command);
+        return $preDefinedCommand !== null && strtolower($preDefinedCommand) == strtolower($command);
     }
 
     /**
@@ -288,8 +297,7 @@ class Processor
      */
     public function getWebhookResponse($data, $silentMode = false)
     {
-        //$response = new Response($data, Update::class);
-        $response = new Response($data);
+        $response = new Response($data, Update::class);
 
         return $this->processResponse($response, $silentMode);
     }

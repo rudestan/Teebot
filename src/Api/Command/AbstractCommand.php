@@ -12,7 +12,7 @@
 
 namespace Teebot\Api\Command;
 
-abstract class AbstractCommand extends AbstractEntityEvent
+abstract class AbstractCommand extends AbstractEntityEvent implements EventInterface
 {
     protected $args = '';
 

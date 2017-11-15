@@ -14,8 +14,8 @@ namespace Teebot;
 use Teebot\Api\Logger\Logger;
 use Teebot\Api\Command\Processor;
 use Teebot\Api\HttpClient;
-use Teebot\Configuration\Service\AbstractContainer as ConfigContainer;
-use Teebot\Configuration\TeebotConfig as Config;
+use Teebot\Configuration\AbstractContainer as ConfigContainer;
+use Teebot\Configuration\Config;
 use Teebot\Api\Method\GetUpdates;
 use Teebot\Api\Response;
 
@@ -98,7 +98,7 @@ class Client
                     $offset = $response->getOffset();
                 }
             } catch (\Exception $e){
-                //$this->logger->
+                $this->logger->exception($e);
             }
 
             sleep($this->config->get('timeout'));

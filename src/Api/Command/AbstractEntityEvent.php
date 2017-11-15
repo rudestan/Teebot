@@ -12,12 +12,11 @@
 
 namespace Teebot\Api\Command;
 
+use Teebot\Api\Entity\EntityInterface;
 use Teebot\Api\Method\SendMessage;
 use Teebot\Api\Entity\Message;
-use Teebot\Api\Entity\AbstractEntity;
-use Teebot\Api\Method\AbstractMethod;
 
-abstract class AbstractEntityEvent
+abstract class AbstractEntityEvent implements EventInterface
 {
     /**
      * @var Processor $processor
@@ -25,7 +24,12 @@ abstract class AbstractEntityEvent
     protected $processor;
 
     /**
-     * @var AbstractEntity $entity
+     * @var array
+     */
+    protected $params;
+
+    /**
+     * @var EntityInterface $entity
      */
     protected $entity = null;
 
@@ -36,6 +40,20 @@ abstract class AbstractEntityEvent
      * @return null|bool
      */
     abstract public function run();
+
+    /**
+     * Sets configuration parameters
+     *
+     * @param array $params
+     *
+     * @return $this
+     */
+    public function setParams(array $params)
+    {
+        $this->params = $params;
+
+        return $this;
+    }
 
     /**
      * Returns chat id if the type of calling entity or it's parent is Message
@@ -60,7 +78,7 @@ abstract class AbstractEntityEvent
     /**
      * @param Processor $processor
      *
-     * @return AbstractEntityEvent
+     * @return $this
      */
     public function setProcessor(Processor $processor)
     {
@@ -72,11 +90,11 @@ abstract class AbstractEntityEvent
     /**
      * Sets entity
      *
-     * @param AbstractEntity $entity Entity object
+     * @param EntityInterface $entity Entity object
      *
-     * @return AbstractEntityEvent
+     * @return $this
      */
-    public function setEntity(AbstractEntity $entity)
+    public function setEntity(EntityInterface $entity)
     {
         $this->entity = $entity;
 
@@ -101,11 +119,11 @@ abstract class AbstractEntityEvent
     /**
      * Replies on the message
      *
-     * @param AbstractMethod $sendMessage Object of the SendMessage method
+     * @param SendMessage $sendMessage Object of the SendMessage method
      *
      * @return bool|\Teebot\Api\Response
      */
-    protected function reply(AbstractMethod $sendMessage) {
+    protected function reply(SendMessage $sendMessage) {
         $chatId = $this->getChatId();
 
         if ((int) $chatId == 0) {
