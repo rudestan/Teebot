@@ -11,7 +11,7 @@
 
 namespace Teebot\Api\Command;
 
-use Teebot\Api\Entity\AbstractEntity;
+use Teebot\Api\Entity\EntityInterface;
 use Teebot\Api\Entity\Error;
 use Teebot\Api\Entity\Message;
 use Teebot\Api\Entity\MessageEntity;
@@ -170,12 +170,12 @@ class Processor
      * will not be triggered otherwise process will continue until either first false returned or the very
      * last event in the flow.
      *
-     * @param AbstractEntity $entity    Entity for which the corresponding event should be triggered
-     * @param AbstractEntity $parent    Entity's parent if any
+     * @param EntityInterface $entity Entity for which the corresponding event should be triggered
+     * @param EntityInterface $parent Entity's parent if any
      *
      * @return bool
      */
-    protected function triggerEventForEntity(AbstractEntity $entity, AbstractEntity $parent = null)
+    protected function triggerEventForEntity(EntityInterface $entity, EntityInterface $parent = null)
     {
         $eventConfiguration = $this->getEventConfiguration($entity);
 
@@ -188,12 +188,12 @@ class Processor
         if (class_exists($eventClass)) {
             $event = new $eventClass();
 
-            if (!$event instanceof AbstractEntityEvent && !$event instanceof AbstractCommand) {
+            if (!$event instanceof EventInterface && !$event instanceof CommandInterface) {
                 return true;
             }
 
             /** @var AbstractCommand $eventClass */
-            if ($event instanceof AbstractCommand && $entity instanceof MessageEntity && $entity->isNativeCommand()) {
+            if ($event instanceof CommandInterface && $entity instanceof MessageEntity && $entity->isNativeCommand()) {
                 $event->setArgs($entity->getArgs());
             }
 
@@ -213,11 +213,12 @@ class Processor
     /**
      * Returns event configuration item search by the data from entity
      *
-     * @param AbstractEntity $entity    Entity for which the corresponding event should be triggered
+     * @param EntityInterface $entity   Entity for which the corresponding event should be triggered
      *                                  be treated as a command
+     *
      * @return null|EventConfig
      */
-    protected function getEventConfiguration(AbstractEntity $entity)
+    protected function getEventConfiguration(EntityInterface $entity)
     {
         $preDefinedEvents = $this->config->get('events');
         $entityEventType  = $entity->getEntityType();
@@ -269,11 +270,11 @@ class Processor
 
     /**
      * Executes remote method and returns response object
-     * 
-     * @param AbstractMethod $method     Method instance
-     * @param bool           $silentMode If set to true then the events, mapped (in config or by default)
-     *                                   to the entities in the result will not be triggered
-     * @param AbstractEntity $parent     Parent entity (if any)
+     *
+     * @param AbstractMethod  $method     Method instance
+     * @param bool            $silentMode If set to true then the events, mapped (in config or by default)
+     *                                    to the entities in the result will not be triggered
+     * @param EntityInterface $parent     Parent entity (if any)
      *
      * @return Response
      */

@@ -12,19 +12,9 @@
 
 namespace Teebot\Api\Command;
 
-abstract class AbstractCommand extends AbstractEntityEvent implements EventInterface
+abstract class AbstractCommand extends AbstractEntityEvent implements CommandInterface
 {
     protected $args = '';
-
-    /**
-     * Returns arguments string for the command
-     *
-     * @return string
-     */
-    public function getArgs()
-    {
-        return $this->args;
-    }
 
     /**
      * Sets argument string for the command
@@ -34,5 +24,15 @@ abstract class AbstractCommand extends AbstractEntityEvent implements EventInter
     public function setArgs($args)
     {
         $this->args = $args;
+    }
+
+    /**
+     * Returns arguments string for the command
+     *
+     * @return string
+     */
+    public function getArgs()
+    {
+        return $this->args;
     }
 }

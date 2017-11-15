@@ -4,10 +4,10 @@ namespace Teebot\Bot\Example\Command;
 
 use Teebot\Api\Command\AbstractCommand;
 
-class Boo extends AbstractCommand
+class Foo extends AbstractCommand
 {
     public function run()
     {
-        echo 'YAY!!!';
+        echo 'Foo triggered!';
     }
 }
