@@ -5,3 +5,4 @@ Bot/*
 Bot/Example/config.php
 build
 .env
+.composer.lock
