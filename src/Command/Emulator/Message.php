@@ -24,18 +24,10 @@ class Message extends AbstractCommand
                 InputArgument::REQUIRED,
                 'Path to bot directory'
             )
-            ->addOption(
+            ->addArgument(
                 'message',
-                'm',
-                InputOption::VALUE_OPTIONAL,
+                InputArgument::REQUIRED,
                 'Message text'
-            )
-            ->addOption(
-                'raw',
-                'r',
-                InputOption::VALUE_OPTIONAL,
-                'Flag that indicates whether provided message is a JSON string',
-                false
             );
     }
 
@@ -43,17 +35,14 @@ class Message extends AbstractCommand
     {
         parent::execute($input, $output);
 
-        $client  = new Client($this->config);
-        $message = $input->getOption('message');
-
-        if ($input->getOption('raw') == false) {
-            $message = $this->getMessage($message);
-        }
+        $client      = new Client($this->config);
+        $messageText = $input->getArgument('message');
+        $message     = $this->buildMessage($messageText);
 
         $client->webhook($message);
     }
 
-    protected function getMessage($messageText)
+    protected function buildMessage($messageText)
     {
         $entity         = new stdClass();
         $entity->offset = 0;

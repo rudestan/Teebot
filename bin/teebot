@@ -5,8 +5,10 @@ use Symfony\Component\Console\Application;
 use Teebot\Command\Listener\Start;
 use Teebot\Command\Listener\Webhook;
 use Teebot\Command\Emulator\Message;
+use Teebot\Command\Emulator\Response;
 
 $autoloadFiles = [
+        __DIR__ . '/../vendor/autoload.php',
         __DIR__ . '/../autoload.php',
         __DIR__ . '/../../../autoload.php',
 ];
@@ -23,6 +25,7 @@ $app->addCommands(
         new Start(),
         new Webhook(),
         new Message(),
+        new Response(),
     ]
 );
 $app->run();
