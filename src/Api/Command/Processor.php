@@ -47,6 +47,16 @@ class Processor
     }
 
     /**
+     * Returns configuration container
+     *
+     * @return ConfigContainer
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * Processes array of entities from response object, root entities must be either update entity
      * or error entity in case of error response from Telegram's API.
      *
