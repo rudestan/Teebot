@@ -27,6 +27,9 @@ class Start extends AbstractCommand
     {
         parent::execute($input, $output);
 
+        $botName = $this->config->get('name');
+        $output->writeln(sprintf('<fg=green;options=bold>%s</> <fg=yellow>started at %s</>', $botName, date('H:i, d.m.Y')));
+
         $client = new Client($this->config);
         $client->listen();
     }

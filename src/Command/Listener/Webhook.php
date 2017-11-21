@@ -28,9 +28,6 @@ class Webhook extends AbstractCommand
         parent::execute($input, $output);
 
         $client = new Client($this->config);
-
-        $data = '{"ok":true,"result":[{"message":{"text":"/me","entities":[{"offset":0,"length":3,"type":"bot_command"}]}}]}';
-
-        $client->webhook($data);
+        $client->webhook();
     }
 }
