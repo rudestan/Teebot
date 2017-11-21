@@ -90,11 +90,9 @@ class MessageEntity extends AbstractEntity
     protected function parseSource()
     {
         if ($this->isNativeCommand()) {
-            $args = mb_substr($this->source, $this->offset, $this->offset + $this->length, 'UTF-8');
-
-            if (preg_match('/([^\/]+)/', $args, $matches)) {
-                $this->args = trim($matches[1]);
-            }
+            $start      = $this->offset + $this->length;
+            $length     = mb_strlen($this->source, 'UTF-8');
+            $this->args = trim(mb_substr($this->source, $start, $length, 'UTF-8'));
         }
 
         $this->source = mb_substr($this->source, $this->offset, $this->length, 'UTF-8');
