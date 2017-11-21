@@ -3,7 +3,7 @@
 namespace Teebot\Api\Entity;
 
 use Teebot\Api\Entity\Inline\InlineQuery;
-use Teebot\Api\Entity\Inline\ChosenInlineResult;
+use Teebot\Api\Entity\Inline\Result\ChosenInlineResult;
 
 class Update extends AbstractEntity
 {
@@ -14,6 +14,8 @@ class Update extends AbstractEntity
     protected $update_id;
 
     protected $message;
+
+    protected $edited = false;
 
     protected $inline_query;
 
@@ -56,6 +58,31 @@ class Update extends AbstractEntity
     {
         $this->message = $message;
         $this->setUpdateType($message);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEdited()
+    {
+        return $this->edited;
+    }
+
+    /**
+     * @param bool $edited
+     */
+    public function setEdited($edited)
+    {
+        $this->edited = $edited;
+    }
+
+    /**
+     * @param mixed $message
+     */
+    public function setEditedMessage($message)
+    {
+        $this->setMessage($message);
+        $this->setEdited(true);
     }
 
     /**
