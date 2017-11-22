@@ -288,7 +288,7 @@ class Processor
      *
      * @return Response
      */
-    public function call(AbstractMethod $method, $silentMode = false, $parent = null)
+    public function call(AbstractMethod $method, $silentMode = false, EntityInterface $parent = null)
     {
         $request  = new Request($this->httpClient);
         $response = $request->exec($method, $parent);

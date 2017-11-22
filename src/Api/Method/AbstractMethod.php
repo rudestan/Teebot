@@ -11,13 +11,14 @@
 namespace Teebot\Api\Method;
 
 use Teebot\Api\Entity\AbstractEntity;
+use Teebot\Api\Entity\EntityInterface;
 use Teebot\Api\Traits\Property;
 use Teebot\Api\Entity\Inline\InlineKeyboardMarkup;
 use Teebot\Api\Entity\ReplyKeyboardMarkup;
 use Teebot\Api\Entity\ReplyKeyboardHide;
 use Teebot\Api\Entity\ForceReply;
 
-abstract class AbstractMethod {
+abstract class AbstractMethod implements MethodInterface {
 
     use Property;
 
@@ -80,7 +81,7 @@ abstract class AbstractMethod {
     }
 
     /**
-     * Returns flag which idicates that method has attached data (audio, voice, video, photo etc.)
+     * Returns flag which indicates that method has attached data (audio, voice, video, photo etc.)
      *
      * @return bool
      */
@@ -92,11 +93,11 @@ abstract class AbstractMethod {
     /**
      * Checks that passed markup is currently supported
      *
-     * @param AbstractEntity $markup Markup class instance
+     * @param EntityInterface $markup Markup class instance
      *
      * @return bool
      */
-    protected function isValidMarkup(AbstractEntity $markup)
+    protected function isValidMarkup(EntityInterface $markup)
     {
         foreach ($this->supportedMarkups as $className) {
             if ($markup instanceof $className) {
@@ -110,11 +111,11 @@ abstract class AbstractMethod {
     /**
      * Sets reply markup class
      *
-     * @param AbstractEntity $markup Markup class instance
+     * @param EntityInterface $markup Markup class instance
      *
      * @return $this
      */
-    public function setReplyMarkup(AbstractEntity $markup)
+    public function setReplyMarkup(EntityInterface $markup)
     {
         $this->reply_markup = !$this->isValidMarkup($markup) ? null : $markup;
 
@@ -122,13 +123,13 @@ abstract class AbstractMethod {
     }
 
     /**
-     * Returns reply markup as JSON encoded string if reply_markup is an instance of AbstractEntity
+     * Returns reply markup as JSON encoded string if reply_markup is an instance of EntityInterface
      *
      * @return string|mixed
      */
     public function getReplyMarkup()
     {
-        if ($this->reply_markup instanceof AbstractEntity) {
+        if ($this->reply_markup instanceof EntityInterface) {
 
             return str_replace('\\\\', '\\', $this->reply_markup->asJson());
         }
@@ -139,7 +140,7 @@ abstract class AbstractMethod {
     /**
      * Returns parent entity which triggered method's execution.
      *
-     * @return AbstractEntity
+     * @return MethodInterface
      */
     public function getParent()
     {
@@ -149,11 +150,11 @@ abstract class AbstractMethod {
     /**
      * Sets parent entity which triggered method's execution.
      *
-     * @param AbstractEntity $parent
+     * @param MethodInterface $parent
      *
      * @return $this
      */
-    public function setParent(AbstractEntity $parent)
+    public function setParent(MethodInterface $parent)
     {
         $this->parent = $parent;
 
