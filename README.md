@@ -4,7 +4,7 @@ Teebot
 [![Build Status](https://travis-ci.org/rudestan/Teebot.svg?branch=master)](https://travis-ci.org/rudestan/Teebot) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/rudestan/Teebot/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/rudestan/Teebot/?branch=master) [![Coverage Status](https://coveralls.io/repos/github/rudestan/Teebot/badge.svg?branch=master)](https://coveralls.io/github/rudestan/Teebot?branch=master)
 
 Teebot is yet another Telegram bot API framework. The main difference from other implementations that
-it is very flexible, easy to extend and configure. You can focus on business logic implementation and
+it is fully object oriented, very flexible, easy to extend and configure. You can focus on business logic implementation and
 do not think about implementation of manual Telegram API calls. It has object oriented architecture yet
 quite simple and understandable. Additionally you can create and run as many bots as you want at the same
 time.
@@ -32,4 +32,4 @@ see the message "Me command triggered!" in the console where you started your bo
 
 ## Capability
 
-PHP 5.6 and higher
+PHP 7.1 and higher (for version 5.6 please check the php_56 branch, but it wont be supported anymore)
