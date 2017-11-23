@@ -28,7 +28,7 @@
   "bin": ["bin/teebot"],
   "autoload": {
     "psr-4": {
-      "TeebotTest\\": "./test",
+      "TeebotUnitTest\\": "./test/unit",
       "Teebot\\Bot\\": "./Bot",
       "Teebot\\": "./src"
     }

@@ -77,7 +77,7 @@ class Response
      *
      * @return array
      */
-    protected function decodeData(string $rawData): array
+    protected function decodeData(string $rawData): ?array
     {
         if (!is_string($rawData) || !strlen($rawData)) {
             return [];

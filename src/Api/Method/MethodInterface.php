@@ -21,9 +21,9 @@ interface MethodInterface
     /**
      * Returns entity's name that should be return in method execution result.
      *
-     * @return string
+     * @return null|string
      */
-    public function getReturnEntity(): string;
+    public function getReturnEntity(): ?string;
 
     /**
      * Returns flag which indicates that method has attached data (audio, voice, video, photo etc.)

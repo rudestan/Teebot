@@ -68,7 +68,7 @@ abstract class AbstractContainer implements ContainerInterface
         $replace = [];
 
         foreach ($tokens as $token) {
-            $envKey   = ContainerInterface::ENV_PREFIX . strtoupper(substr($token, 1, strlen($token) - 2));
+            $envKey   = static::ENV_PREFIX . strtoupper(substr($token, 1, strlen($token) - 2));
             $envValue = getenv($envKey);
 
             if ($envValue) {

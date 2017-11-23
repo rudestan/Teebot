@@ -39,12 +39,12 @@ class Request
     /**
      * Executes the Request to Telegram's servers and returns Response object.
      *
-     * @param AbstractMethod       $method Teebot method's instance to get arguments from
+     * @param MethodInterface      $method Teebot method's instance to get arguments from
      * @param null|EntityInterface $parent Parent entity that initiated the Request
      *
      * @return null|Response
      */
-    public function exec(AbstractMethod $method, EntityInterface $parent = null): ?Response
+    public function exec(MethodInterface $method, EntityInterface $parent = null): ?Response
     {
         $entityClass = $method->getReturnEntity();
         $result      = $this->send($method);
@@ -78,14 +78,14 @@ class Request
      * Creates the Response object from received data.
      *
      * @param string               $receivedData Received data from Telegram's servers
-     * @param string               $entityClass  Entity class name that should be passed to Response constructor
+     * @param null|string          $entityClass  Entity class name that should be passed to Response constructor
      * @param null|EntityInterface $parent       Parent entity
      *
      * @return null|Response
      */
     public function createResponseFromData(
         string $receivedData,
-        string $entityClass,
+        ?string $entityClass,
         EntityInterface $parent = null
     ): Response {
         return new Response($receivedData, $entityClass, $parent);

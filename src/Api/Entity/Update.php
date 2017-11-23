@@ -44,7 +44,7 @@ class Update extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return Message
      */
     public function getMessage()
     {

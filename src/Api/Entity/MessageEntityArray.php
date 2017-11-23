@@ -33,7 +33,7 @@ class MessageEntityArray extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getEntities()
     {
@@ -41,7 +41,7 @@ class MessageEntityArray extends AbstractEntity
     }
 
     /**
-     * @param mixed $entities
+     * @param array $entities
      */
     public function setEntities(array $entities)
     {

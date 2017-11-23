@@ -27,9 +27,7 @@ use Teebot\Api\Exception\{
     ProcessEntitiesException
 };
 use Teebot\Api\{
-    HttpClient,
-    Request,
-    Response
+    Command\ValueObject\ChainItem, HttpClient, Request, Response
 };
 use Teebot\Configuration\{
     AbstractContainer as ConfigContainer,
@@ -85,7 +83,7 @@ class Processor
             $entitiesChain = $this->getEntitiesChain($entity);
 
             if (empty($entitiesChain)) {
-                throw new ProcessEntitiesException("Unknown entity! Skipping.");
+                throw new ProcessEntitiesException("Entities chain is empty! There must be an unknown entity passed!");
             }
 
             $this->processEntitiesChain($entitiesChain);
@@ -114,7 +112,7 @@ class Processor
     {
         if ($entity instanceof Error) {
             return [
-                ['entity' => $entity],
+                new ChainItem($entity),
             ];
         }
         if (!$entity instanceof Update) {
@@ -124,27 +122,21 @@ class Processor
         $updateTypeEntity = $entity->getUpdateTypeEntity();
 
         $events = [
-            ['entity' => $entity],
-            ['entity' => $updateTypeEntity, 'parent' => $updateTypeEntity],
+            new ChainItem($entity),
+            new ChainItem($updateTypeEntity, $updateTypeEntity),
         ];
 
         if ($updateTypeEntity instanceof Message && $updateTypeEntity->getMessageTypeEntity()) {
 
             $messageTypeEntity = $updateTypeEntity->getMessageTypeEntity();
 
-            $events[] = [
-                'entity' => $messageTypeEntity,
-                'parent' => $updateTypeEntity,
-            ];
+            $events[] = new ChainItem($messageTypeEntity, $updateTypeEntity);
 
             if ($messageTypeEntity instanceof MessageEntityArray) {
                 $entities = $messageTypeEntity->getEntities();
 
                 foreach ($entities as $entity) {
-                    $events[] = [
-                        'entity' => $entity,
-                        'parent' => $updateTypeEntity,
-                    ];
+                    $events[] = new ChainItem($entity, $updateTypeEntity);
                 }
             }
         }
@@ -161,10 +153,10 @@ class Processor
      */
     protected function processEntitiesChain(array $entitiesChain)
     {
-        foreach ($entitiesChain as $entityData) {
+        /** @var ChainItem $chainItem */
+        foreach ($entitiesChain as $chainItem) {
             try {
-                $parent   = isset($entityData['parent']) ? $entityData['parent'] : null;
-                $continue = $this->triggerEventForEntity($entityData['entity'], $parent);
+                $continue = $this->triggerEventForEntity($chainItem);
 
                 if (!$continue) {
                     return;
@@ -181,13 +173,13 @@ class Processor
      * will not be triggered otherwise process will continue until either first false returned or the very
      * last event in the flow.
      *
-     * @param EntityInterface $entity Entity for which the corresponding event should be triggered
-     * @param EntityInterface $parent Entity's parent if any
+     * @param ChainItem $chainItem
      *
      * @return bool
      */
-    protected function triggerEventForEntity(EntityInterface $entity, EntityInterface $parent = null): bool
+    protected function triggerEventForEntity(ChainItem $chainItem): bool
     {
+        $entity             = $chainItem->getEntity();
         $eventConfiguration = $this->getEventConfiguration($entity);
 
         if ($eventConfiguration === null) {
@@ -208,7 +200,7 @@ class Processor
                 $event->setArgs($entity->getArgs());
             }
 
-            $referencedEntity = $parent ? $parent : $entity;
+            $referencedEntity = $chainItem->getParent() ? $chainItem->getParent() : $entity;
 
             $event
                 ->setProcessor($this)

@@ -346,6 +346,9 @@ class Message extends AbstractEntity
         }
     }
 
+    /**
+     * @return null|Contact|Document|Location|Sticker|Video|Voice
+     */
     public function getMessageTypeEntity()
     {
         $messageTypeEntity = null;
