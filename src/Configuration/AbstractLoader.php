@@ -1,17 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Configuration;
 
-use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Config\Exception\FileLoaderLoadException;
-use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\{
+    Definition\Processor,
+    Definition\ConfigurationInterface,
+    Exception\FileLoaderLoadException,
+    FileLocator
+};
 use Symfony\Component\Yaml\Yaml;
-use Dotenv\Dotenv;
-use Dotenv\Exception\InvalidPathException;
+use Dotenv\{
+    Dotenv,
+    Exception\InvalidPathException
+};
 
+/**
+ * Abstract configuration loader
+ *
+ * @package Teebot\Configuration
+ */
 abstract class AbstractLoader
 {
-    const FILE_NAME = 'config%s.yml';
+    protected const FILE_NAME = 'config%s.yml';
 
     /**
      * @var string $path
@@ -23,7 +35,10 @@ abstract class AbstractLoader
      */
     protected $fileName;
 
-    public function __construct($path)
+    /**
+     * @param string $path
+     */
+    public function __construct(string $path)
     {
         $this->initEnv($path);
 
@@ -31,7 +46,12 @@ abstract class AbstractLoader
         $this->fileName = $this->getFileName();
     }
 
-    public function load()
+    /**
+     * Loads configuration
+     *
+     * @return ContainerInterface
+     */
+    public function load(): ContainerInterface
     {
         $configFile = $this->getConfigFile();
         $data       = Yaml::parse(file_get_contents($configFile));
@@ -39,21 +59,38 @@ abstract class AbstractLoader
         return $this->loadFromArray($data);
     }
 
-    public function loadFromArray($configData)
+    /**
+     * Loads configuration from array
+     *
+     * @param array $configData
+     *
+     * @return ContainerInterface
+     */
+    public function loadFromArray(array $configData): ContainerInterface
     {
         $config = $this->processConfig($configData);
 
         return $this->initContainer($config);
     }
 
-    protected function getFileName()
+    /**
+     * Returns config file name based on the current environment
+     *
+     * @return string
+     */
+    protected function getFileName(): string
     {
         $env = getenv('ENV') ? '_' . getenv('ENV') : '';
 
         return sprintf(static::FILE_NAME, $env);
     }
 
-    protected function initEnv($path)
+    /**
+     * Initializes and loads the DotEnv, suppress the DotEnv exception to continue loading process
+     *
+     * @param string $path
+     */
+    protected function initEnv(string $path)
     {
         try {
             $dotenv = new Dotenv($path);
@@ -62,7 +99,14 @@ abstract class AbstractLoader
         }
     }
 
-    protected function getConfigFile()
+    /**
+     * Returns path to config file
+     *
+     * @return string
+     *
+     * @throws FileLoaderLoadException
+     */
+    protected function getConfigFile(): string
     {
         $locator    = new FileLocator($this->path);
         $configFile = $locator->locate($this->fileName, null, true);
@@ -74,7 +118,14 @@ abstract class AbstractLoader
         return $configFile;
     }
 
-    protected function processConfig($data)
+    /**
+     * Processes the config
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function processConfig(array $data): array
     {
         $processor       = new Processor();
         $configuration   = $this->getConfiguration();
@@ -83,7 +134,15 @@ abstract class AbstractLoader
         return $processedConfig;
     }
 
-    abstract protected function getConfiguration();
+    /**
+     * @return ConfigurationInterface
+     */
+    abstract protected function getConfiguration(): ConfigurationInterface;
 
-    abstract protected function initContainer($config);
+    /**
+     * @param array $config
+     *
+     * @return ContainerInterface
+     */
+    abstract protected function initContainer(array $config): ContainerInterface;
 }

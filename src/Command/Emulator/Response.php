@@ -1,18 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Command\Emulator;
 
-use stdClass;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\{
+    InputArgument,
+    InputInterface
+};
 use Symfony\Component\Console\Output\OutputInterface;
-use Teebot\Api\Entity\MessageEntity;
-use Teebot\Client;
-use Teebot\Command\AbstractCommand;
+use Teebot\{
+    Client,
+    Command\AbstractCommand
+};
 
 class Response extends AbstractCommand
 {
+    /**
+     * Configures the command
+     */
     public function configure()
     {
         $this
@@ -31,7 +37,13 @@ class Response extends AbstractCommand
             );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * Executes the command
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
 

@@ -94,7 +94,7 @@ abstract class AbstractEntity implements EntityInterface
 
             if ($initValues) {
                 $object = class_exists($class) ? new $class($initValues) : null;
-                $this->setProperty($name, $object);
+                $this->setProperty((string) $name, $object);
             }
         }
     }

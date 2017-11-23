@@ -10,21 +10,18 @@
 
 namespace Teebot\Api\Method;
 
-use Teebot\Api\Entity\AbstractEntity;
-use Teebot\Api\Entity\EntityInterface;
 use Teebot\Api\Traits\Property;
-use Teebot\Api\Entity\Inline\InlineKeyboardMarkup;
-use Teebot\Api\Entity\ReplyKeyboardMarkup;
-use Teebot\Api\Entity\ReplyKeyboardHide;
-use Teebot\Api\Entity\ForceReply;
+use Teebot\Api\Entity\{
+    EntityInterface, Inline\InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardHide, ForceReply
+};
 
 abstract class AbstractMethod implements MethodInterface {
 
     use Property;
 
-    const NAME            = null;
+    protected const NAME = null;
 
-    const RETURN_ENTITY   = null;
+    protected const RETURN_ENTITY = null;
 
     protected $parent = null;
 
@@ -39,6 +36,9 @@ abstract class AbstractMethod implements MethodInterface {
      */
     protected $supportedProperties = [];
 
+    /**
+     * @var array
+     */
     protected $supportedMarkups = [
         InlineKeyboardMarkup::class,
         ReplyKeyboardMarkup::class,
@@ -51,7 +51,7 @@ abstract class AbstractMethod implements MethodInterface {
      *
      * @param array $args
      */
-    public function __construct($args = [])
+    public function __construct(array $args = [])
     {
         if (empty($args)) {
             return;
@@ -65,7 +65,7 @@ abstract class AbstractMethod implements MethodInterface {
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
@@ -75,7 +75,7 @@ abstract class AbstractMethod implements MethodInterface {
      *
      * @return string
      */
-    public function getReturnEntity()
+    public function getReturnEntity(): string
     {
         return static::RETURN_ENTITY;
     }
@@ -85,7 +85,7 @@ abstract class AbstractMethod implements MethodInterface {
      *
      * @return bool
      */
-    public function hasAttachedData()
+    public function hasAttachedData(): bool
     {
         return $this->hasAttachedData;
     }
@@ -97,7 +97,7 @@ abstract class AbstractMethod implements MethodInterface {
      *
      * @return bool
      */
-    protected function isValidMarkup(EntityInterface $markup)
+    protected function isValidMarkup(EntityInterface $markup): bool
     {
         foreach ($this->supportedMarkups as $className) {
             if ($markup instanceof $className) {
@@ -113,9 +113,9 @@ abstract class AbstractMethod implements MethodInterface {
      *
      * @param EntityInterface $markup Markup class instance
      *
-     * @return $this
+     * @return MethodInterface
      */
-    public function setReplyMarkup(EntityInterface $markup)
+    public function setReplyMarkup(EntityInterface $markup): MethodInterface
     {
         $this->reply_markup = !$this->isValidMarkup($markup) ? null : $markup;
 
@@ -142,7 +142,7 @@ abstract class AbstractMethod implements MethodInterface {
      *
      * @return MethodInterface
      */
-    public function getParent()
+    public function getParent(): MethodInterface
     {
         return $this->parent;
     }
@@ -152,9 +152,9 @@ abstract class AbstractMethod implements MethodInterface {
      *
      * @param MethodInterface $parent
      *
-     * @return $this
+     * @return MethodInterface
      */
-    public function setParent(MethodInterface $parent)
+    public function setParent(MethodInterface $parent): MethodInterface
     {
         $this->parent = $parent;
 

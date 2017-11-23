@@ -1,13 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Command;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Exception\RuntimeException;
-use Teebot\Configuration\Container;
-use Teebot\Configuration\Loader as ConfigLoader;
+use Symfony\Component\Console\{
+    Command\Command,
+    Input\InputInterface,
+    Output\OutputInterface,
+    Exception\RuntimeException
+};
+use Teebot\ClientInterface;
+use Teebot\Configuration\{
+    ContainerInterface,
+    Loader as ConfigLoader
+};
 
 class AbstractCommand extends Command
 {
@@ -16,14 +23,20 @@ class AbstractCommand extends Command
      */
     protected $path;
 
+    /**
+     * @var ClientInterface
+     */
     protected $client;
 
     /**
-     * @var Container
+     * @var ContainerInterface
      */
     protected $config;
 
-    protected function init($path)
+    /**
+     * @param string $path
+     */
+    protected function init(string $path)
     {
         $rPath = realpath($path);
 
@@ -35,7 +48,13 @@ class AbstractCommand extends Command
         $this->config = $configLoader->load();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * Executes command
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $path = $input->getArgument('path');
 

@@ -10,7 +10,7 @@ use Teebot\Api\Entity\EntityInterface;
 interface EventInterface
 {
     /**
-     * Runs event
+     * Runs event, returns whether continue  stop processing of the entities or not
      */
     public function run();
 

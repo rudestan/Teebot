@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Configuration;
 
 use Teebot\Configuration\ValueObject\EventConfig;

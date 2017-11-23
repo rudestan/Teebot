@@ -8,6 +8,8 @@
  * @author  Stanislav Drozdov <rudestan@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Teebot\Api\Traits;
 
 use Teebot\Api\Entity\InputFile;
@@ -21,7 +23,7 @@ trait File
      *
      * @return \CURLFile
      */
-    protected function initInputFile($file)
+    protected function initInputFile(string $file)
     {
         $inputFile = new InputFile($file);
         $file      = $inputFile->getFileForUpload();

@@ -12,12 +12,12 @@ interface CommandInterface extends EventInterface
      *
      * @param string $args Arguments string
      */
-    public function setArgs($args);
+    public function setArgs(string $args);
 
     /**
      * Returns arguments string for the command
      *
      * @return string
      */
-    public function getArgs();
+    public function getArgs(): string;
 }

@@ -10,11 +10,16 @@
  * @author  Stanislav Drozdov <rudestan@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Teebot\Api\Command;
 
-use Teebot\Api\Entity\EntityInterface;
-use Teebot\Api\Method\SendMessage;
-use Teebot\Api\Entity\Message;
+use Teebot\Api\{
+    Response,
+    Entity\EntityInterface,
+    Entity\Message,
+    Method\SendMessage
+};
 
 abstract class AbstractEntityEvent implements EventInterface
 {
@@ -35,8 +40,8 @@ abstract class AbstractEntityEvent implements EventInterface
 
     /**
      * Abstract method of each entity event which will be called if certain entity presents in response
-     * and it's class exists or mapped in the config. 
-     * 
+     * and it's class exists or mapped in the config.
+     *
      * @return null|bool
      */
     abstract public function run();
@@ -46,9 +51,9 @@ abstract class AbstractEntityEvent implements EventInterface
      *
      * @param array $params
      *
-     * @return $this
+     * @return EventInterface
      */
-    public function setParams(array $params)
+    public function setParams(array $params): EventInterface
     {
         $this->params = $params;
 
@@ -60,7 +65,7 @@ abstract class AbstractEntityEvent implements EventInterface
      *
      * @return null|int
      */
-    public function getChatId()
+    public function getChatId(): ?int
     {
         if ($this->entity instanceof Message) {
             return $this->entity->getChatId();
@@ -78,9 +83,9 @@ abstract class AbstractEntityEvent implements EventInterface
     /**
      * @param Processor $processor
      *
-     * @return $this
+     * @return EventInterface
      */
-    public function setProcessor(Processor $processor)
+    public function setProcessor(Processor $processor): EventInterface
     {
         $this->processor = $processor;
 
@@ -92,9 +97,9 @@ abstract class AbstractEntityEvent implements EventInterface
      *
      * @param EntityInterface $entity Entity object
      *
-     * @return $this
+     * @return EventInterface
      */
-    public function setEntity(EntityInterface $entity)
+    public function setEntity(EntityInterface $entity): EventInterface
     {
         $this->entity = $entity;
 
@@ -106,9 +111,9 @@ abstract class AbstractEntityEvent implements EventInterface
      *
      * @param string $text Message text
      *
-     * @return bool|\Teebot\Api\Response
+     * @return Response
      */
-    protected function sendMessage($text)
+    protected function sendMessage(string $text): Response
     {
         return $this->reply(
             (new SendMessage())
@@ -121,12 +126,13 @@ abstract class AbstractEntityEvent implements EventInterface
      *
      * @param SendMessage $sendMessage Object of the SendMessage method
      *
-     * @return bool|\Teebot\Api\Response
+     * @return Response
      */
-    protected function reply(SendMessage $sendMessage) {
+    protected function reply(SendMessage $sendMessage): Response
+    {
         $chatId = $this->getChatId();
 
-        if ((int) $chatId == 0) {
+        if ((int)$chatId == 0) {
             return false;
         }
 

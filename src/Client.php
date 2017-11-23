@@ -9,20 +9,26 @@
  * @author  Stanislav Drozdov <rudestan@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Teebot;
 
-use Teebot\Api\Logger\Logger;
-use Teebot\Api\Command\Processor;
-use Teebot\Api\HttpClient;
-use Teebot\Configuration\AbstractContainer as ConfigContainer;
-use Teebot\Configuration\Config;
-use Teebot\Api\Method\GetUpdates;
-use Teebot\Api\Response;
+use Teebot\Configuration\{
+    AbstractContainer,
+    Config
+};
+use Teebot\Api\{
+    Logger\Logger,
+    Command\Processor,
+    HttpClient,
+    Method\GetUpdates,
+    Response
+};
 
-class Client
+class Client implements ClientInterface
 {
     /**
-     * @var ConfigContainer
+     * @var AbstractContainer
      */
     protected $config;
 
@@ -36,14 +42,19 @@ class Client
      */
     protected $logger;
 
-    public function __construct(ConfigContainer $config)
+    public function __construct(AbstractContainer $config)
     {
         define('TEEBOT_ROOT', realpath(__DIR__ . '/../'));
 
         $this->init($config);
     }
 
-    protected function init($config)
+    /**
+     * Initializes the Client
+     *
+     * @param AbstractContainer $config
+     */
+    protected function init(AbstractContainer $config)
     {
         $this->config    = $config;
         $this->processor = new Processor($config, new HttpClient($config));
@@ -51,7 +62,7 @@ class Client
     }
 
     /**
-     * Requests and returns the latest updates from Telegram's API server
+     * Returns the latest updates from Telegram's API server
      *
      * @param int  $offset     Offset for the updates list
      * @param int  $limit      Limit of the updates to get
@@ -59,8 +70,11 @@ class Client
      *                         the entities in the result will not be triggered
      * @return Response
      */
-    public function getUpdates($offset = Config::DEFAULT_OFFSET, $limit = Config::DEFAULT_LIMIT, $silentMode = false)
-    {
+    public function getUpdates(
+        $offset = Config::DEFAULT_OFFSET,
+        $limit = Config::DEFAULT_LIMIT,
+        $silentMode = false
+    ): Response {
         $method = (new GetUpdates())
             ->setOffset($offset)
             ->setLimit($limit)
@@ -71,12 +85,12 @@ class Client
 
     /**
      * Flushes the results and resets the offset pointer to the latest updates. Returns last offset.
-     * Should be used to skip previous results from dialogs during first listener's start, should not
+     * Should be used to skip previous results from dialogs during first listener's start. Must not
      * be used for webhook.
      *
      * @return int
      */
-    public function flush()
+    public function flush(): int
     {
         $response = $this->getUpdates(Config::DEFAULT_OFFSET, Config::DEFAULT_LIMIT, true);
 
@@ -84,7 +98,7 @@ class Client
     }
 
     /**
-     * Starts listener daemon for getting the updates from the chats. Should be used if webhook is not set.
+     * Starts listener in daemon mode for receiving the updates from the chats. Should be used if webhook is not set.
      */
     public function listen()
     {
@@ -115,7 +129,7 @@ class Client
      *                             the entities in the result will not be triggered
      * @return Response
      */
-    public function webhook($receivedData = '', $silentMode = false)
+    public function webhook($receivedData = '', $silentMode = false): Response
     {
         if (empty($receivedData)) {
             $receivedData = file_get_contents("php://input");

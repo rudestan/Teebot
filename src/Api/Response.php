@@ -8,37 +8,55 @@
  * @author Stanislav Drozdov <rudestan@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Teebot\Api;
 
-use Teebot\Api\Entity\Update;
-use Teebot\Api\Exception\BuildEntityException;
-use Teebot\Api\Exception\DecodingDataException;
-use Teebot\Api\Entity\AbstractEntity;
-use Teebot\Api\Entity\Error;
+use Teebot\Api\Exception\{
+    BuildEntityException,
+    DecodingDataException
+};
+use Teebot\Api\Entity\{
+    Update,
+    EntityInterface,
+    Error
+};
 
 class Response
 {
-    const DEFAULT_ENTITY_TYPE = Update::class;
+    protected const DEFAULT_ENTITY_TYPE = Update::class;
 
+    /**
+     * @var array
+     */
     protected $decodedData = [];
 
+    /**
+     * @var int
+     */
     protected $lastUpdate = 0;
 
+    /**
+     * @var array
+     */
     protected $entities = [];
 
+    /**
+     * @var null|EntityInterface
+     */
     protected $parent;
 
     /**
      * Creates an instanse of Response class from Raw JSON string and builds corresponding entity
      * if passed in entity class. This class should be instantiated for every JSON response from Telegram.
      *
-     * @param string              $rawData     Raw JSON string
-     * @param null|string         $entityClass Entity class that should be instantiated with decoded JSON data
-     * @param null|AbstractEntity $parent      Parent class should be set as parent for newly instantiated entity
+     * @param string               $rawData     Raw JSON string
+     * @param null|string          $entityClass Entity class that should be instantiated with decoded JSON data
+     * @param null|EntityInterface $parent      Parent class should be set as parent for newly instantiated entity
      *
      * @throws DecodingDataException
      */
-    public function __construct($rawData, $entityClass = null, $parent = null)
+    public function __construct(string $rawData, string $entityClass = null, EntityInterface $parent = null)
     {
         $this->parent      = $parent;
         $this->decodedData = $this->decodeData($rawData);
@@ -57,9 +75,9 @@ class Response
      *
      * @param string $rawData JSON string
      *
-     * @return array|mixed
+     * @return array
      */
-    protected function decodeData($rawData)
+    protected function decodeData(string $rawData): array
     {
         if (!is_string($rawData) || !strlen($rawData)) {
             return [];
@@ -79,7 +97,7 @@ class Response
      *
      * @return bool
      */
-    public function isErrorReceived()
+    public function isErrorReceived(): bool
     {
         if ((isset($this->decodedData['ok']) && $this->decodedData['ok'] === true)) {
             return false;
@@ -96,7 +114,7 @@ class Response
      *
      * @return array
      */
-    protected function buildEntities(array $rawData, $entityClass = null)
+    protected function buildEntities(array $rawData, string $entityClass = null): array
     {
         $entities = [];
         $entity   = null;
@@ -117,7 +135,7 @@ class Response
             $entity = $this->buildEntity($rawItemData, $entityClass);
 
             if ($entity && $entity instanceof Update) {
-                $this->lastUpdate = (int) $entity->getUpdateId();
+                $this->lastUpdate = (int)$entity->getUpdateId();
             }
 
             $entities[] = $entity;
@@ -132,11 +150,11 @@ class Response
      * @param array       $rawItemData Array with raw entity's data
      * @param null|string $entityClass Entity class to instantiate, if not passed - default Entity class will be used.
      *
-     * @return AbstractEntity
+     * @return EntityInterface
      *
      * @throws BuildEntityException
      */
-    protected function buildEntity(array $rawItemData, $entityClass = null)
+    protected function buildEntity(array $rawItemData, $entityClass = null): EntityInterface
     {
         $entityClass = $entityClass ? $entityClass : static::DEFAULT_ENTITY_TYPE;
         $entity      = null;
@@ -145,7 +163,7 @@ class Response
             throw new BuildEntityException('Entity "' . $entityClass . '" does not exists or not supported yet!');
         }
 
-        /** @var AbstractEntity $entity */
+        /** @var EntityInterface $entity */
         $entity = new $entityClass($rawItemData);
         $entity->setParent($this->parent);
 
@@ -157,7 +175,7 @@ class Response
      *
      * @return array
      */
-    public function getEntities()
+    public function getEntities(): array
     {
         return $this->entities;
     }
@@ -167,9 +185,9 @@ class Response
      *
      * @param int $offset Offset
      *
-     * @return mixed|null
+     * @return EntityInterface|null
      */
-    public function getEntityByOffset($offset = 0)
+    public function getEntityByOffset(int $offset = 0): ?EntityInterface
     {
         return is_array($this->entities) && isset($this->entities[$offset]) ? $this->entities[$offset] : null;
     }
@@ -177,9 +195,9 @@ class Response
     /**
      * Returns first entity. More meaningful wrapper for self::getEntityByOffset(0) method.
      *
-     * @return mixed|null
+     * @return EntityInterface|null
      */
-    public function getFirstEntity()
+    public function getFirstEntity(): ?EntityInterface
     {
         return $this->getEntityByOffset();
     }
@@ -189,7 +207,7 @@ class Response
      *
      * @return array
      */
-    protected function getRawEntitiesList()
+    protected function getRawEntitiesList(): array
     {
         if (!is_array($this->decodedData) || empty($this->decodedData)) {
             return [];
@@ -207,7 +225,7 @@ class Response
      *
      * @return int
      */
-    public function getEntitiesCount()
+    public function getEntitiesCount(): int
     {
         return count($this->entities);
     }
@@ -217,7 +235,7 @@ class Response
      *
      * @return int
      */
-    public function getLastUpdate()
+    public function getLastUpdate(): int
     {
         return $this->lastUpdate;
     }
@@ -227,7 +245,7 @@ class Response
      *
      * @return int
      */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->lastUpdate + 1;
     }

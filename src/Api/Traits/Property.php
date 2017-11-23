@@ -8,6 +8,8 @@
  * @author  Stanislav Drozdov <rudestan@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Teebot\Api\Traits;
 
 use Teebot\Api\Exception\PropertyException;
@@ -22,7 +24,7 @@ trait Property
      *
      * @return null|string
      */
-    protected function getSetGetMethodName($prefix, $name)
+    protected function getSetGetMethodName(string $prefix, string $name): ?string
     {
         $setter = $prefix . str_replace("_", "", ucwords($name, "_"));
 
@@ -41,7 +43,7 @@ trait Property
     protected function setProperties(array $data)
     {
         foreach ($data as $name => $value) {
-            $this->setProperty($name, $value);
+            $this->setProperty((string) $name, $value);
         }
     }
 
@@ -51,7 +53,7 @@ trait Property
      * @param string     $name  Property name
      * @param null|mixed $value Value of the property
      */
-    protected function setProperty($name, $value = null)
+    protected function setProperty(string $name, $value = null)
     {
         $setterMethod = $this->getSetGetMethodName("set", $name);
 
@@ -71,7 +73,7 @@ trait Property
      *
      * @return string
      */
-    public function getPropertiesAsString()
+    public function getPropertiesAsString(): string
     {
         $properties = $this->getPropertiesArray();
 
@@ -86,7 +88,7 @@ trait Property
      *
      * @return array
      */
-    public function getPropertiesArray($validate = true)
+    public function getPropertiesArray(bool $validate = true): array
     {
         $properties = [];
 
@@ -116,7 +118,14 @@ trait Property
         return $properties;
     }
 
-    public function getPropertiesMultipart($validate = true)
+    /**
+     * Returns multipart properties
+     *
+     * @param bool $validate
+     *
+     * @return array
+     */
+    public function getPropertiesMultipart(bool $validate = true): array
     {
         $requestProperties = [];
         $properties        = $this->getPropertiesArray($validate);
@@ -138,7 +147,7 @@ trait Property
      *
      * @throws PropertyException
      */
-    protected function validateProperties($properties)
+    protected function validateProperties(array $properties)
     {
         foreach ($this->supportedProperties as $propertyName => $isRequired) {
             if ($isRequired === true && empty($properties[$propertyName])) {
@@ -154,7 +163,7 @@ trait Property
      *
      * @return string
      */
-    public function asJson($validate = true)
+    public function asJson(bool $validate = true): string
     {
         $properties = $this->getPropertiesArray($validate);
 

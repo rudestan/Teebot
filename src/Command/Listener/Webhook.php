@@ -1,15 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Command\Listener;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\{
+    InputArgument,
+    InputInterface
+};
 use Symfony\Component\Console\Output\OutputInterface;
-use Teebot\Client;
-use Teebot\Command\AbstractCommand;
+use Teebot\{
+    Client,
+    Command\AbstractCommand
+};
 
 class Webhook extends AbstractCommand
 {
+    /**
+     * Configures the command
+     */
     public function configure()
     {
         $this
@@ -23,7 +32,13 @@ class Webhook extends AbstractCommand
             );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * Executes the command
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
 

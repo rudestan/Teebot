@@ -10,10 +10,15 @@
  * @author  Stanislav Drozdov <rudestan@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Teebot\Api\Command;
 
 abstract class AbstractCommand extends AbstractEntityEvent implements CommandInterface
 {
+    /**
+     * @var string
+     */
     protected $args = '';
 
     /**
@@ -21,7 +26,7 @@ abstract class AbstractCommand extends AbstractEntityEvent implements CommandInt
      *
      * @param string $args Arguments string
      */
-    public function setArgs($args)
+    public function setArgs(string $args)
     {
         $this->args = $args;
     }
@@ -31,7 +36,7 @@ abstract class AbstractCommand extends AbstractEntityEvent implements CommandInt
      *
      * @return string
      */
-    public function getArgs()
+    public function getArgs(): string
     {
         return $this->args;
     }

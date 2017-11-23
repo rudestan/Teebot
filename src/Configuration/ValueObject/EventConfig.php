@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Configuration\ValueObject;
 
 /**
@@ -49,7 +51,7 @@ class EventConfig
     /**
      * @return string|null
      */
-    public function getCommand()
+    public function getCommand(): ?string
     {
         return $this->command;
     }
@@ -57,7 +59,7 @@ class EventConfig
     /**
      * @return  string|null
      */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -65,7 +67,7 @@ class EventConfig
     /**
      * @return  string|null
      */
-    public function getClass()
+    public function getClass(): ?string
     {
         return $this->class;
     }
@@ -73,7 +75,7 @@ class EventConfig
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }

@@ -10,7 +10,7 @@
 
 namespace Teebot\Api\Exception;
 
-use \Exception;
+use Exception;
 
 class AbstractException extends Exception
 {

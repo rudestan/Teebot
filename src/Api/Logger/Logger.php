@@ -1,15 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Api\Logger;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger as Monolog;
-use Teebot\Configuration\AbstractContainer as ConfigContainer;
+use Monolog\{
+    Handler\StreamHandler,
+    Logger as Monolog
+};
+use Teebot\Configuration\ContainerInterface;
+use Exception;
 
 class Logger
 {
     /**
-     * @var ConfigContainer $config
+     * @var ContainerInterface $config
      */
     protected $config;
 
@@ -18,7 +23,10 @@ class Logger
      */
     protected $logger;
 
-    public function __construct(ConfigContainer $config)
+    /**
+     * @param ContainerInterface $config
+     */
+    public function __construct(ContainerInterface $config)
     {
         $this->config = $config;
         $filename     = TEEBOT_ROOT . $this->config->get('logger.filename');
@@ -28,12 +36,18 @@ class Logger
         );
     }
 
-    public function exception(\Exception $exception)
+    /**
+     * @param Exception $exception
+     */
+    public function exception(Exception $exception)
     {
         $this->logger->warning($exception->getMessage());
     }
 
-    public function warning($msg)
+    /**
+     * @param string $msg
+     */
+    public function warning(string $msg)
     {
         $this->logger->warning($msg);
     }

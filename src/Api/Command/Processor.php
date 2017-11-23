@@ -9,38 +9,51 @@
  * @author  Stanislav Drozdov <rudestan@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Teebot\Api\Command;
 
-use Teebot\Api\Entity\EntityInterface;
-use Teebot\Api\Entity\Error;
-use Teebot\Api\Entity\Message;
-use Teebot\Api\Entity\MessageEntity;
-use Teebot\Api\Entity\MessageEntityArray;
-use Teebot\Api\Entity\Update;
-use Teebot\Api\Exception\ProcessEntitiesChainException;
-use Teebot\Api\Exception\ProcessEntitiesException;
-use Teebot\Api\HttpClient;
-use Teebot\Api\Method\AbstractMethod;
-use Teebot\Api\Request;
-use Teebot\Api\Response;
-use Teebot\Configuration\AbstractContainer as ConfigContainer;
-use Teebot\Configuration\ValueObject\EventConfig;
+use Teebot\Api\Entity\{
+    EntityInterface,
+    Error,
+    Message,
+    MessageEntity,
+    MessageEntityArray,
+    Update
+};
+use Teebot\Api\Method\MethodInterface;
+use Teebot\Api\Exception\{
+    ProcessEntitiesChainException,
+    ProcessEntitiesException
+};
+use Teebot\Api\{
+    HttpClient,
+    Request,
+    Response
+};
+use Teebot\Configuration\{
+    AbstractContainer as ConfigContainer,
+    ContainerInterface,
+    ValueObject\EventConfig
+};
 
 class Processor
 {
-    /** @var ConfigContainer $config */
+    /**
+     * @var ConfigContainer $config
+     */
     protected $config;
 
-    /** @var HttpClient $httpClient */
+    /**
+     * @var HttpClient $httpClient
+     */
     protected $httpClient;
 
     /**
-     * Processor constructor.
-     *
-     * @param ConfigContainer $config
+     * @param ContainerInterface $config
      * @param HttpClient      $httpClient
      */
-    public function __construct(ConfigContainer $config, HttpClient $httpClient)
+    public function __construct(ContainerInterface $config, HttpClient $httpClient)
     {
         $this->config     = $config;
         $this->httpClient = $httpClient;
@@ -49,9 +62,9 @@ class Processor
     /**
      * Returns configuration container
      *
-     * @return ConfigContainer
+     * @return ContainerInterface
      */
-    public function getConfig()
+    public function getConfig(): ContainerInterface
     {
         return $this->config;
     }
@@ -62,8 +75,6 @@ class Processor
      *
      * @param array $entities Array of entities (Update or Error) passed either from response object or
      *                        directly to the method
-     *
-     * @return bool
      *
      * @throws ProcessEntitiesException
      */
@@ -77,14 +88,8 @@ class Processor
                 throw new ProcessEntitiesException("Unknown entity! Skipping.");
             }
 
-            $result = $this->processEntitiesChain($entitiesChain);
-
-            if ($result == false) {
-                throw new ProcessEntitiesException("Failed to process the entity!");
-            }
+            $this->processEntitiesChain($entitiesChain);
         }
-
-        return true;
     }
 
     /**
@@ -101,11 +106,11 @@ class Processor
      *   - Inline Query
      *   - Chosen Inline Result
      *
-     * @param Update|Error $entity Update or Error entity object
+     * @param EntityInterface $entity Update or Error entity object
      *
      * @return array
      */
-    public function getEntitiesChain($entity)
+    public function getEntitiesChain(EntityInterface $entity): array
     {
         if ($entity instanceof Error) {
             return [
@@ -153,8 +158,6 @@ class Processor
      * @param array $entitiesChain Array of entities
      *
      * @throws ProcessEntitiesChainException
-     *
-     * @return bool
      */
     protected function processEntitiesChain(array $entitiesChain)
     {
@@ -164,14 +167,12 @@ class Processor
                 $continue = $this->triggerEventForEntity($entityData['entity'], $parent);
 
                 if (!$continue) {
-                    return true;
+                    return;
                 }
             } catch (\Exception $e) {
-                throw new ProcessEntitiesChainException('Process entities chain error', 0, $e);
+                throw new ProcessEntitiesChainException('Processing of the entities chain error', 0, $e);
             }
         }
-
-        return true;
     }
 
     /**
@@ -185,7 +186,7 @@ class Processor
      *
      * @return bool
      */
-    protected function triggerEventForEntity(EntityInterface $entity, EntityInterface $parent = null)
+    protected function triggerEventForEntity(EntityInterface $entity, EntityInterface $parent = null): bool
     {
         $eventConfiguration = $this->getEventConfiguration($entity);
 
@@ -214,7 +215,7 @@ class Processor
                 ->setParams($eventConfiguration->getParams())
                 ->setEntity($referencedEntity);
 
-            return $event->run();
+            return (bool) $event->run();
         }
 
         return true;
@@ -228,7 +229,7 @@ class Processor
      *
      * @return null|EventConfig
      */
-    protected function getEventConfiguration(EntityInterface $entity)
+    protected function getEventConfiguration(EntityInterface $entity): ?EventConfig
     {
         $preDefinedEvents = $this->config->get('events');
         $entityEventType  = $entity->getEntityType();
@@ -273,7 +274,7 @@ class Processor
      *
      * @return bool
      */
-    protected function isCommandSupported($preDefinedCommand, $command)
+    protected function isCommandSupported(?string $preDefinedCommand, string $command): bool
     {
         return $preDefinedCommand !== null && strtolower($preDefinedCommand) == strtolower($command);
     }
@@ -281,14 +282,14 @@ class Processor
     /**
      * Executes remote method and returns response object
      *
-     * @param AbstractMethod  $method     Method instance
+     * @param MethodInterface $method     Method instance
      * @param bool            $silentMode If set to true then the events, mapped (in config or by default)
      *                                    to the entities in the result will not be triggered
      * @param EntityInterface $parent     Parent entity (if any)
      *
      * @return Response
      */
-    public function call(AbstractMethod $method, $silentMode = false, EntityInterface $parent = null)
+    public function call(MethodInterface $method, $silentMode = false, EntityInterface $parent = null)
     {
         $request  = new Request($this->httpClient);
         $response = $request->exec($method, $parent);

@@ -9,10 +9,15 @@
  * @author  Stanislav Drozdov <rudestan@gmail.com>
  */
 
+declare(strict_types=1);
+
 namespace Teebot\Api;
 
-use Teebot\Api\Entity\AbstractEntity;
-use Teebot\Api\Method\AbstractMethod;
+use Teebot\Api\{
+    Entity\EntityInterface,
+    Method\AbstractMethod,
+    Method\MethodInterface
+};
 
 class Request
 {
@@ -34,12 +39,12 @@ class Request
     /**
      * Executes the Request to Telegram's servers and returns Response object.
      *
-     * @param AbstractMethod      $method Teebot method's instance to get arguments from
-     * @param null|AbstractEntity $parent Parent entity that initiated the Request
+     * @param AbstractMethod       $method Teebot method's instance to get arguments from
+     * @param null|EntityInterface $parent Parent entity that initiated the Request
      *
      * @return null|Response
      */
-    public function exec(AbstractMethod $method, $parent = null)
+    public function exec(AbstractMethod $method, EntityInterface $parent = null): ?Response
     {
         $entityClass = $method->getReturnEntity();
         $result      = $this->send($method);
@@ -47,7 +52,14 @@ class Request
         return $this->createResponseFromData($result, $entityClass, $parent);
     }
 
-    protected function send(AbstractMethod $methodInstance)
+    /**
+     * Sends the request
+     *
+     * @param MethodInterface $methodInstance
+     *
+     * @return null|string
+     */
+    protected function send(MethodInterface $methodInstance): ?string
     {
         $options = [
             'query' => $methodInstance->getPropertiesArray(),
@@ -65,14 +77,17 @@ class Request
     /**
      * Creates the Response object from received data.
      *
-     * @param string              $receivedData Received data from Telegram's servers
-     * @param string              $entityClass  Entity class name that should be passed to Response constructor
-     * @param null|AbstractEntity $parent       Parent entity
+     * @param string               $receivedData Received data from Telegram's servers
+     * @param string               $entityClass  Entity class name that should be passed to Response constructor
+     * @param null|EntityInterface $parent       Parent entity
      *
      * @return null|Response
      */
-    public function createResponseFromData($receivedData, $entityClass, $parent = null)
-    {
+    public function createResponseFromData(
+        string $receivedData,
+        string $entityClass,
+        EntityInterface $parent = null
+    ): Response {
         return new Response($receivedData, $entityClass, $parent);
     }
 }

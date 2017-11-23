@@ -1,26 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Configuration;
 
-use \RecursiveArrayIterator;
-use \RecursiveIteratorIterator;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 
-abstract class AbstractContainer
+abstract class AbstractContainer implements ContainerInterface
 {
-    const ENV_PREFIX = 'CONFIG__';
-
     /**
      * @var array
      */
     protected $values;
 
+    /**
+     * @var null|$this
+     */
     protected static $instance = null;
 
+    /**
+     * @param array $config
+     */
     public function __construct(array $config)
     {
         $this->values = $this->applyEnvParamsRecursively($config);
     }
 
+    /**
+     * Replaces placeholders on environment variables recursively
+     *
+     * @param array $data
+     *
+     * @return array
+     */
     protected function applyEnvParamsRecursively(array $data)
     {
         foreach ($data as $key => $value) {
@@ -29,6 +42,8 @@ abstract class AbstractContainer
 
                 continue;
             }
+
+            $value = (string) $value;
 
             if (preg_match_all('/%\w+%/', $value, $matches) && isset($matches[0])) {
                 $tokens = $matches[0];
@@ -40,12 +55,20 @@ abstract class AbstractContainer
         return $data;
     }
 
-    protected function getValueFromEnv($tokens, $str)
+    /**
+     * Returns environment value
+     *
+     * @param array  $tokens
+     * @param string $str
+     *
+     * @return mixed
+     */
+    protected function getValueFromEnv(array $tokens, string $str): string
     {
         $replace = [];
 
         foreach ($tokens as $token) {
-            $envKey   = static::ENV_PREFIX . strtoupper(substr($token, 1, strlen($token) - 2));
+            $envKey   = ContainerInterface::ENV_PREFIX . strtoupper(substr($token, 1, strlen($token) - 2));
             $envValue = getenv($envKey);
 
             if ($envValue) {
@@ -60,7 +83,15 @@ abstract class AbstractContainer
         return str_replace(array_keys($replace), array_values($replace), $str);
     }
 
-    protected function getValueByPath($path)
+    /**
+     * Returns value by path from the array. To access nested array values
+     * the path like "key.subarray_key.subarray_key2...." can be used.
+     *
+     * @param string $path
+     *
+     * @return mixed|null
+     */
+    protected function getValueByPath(string $path)
     {
         $rIterator = new RecursiveIteratorIterator(
             new RecursiveArrayIterator($this->values),
@@ -83,7 +114,14 @@ abstract class AbstractContainer
         return null;
     }
 
-    public function get($path)
+    /**
+     * Returns value retrieved by path
+     *
+     * @param string $path
+     *
+     * @return mixed|null
+     */
+    public function get(string $path)
     {
         $value = $this->getValueByPath($path);
 

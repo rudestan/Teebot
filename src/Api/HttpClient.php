@@ -1,37 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Api;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
-use Teebot\Configuration\AbstractContainer as ConfigContainer;
+use Teebot\Configuration\ContainerInterface;
+use GuzzleHttp\{
+    Client as GuzzleClient,
+    Psr7\Response
+};
 
 class HttpClient
 {
-    const METHOD_GET = 'GET';
+    protected const METHOD_GET = 'GET';
 
-    const METHOD_POST = 'POST';
+    protected const METHOD_POST = 'POST';
 
     /**
-     * @var ConfigContainer $config
+     * @var ContainerInterface $config
      */
     protected $config;
 
     /**
-     * @var Client
+     * @var GuzzleClient
      */
     protected $client;
 
-    public function __construct(ConfigContainer $config)
+    /**
+     * @param ContainerInterface $config
+     */
+    public function __construct(ContainerInterface $config)
     {
         $this->config = $config;
-        $this->client = new Client([
+        $this->client = new GuzzleClient([
             'base_uri' => $this->getBaseUri(),
-            $this->config->get('timeout')
+            $this->config->get('timeout'),
         ]);
     }
 
-    protected function getBaseUri()
+    /**
+     * Returns base API url
+     *
+     * @return string
+     */
+    protected function getBaseUri(): string
     {
         return sprintf(
             '%s/%s%s/',
@@ -41,7 +53,15 @@ class HttpClient
         );
     }
 
-    public function request($apiMethodName, $requestOptions = [])
+    /**
+     * Performs the request and returns the Response contents
+     *
+     * @param string $apiMethodName
+     * @param array  $requestOptions
+     *
+     * @return null|string
+     */
+    public function request(string $apiMethodName, array $requestOptions = []): ?string
     {
         $method = static::METHOD_POST;
 

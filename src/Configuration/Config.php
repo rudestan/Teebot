@@ -1,29 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Teebot\Configuration;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\{
+    Builder\TreeBuilder,
+    ConfigurationInterface
+};
 
 class Config implements ConfigurationInterface
 {
-    const DEFAULT_NAME = 'Teebot_test';
+    public const DEFAULT_LIMIT = 1;
 
-    const DEFAULT_URL = 'https://api.telegram.org';
+    public const DEFAULT_OFFSET = -1;
 
-    const DEFAULT_FILE_URL = 'https://api.telegram.org/file/bot';
+    private const DEFAULT_NAME = 'Teebot_test';
 
-    const DEFAULT_TIMEOUT = 3;
+    private const DEFAULT_URL = 'https://api.telegram.org';
 
-    const DEFAULT_LIMIT = 1;
+    private const DEFAULT_FILE_URL = 'https://api.telegram.org/file/bot';
 
-    const DEFAULT_OFFSET = -1;
+    private const DEFAULT_TIMEOUT = 3;
 
-    const DEFAULT_METHOD = 'GET';
+    private const DEFAULT_METHOD = 'GET';
 
-    const BOT_PREFIX = 'bot';
+    private const BOT_PREFIX = 'bot';
 
-    public function getConfigTreeBuilder()
+    /**
+     * Returns configuration tree builder object
+     *
+     * @return TreeBuilder
+     */
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('teebot');
