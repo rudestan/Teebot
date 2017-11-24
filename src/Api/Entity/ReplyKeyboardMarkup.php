@@ -4,8 +4,7 @@ namespace Teebot\Api\Entity;
 
 class ReplyKeyboardMarkup extends AbstractEntity
 {
-
-    const ENTITY_TYPE = 'ReplyKeyboardMarkup';
+    public const ENTITY_TYPE = 'ReplyKeyboardMarkup';
 
     protected $keyboard;
 
@@ -33,9 +32,9 @@ class ReplyKeyboardMarkup extends AbstractEntity
     /**
      * @param array $keyboard
      *
-     * @return $this
+     * @return EntityInterface
      */
-    public function setKeyboard($keyboard)
+    public function setKeyboard(array $keyboard): EntityInterface
     {
         $this->keyboard = $keyboard;
 
@@ -53,9 +52,9 @@ class ReplyKeyboardMarkup extends AbstractEntity
     /**
      * @param mixed $resize_keyboard
      *
-     * @return $this
+     * @return EntityInterface
      */
-    public function setResizeKeyboard($resize_keyboard)
+    public function setResizeKeyboard($resize_keyboard): EntityInterface
     {
         $this->resize_keyboard = $resize_keyboard;
 
@@ -73,9 +72,9 @@ class ReplyKeyboardMarkup extends AbstractEntity
     /**
      * @param mixed $one_time_keyboard
      *
-     * @return $this
+     * @return EntityInterface
      */
-    public function setOneTimeKeyboard($one_time_keyboard)
+    public function setOneTimeKeyboard($one_time_keyboard): EntityInterface
     {
         $this->one_time_keyboard = $one_time_keyboard;
 
@@ -93,9 +92,9 @@ class ReplyKeyboardMarkup extends AbstractEntity
     /**
      * @param mixed $selective
      *
-     * @return $this
+     * @return EntityInterface
      */
-    public function setSelective($selective)
+    public function setSelective($selective): EntityInterface
     {
         $this->selective = $selective;
 
@@ -109,7 +108,7 @@ class ReplyKeyboardMarkup extends AbstractEntity
      *
      * @return string
      */
-    public function asJson($validate = true)
+    public function asJson(bool $validate = true): string
     {
         $properties = $this->getPropertiesArray($validate);
 

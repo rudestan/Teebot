@@ -117,7 +117,6 @@ class Response
     protected function buildEntities(array $rawData, string $entityClass = null): array
     {
         $entities = [];
-        $entity   = null;
 
         if (empty($rawData)) {
             return $entities;
@@ -157,7 +156,6 @@ class Response
     protected function buildEntity(array $rawItemData, $entityClass = null): EntityInterface
     {
         $entityClass = $entityClass ? $entityClass : static::DEFAULT_ENTITY_TYPE;
-        $entity      = null;
 
         if (!class_exists($entityClass)) {
             throw new BuildEntityException('Entity "' . $entityClass . '" does not exists or not supported yet!');
