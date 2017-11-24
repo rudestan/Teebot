@@ -2,12 +2,14 @@
 
 namespace Teebot\Api\Entity\Inline\Result;
 
-use Teebot\Entity\AbstractEntity;
-use Teebot\Entity\Inline\Input\InputMessageContentAbstract;
+use Teebot\Api\Entity\{
+    AbstractEntity,
+    Inline\Input\InputMessageContentAbstract
+};
 
 abstract class InlineQueryResultAbstract extends AbstractEntity
 {
-    const RESULT_TYPE = 'InlineQueryResultAbstract';
+    public const RESULT_TYPE = 'InlineQueryResultAbstract';
 
     protected $id;
 
