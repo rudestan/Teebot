@@ -2,7 +2,8 @@
 
 namespace TeebotUnitTest\Api\Command;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
+
 use Prophecy\Prophecy\ObjectProphecy;
 use Teebot\Api\Command\{
     Processor,
