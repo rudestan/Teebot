@@ -17,6 +17,13 @@ use Teebot\Api\Exception\PropertyException;
 trait Property
 {
     /**
+     * List of properties supported by method in format: property name => required or not
+     *
+     * @var array
+     */
+    protected $supportedProperties = [];
+
+    /**
      * Returns camel cased property's getter or setter method name. Checks method for existence.
      *
      * @param string $prefix Prefix of the method e.g. "set" or "get"
@@ -57,7 +64,7 @@ trait Property
     {
         $setterMethod = $this->getSetGetMethodName("set", $name);
 
-        if ($setterMethod) {
+        if ($setterMethod !== null) {
             $this->{$setterMethod}($value);
 
             return;

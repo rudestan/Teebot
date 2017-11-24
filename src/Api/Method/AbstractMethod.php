@@ -30,13 +30,6 @@ abstract class AbstractMethod implements MethodInterface {
     protected $reply_markup;
 
     /**
-     * List of properties supported by method in format: property name => required or not
-     *
-     * @var array
-     */
-    protected $supportedProperties = [];
-
-    /**
      * @var array
      */
     protected $supportedMarkups = [

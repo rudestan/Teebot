@@ -142,15 +142,15 @@ class Message extends AbstractEntity
     }
 
     /**
-     * @param mixed $text
+     * @param string $text
      */
-    public function setText($text)
+    public function setText(string $text)
     {
         $this->text = $text;
     }
 
     /**
-     * @return null
+     * @return null|string
      */
     public function getText()
     {

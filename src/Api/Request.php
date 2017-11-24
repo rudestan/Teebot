@@ -42,9 +42,9 @@ class Request
      * @param MethodInterface      $method Teebot method's instance to get arguments from
      * @param null|EntityInterface $parent Parent entity that initiated the Request
      *
-     * @return null|Response
+     * @return Response
      */
-    public function exec(MethodInterface $method, EntityInterface $parent = null): ?Response
+    public function exec(MethodInterface $method, EntityInterface $parent = null): Response
     {
         $entityClass = $method->getReturnEntity();
         $result      = $this->send($method);
@@ -81,7 +81,7 @@ class Request
      * @param null|string          $entityClass  Entity class name that should be passed to Response constructor
      * @param null|EntityInterface $parent       Parent entity
      *
-     * @return null|Response
+     * @return Response
      */
     public function createResponseFromData(
         string $receivedData,
