@@ -2,13 +2,13 @@
 
 namespace Teebot\Api\Entity\Inline\Result;
 
-use Teebot\Entity\AbstractEntity;
-use Teebot\Entity\Location;
-use Teebot\Entity\User;
+use Teebot\Api\Entity\{
+    AbstractEntity, Location, User
+};
 
 class ChosenInlineResult extends AbstractEntity
 {
-    const ENTITY_TYPE = 'ChosenInlineResult';
+    public const ENTITY_TYPE = 'ChosenInlineResult';
 
     protected $result_id;
 
@@ -22,7 +22,7 @@ class ChosenInlineResult extends AbstractEntity
 
     protected $builtInEntities = [
         'from'     => User::class,
-        'location' => Location::class
+        'location' => Location::class,
     ];
 
     /**
