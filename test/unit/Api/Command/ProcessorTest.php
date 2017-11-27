@@ -222,4 +222,24 @@ class ProcessorTest extends TestCase
         $this->assertInstanceOf(User::class, $user);
         $this->assertSame('Test name', $user->getFirstName());
     }
+
+    /**
+     * Tests that getConfig returns ContainerInterface instance
+     */
+    public function testGetConfig()
+    {
+        $this->assertInstanceOf(ContainerInterface::class, $this->sut->getConfig());
+    }
+
+    /**
+     * Tests that getWebhooResponse method returns Response object instance
+     */
+    public function testGetWebhookResponse()
+    {
+        $result = $this->sut->getWebhookResponse('{"ok":true,"result":[]}', true);
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertSame(0, $result->getEntitiesCount());
+        $this->assertCount(0, $result->getEntities());
+    }
 }
